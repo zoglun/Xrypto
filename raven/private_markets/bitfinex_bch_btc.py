@@ -25,7 +25,6 @@ class PrivateBitfinex_BCH_BTC(Market):
             'buy',
             'exchange limit',
             symbol=self.pair_code)
-        print(res)
         return res['order_id']
 
     def _sell_limit(self, amount, price):
@@ -39,7 +38,7 @@ class PrivateBitfinex_BCH_BTC(Market):
         return res['order_id']
 
     def _order_status(self, res):
-        print(res)
+        # print(res)
 
         resp = {}
         resp['order_id'] = res['id']
@@ -52,25 +51,21 @@ class PrivateBitfinex_BCH_BTC(Market):
             resp['status'] = 'OPEN'
         else:
             resp['status'] = 'CLOSE'
- 
-        if res['is_cancelled']:
-            resp['status'] = 'CANCELED'
 
         return resp
 
     def _get_order(self, order_id):
         res = self.trade_client.status_order(int(order_id))
-        print(res)
         assert str(res['id']) == str(order_id)
         return self._order_status(res)
 
 
     def _cancel_order(self, order_id):
-        res = self.trade_client.delete_order(order_id)
+        res = self.trade_client.delete_order(int(order_id))
         assert str(res['id']) == str(order_id)
 
         resp = self._order_status(res)
-        if resp['status'] == 'CANCELED':
+        if resp:
             return True
         else:
             return False
