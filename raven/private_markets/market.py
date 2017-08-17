@@ -1,4 +1,4 @@
-# Copyright (C) 2013, Maxime Biais <maxime@biais.org>
+# Copyright (C) 2017, Philsong <songbohr@gmail.com>
 
 import logging
 
@@ -8,6 +8,7 @@ class TradeException(Exception):
 class Market:
     def __init__(self, base_currency, market_currency, pair_code):
         self.name = self.__class__.__name__
+        self.brief_name  = self.name[7:]
 
         self.base_currency = base_currency
         self.market_currency = market_currency
@@ -25,36 +26,36 @@ class Market:
                                            "btc_available": self.btc_available,
                                            "bch_available": self.bch_available}))
 
-    def buy(self, amount, price, client_id=None):
-        logging.verbose("BUY LIMIT%f %s at %f %s @%s" % (amount, self.market_currency, 
-                        price, self.base_currency, self.name))
+    def buy_limit(self, amount, price, client_id=None):
+        logging.verbose("BUY LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
+                        price, self.base_currency, self.brief_name))
         if client_id:
-            return self._buy(amount, local_currency_price, client_id)
+            return self._buy_limit(amount, price, client_id)
         else:
-            return self._buy(amount, local_currency_price)
+            return self._buy_limit(amount, price)
 
 
-    def sell(self, amount, price, client_id=None):
+    def sell_limit(self, amount, price, client_id=None):
         logging.verbose("SELL LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
-                        price, self.base_currency, self.name))
+                        price, self.base_currency, self.brief_name))
         if client_id:
-            return self._sell(amount, local_currency_price, client_id)
+            return self._sell_limit(amount, price, client_id)
         else:
-            return self._sell(amount, local_currency_price)
+            return self._sell_limit(amount, price)
 
 
     def buy_maker(self, amount, price):
         logging.verbose("BUY MAKER %f %s at %f %s @%s" % (amount, self.market_currency, 
-                        price, self.base_currency, self.name))
+                        price, self.base_currency, self.brief_name))
 
-        return self._buy_maker(amount, local_currency_price)
+        return self._buy_maker(amount, price)
 
 
     def sell_maker(self, amount, price):
         logging.verbose("SELL MAKER %f %s at %f %s @%s" % (amount, self.market_currency, 
-                        price, self.base_currency, self.name))
+                        price, self.base_currency, self.brief_name))
 
-        return self._sell_maker(amount, local_currency_price)
+        return self._sell_maker(amount, price)
 
     def get_order(self, order_id):
         return self._get_order(order_id)
@@ -65,10 +66,10 @@ class Market:
     def cancel_all(self):
         return self._cancel_all()
 
-    def _buy(self, amount, price):
+    def _buy_limit(self, amount, price):
         raise NotImplementedError("%s.buy(self, amount, price)" % self.name)
 
-    def _sell(self, amount, price):
+    def _sell_limit(self, amount, price):
         raise NotImplementedError("%s.sell(self, amount, price)" % self.name)
 
     def _buy_maker(self, amount, price):
@@ -94,3 +95,6 @@ class Market:
 
     def get_balances(self):
         raise NotImplementedError("%s.get_balances(self)" % self.name)
+
+    def test(self):
+        pass

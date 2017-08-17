@@ -17,29 +17,63 @@ class PrivateBitfinex_BCH_BTC(Market):
 
         self.get_balances()
  
-    def _buy(self, amount, price):
+    def _buy_limit(self, amount, price):
         """Create a buy limit order"""
-        print("buy limit...")
-        return
         res = self.trade_client.place_order(
-            amount,
-            price,
+            str(amount),
+            str(price),
             'buy',
             'exchange limit',
             symbol=self.pair_code)
+        print(res)
         return res['order_id']
 
-    def _sell(self, amount, price):
+    def _sell_limit(self, amount, price):
         """Create a sell limit order"""
-        print("sell limit...")
-        return
         res = self.trade_client.place_order(
-            amount,
-            price,
+            str(amount),
+            str(price),
             'sell',
             'exchange limit',
             symbol=self.pair_code)
         return res['order_id']
+
+    def _order_status(self, res):
+        print(res)
+
+        resp = {}
+        resp['order_id'] = res['id']
+        resp['amount'] = float(res['original_amount'])
+        resp['price'] = float(res['price'])
+        resp['deal_size'] = float(res['executed_amount'])
+        resp['avg_price'] = float(res['avg_execution_price'])
+
+        if res['is_live']:
+            resp['status'] = 'OPEN'
+        else:
+            resp['status'] = 'CLOSE'
+ 
+        if res['is_cancelled']:
+            resp['status'] = 'CANCELED'
+
+        return resp
+
+    def _get_order(self, order_id):
+        res = self.trade_client.status_order(int(order_id))
+        print(res)
+        assert str(res['id']) == str(order_id)
+        return self._order_status(res)
+
+
+    def _cancel_order(self, order_id):
+        res = self.trade_client.delete_order(order_id)
+        assert str(res['id']) == str(order_id)
+
+        resp = self._order_status(res)
+        if resp['status'] == 'CANCELED':
+            return True
+        else:
+            return False
 
     def get_balances(self):
         """Get balance"""
@@ -56,11 +90,26 @@ class PrivateBitfinex_BCH_BTC(Market):
                 continue
 
             if currency == 'BCH':
-                self.bch_available = entry['available']
-                self.bch_balance = entry['amount']
+                self.bch_available = float(entry['available'])
+                self.bch_balance = float(entry['amount'])
 
             elif currency == 'BTC':
-                self.btc_available = entry['available']
-                self.btc_balance = entry['amount']  
+                self.btc_available = float(entry['available'])
+                self.btc_balance = float(entry['amount'])
+
+    def test(self):
+        order_id = self.buy_limit(0.1, 0.02)
+        print(order_id)
+        order_status = self.get_order(order_id)
+        print(order_status)
+        cancel_status = self.cancel_order(order_id)
+        print(cancel_status)
+        order_status = self.get_order(order_id)
+        print(order_status)
+
+
+
+
+
             
         

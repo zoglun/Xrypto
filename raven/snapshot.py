@@ -9,7 +9,6 @@ class Snapshot(object):
     """docstring for ClassName"""
     def __init__(self):
         super(Snapshot, self).__init__()
-        self.last_snapshot = 0.0
 
     def _snapshot(self, filename, header, body):
         need_header = False
@@ -25,18 +24,16 @@ class Snapshot(object):
         fp.write(body)
         fp.close()
 
+    def snapshot_balance(self, market, total_btc, total_bch):
+        filename = 'snapshot_%s_balance.csv' % market
+        header = "localtime, timestamp, total_btc, total_bch\n"
 
-    def snapshot_balance(self, total_btc, total_bch):
-        if  time.time() - self.last_snapshot > 60*60:
-            filename = 'snapshot_balance.csv'
-            header = "localtime, timestamp, total_btc, total_bch\n"
+        localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) 
+        timestamp = time.time()
+        body =("%s") % localtime +',' + ("%d") % timestamp +','+("%.4f") % total_btc+','+("%.2f") % total_bch +'\n'
 
-            localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) 
-            timestamp = time.time()
-            body =("%s") % localtime +',' + ("%d") % timestamp +','+("%.4f") % total_btc+','+("%.2f") % total_bch +'\n'
+        self._snapshot(filename, header, body)
 
-            self._snapshot(filename, header, body)
-
+        if market == "ALL":
             body =("localtime=%s, total_btc=%0.4f, total_bch=%0.4f") % (localtime, total_btc, total_bch)
             send_email('raven balance snapshot', body)
-            self.last_snapshot = time.time()

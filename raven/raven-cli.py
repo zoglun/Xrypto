@@ -39,6 +39,8 @@ class ArbitrerCLI:
             self.list_markets()
         if "get-broker-balance" in args.command:
             self.get_broker_balance(args)
+        if "test" in args.command:
+            self.test(args)
 
     def list_markets(self):
         logging.debug('list_markets') 
@@ -53,6 +55,21 @@ class ArbitrerCLI:
                             print(obj.__name__)
         sys.exit(0)
 
+
+    def test(self, args):
+        if not args.markets:
+            logging.error("You must use --markets argument to specify markets")
+            sys.exit(2)
+        pmarkets = args.markets.split(",")
+        pmarketsi = []
+        for pmarket in pmarkets:
+            exec('import private_markets.' + pmarket.lower())
+            market = eval('private_markets.' + pmarket.lower()
+                          + '.Private' + pmarket + '()')
+            pmarketsi.append(market)
+
+        for market in pmarketsi:
+            market.test()
 
     def get_balance(self, args):
         if not args.markets:
@@ -72,13 +89,14 @@ class ArbitrerCLI:
             total_btc = 0.
             total_bch = 0.
             for market in pmarketsi:
-                print(market)
-                total_btc += float(market.btc_balance)
-                total_bch += float(market.bch_balance)
+                # print(market)
+                total_btc += market.btc_balance
+                total_bch += market.bch_balance
+                snapshot.snapshot_balance(market.name[7:], market.btc_balance, market.bch_balance)
 
-            snapshot.snapshot_balance(total_btc, total_bch)
+            snapshot.snapshot_balance('ALL', total_btc, total_bch)
 
-            time.sleep(60)
+            time.sleep(60*10)
 
     def create_arbitrer(self, args):
         self.arbitrer = Arbitrer()

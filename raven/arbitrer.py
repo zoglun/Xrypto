@@ -77,30 +77,30 @@ class Arbitrer(object):
         # max_amount_pair_t = min(max_amount_pair_t, config.max_tx_volume)
 
         buy_total = 0
-        w_buyprice = 0
+        w_bprice = 0
         for i in range(mi + 1):
             price = self.depths[kask]["asks"][i]["price"]
             amount = min(max_amount_pair_t, buy_total + self.depths[kask]["asks"][i]["amount"]) - buy_total
             if amount <= 0.000001:
                 break
             buy_total += amount
-            if w_buyprice == 0 or buy_total == 0:
-                w_buyprice = price
+            if w_bprice == 0 or buy_total == 0:
+                w_bprice = price
             else:
-                w_buyprice = (w_buyprice * (buy_total - amount) + price * amount) / buy_total
+                w_bprice = (w_bprice * (buy_total - amount) + price * amount) / buy_total
 
         sell_total = 0
-        w_sellprice = 0
+        w_sprice = 0
         for j in range(mj + 1):
             price = self.depths[kbid]["bids"][j]["price"]
             amount = min(max_amount_pair_t, sell_total + self.depths[kbid]["bids"][j]["amount"]) - sell_total
             if amount <= 0.000001:
                 break
             sell_total += amount
-            if w_sellprice == 0 or sell_total == 0:
-                w_sellprice = price
+            if w_sprice == 0 or sell_total == 0:
+                w_sprice = price
             else:
-                w_sellprice = (w_sellprice * (sell_total - amount) + price * amount) / sell_total
+                w_sprice = (w_sprice * (sell_total - amount) + price * amount) / sell_total
         
         # sell should == buy
         if abs(sell_total-buy_total) > 0.000001:
@@ -109,8 +109,8 @@ class Arbitrer(object):
 
         volume = buy_total # or sell_total
 
-        profit = sell_total * w_sellprice - buy_total * w_buyprice
-        return profit, volume, w_buyprice, w_sellprice
+        profit = sell_total * w_sprice - buy_total * w_bprice
+        return profit, volume, w_bprice, w_sprice
 
     def get_max_depth(self, kask, kbid):
         i = 0
@@ -142,43 +142,49 @@ class Arbitrer(object):
     def arbitrage_depth_opportunity(self, kask, kbid):
         best_profit, best_volume = (0, 0)
         best_i, best_j = (0, 0)
-        best_w_buyprice, best_w_sellprice = (0, 0)
+        best_w_bprice, best_w_sprice = (0, 0)
 
         maxi, maxj = self.get_max_depth(kask, kbid)
         for i in range(maxi + 1):
             for j in range(maxj + 1):
-                profit, volume, w_buyprice, w_sellprice = self.get_profit_for(
+                profit, volume, w_bprice, w_sprice = self.get_profit_for(
                     i, j, kask, kbid)
                 if profit >= 0 and profit >= best_profit:
                     best_profit = profit
                     best_volume = volume
                     best_i, best_j = (i, j)
-                    best_w_buyprice, best_w_sellprice = (
-                        w_buyprice, w_sellprice)
+                    best_w_bprice, best_w_sprice = (
+                        w_bprice, w_sprice)
         return best_profit, best_volume, \
                self.depths[kask]["asks"][best_i]["price"], \
                self.depths[kbid]["bids"][best_j]["price"], \
-               best_w_buyprice, best_w_sellprice
+               best_w_bprice, best_w_sprice
 
     def arbitrage_opportunity(self, kask, ask, kbid, bid):
-        profit, volume, exe_buyprice, exe_sellprice, w_buyprice,\
-            w_sellprice = self.arbitrage_depth_opportunity(kask, kbid)
+        profit, volume, exe_bprice, exe_sprice, w_bprice,\
+            w_sprice = self.arbitrage_depth_opportunity(kask, kbid)
 
-        if volume == 0 or exe_buyprice == 0 or exe_sellprice == 0:
+        if volume == 0 or exe_bprice == 0 or exe_sprice == 0:
             return
 
         # perc = (bid["price"] - ask["price"]) / bid["price"] * 100
-        w_perc = (w_sellprice - w_buyprice) / w_buyprice * 100
+        w_perc = (w_sprice - w_bprice) / w_bprice * 100
 
-        market = self.get_market(kask)
+        ask_market = self.get_market(kask)
+        bid_market = self.get_market(kbid)
+        if round(w_sprice * ask_market.fee_rate * config.Diff, 8)  >= round(w_bprice * bid_market.fee_rate, 8):
+            return
+
+        fee_rate = max(ask_market.fee_rate, bid_market.fee_rate)
+        profit = round(profit*(1-fee_rate), 8)
 
         # notify observer
         for observer in self.observers:
             observer.opportunity(
-                profit, volume, exe_buyprice, kask, exe_sellprice, kbid,
-                w_perc, w_buyprice, w_sellprice,
-                base_currency=market.base_currency, 
-                market_currency=market.market_currency)
+                profit, volume, exe_bprice, kask, exe_sprice, kbid,
+                w_perc, w_bprice, w_sprice,
+                base_currency=ask_market.base_currency, 
+                market_currency=ask_market.market_currency)
 
     def get_market(self, market_name):
         for market in self.markets:
@@ -215,7 +221,9 @@ class Arbitrer(object):
         if len(depth1["asks"]) <= 0 or len(depth2["bids"]) <= 0:
             return False
         
-        if float(depth1["asks"][0]['price'])  >= float(depth2["bids"][0]['price']):
+        sprice = float(depth1["asks"][0]['price'])
+        bprice = float(depth2["bids"][0]['price'])
+        if round(sprice * config.FEE * config.Diff, 8)  >= round(bprice * config.FEE, 8):
             return False
         
         return True

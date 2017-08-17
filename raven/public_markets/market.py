@@ -11,11 +11,12 @@ import config
 import threading
 
 class Market(object):
-    def __init__(self, base_currency, market_currency, pair_code):
+    def __init__(self, base_currency, market_currency, pair_code, fee_rate):
         self.name = self.__class__.__name__
         self.base_currency = base_currency
         self.market_currency = market_currency
         self.pair_code = pair_code
+        self.fee_rate = fee_rate
 
         self.depth_updated = 0
         self.update_rate = 1

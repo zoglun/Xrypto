@@ -17,7 +17,7 @@ from .market import Market
 
 class Bitfinex(Market):
     def __init__(self, base_currency, market_currency, pair_code):
-        super().__init__(base_currency, market_currency, pair_code)
+        super().__init__(base_currency, market_currency, pair_code, 0.002)
 
     def update_depth(self):
         url = 'https://api.bitfinex.com/v1/book/%s' % self.pair_code
