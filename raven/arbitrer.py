@@ -74,7 +74,7 @@ class Arbitrer(object):
             max_amount_sell += self.depths[kbid]["bids"][j]["amount"]
 
         max_amount_pair_t = min(max_amount_buy, max_amount_sell)
-        max_amount_pair_t = min(max_amount, config.max_tx_volume)
+        # max_amount_pair_t = min(max_amount_pair_t, config.max_tx_volume)
 
         buy_total = 0
         w_buyprice = 0

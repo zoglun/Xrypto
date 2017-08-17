@@ -1,6 +1,6 @@
 # opportunity detector and automated trading
 
-raven，权利的游戏里的渡鸦，可以洞察世间的一切，而crypto-raven寓意洞察全球区块链资产里价差并进行套利活动。
+raven，权利的游戏里的渡鸦，可以洞察世间的一切，而crypto-raven寓意洞察全球区块链资产价差并进行自动化套利活动。
 
 It gets order books from supported exchanges and calculate arbitrage
 opportunities between each markets. It takes market depth into account.
@@ -32,7 +32,7 @@ Currently supported exchanges to automate trade:
 
 # Installation And Configuration
 
-    $ cp arbitrage/config.py-example arbitrage/config.py
+    $ cp raven/config.py-example raven/config.py
 
 Then edit config.py file to setup your preferences: watched markets
 and observers
@@ -41,7 +41,7 @@ You need Python3 to run this program. To install on Debian, Ubuntu, or
 variants of them, use:
 
     $ sudo apt-get install python3 python3-pip python-nose
-    $ pip3 install requests zmq
+    $ pip3 install -r requirements.txt
 
 You need market broker service, please read its README to install then run it. 
   
@@ -55,18 +55,22 @@ To use the observer XMPPMessager you will need to install sleekxmpp:
 
     $ pip3 install sleekxmpp
 
+# Debug
+
+    $ python3 raven/raven-cli.py watch -d
+
 # Run
 
 To run the opportunity watcher:
 
-    $ python3 arbitrage/arbitrage.py watch -v
+    $ python3 raven/raven-cli.py watch -v
 
 To check your balance on an exchange (also a good way to check your accounts configuration):
 
-    $ python3 arbitrage/arbitrage.py -m HaobtcCNY get-balance
-    $ python3 arbitrage/arbitrage.py -m Bitfinex_BCH_BTC get-balance
-    $ python3 arbitrage/arbitrage.py -m HaobtcCNY,BitstampUSD get-balance
-    $ python3 arbitrage/arbitrage.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
+    $ python3 raven/raven-cli.py -m HaobtcCNY get-balance
+    $ python3 raven/raven-cli.py -m Bitfinex_BCH_BTC get-balance
+    $ python3 raven/raven-cli.py -m HaobtcCNY,BitstampUSD get-balance
+    $ python3 raven/raven-cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
 
 Run tests
 
@@ -76,26 +80,26 @@ Run tests
 
 List supported public markets:
 
-      $ python3 arbitrage/arbitrage.py list-public-markets
+      $ python3 raven/raven-cli.py list-public-markets
 
 Help
       
-      $ python3 arbitrage/arbitrage.py -h
+      $ python3 raven/raven-cli.py -h
 
 # Example
 
 arbitrage in haobtc, huobi or okcoin
 
-    $ python3 arbitrage/arbitrage.py -oTraderBot -mHaobtcCNY,HuobiCNY
-    $ python3 arbitrage/arbitrage.py -oTraderBot -mHaobtcCNY,OKCoinCNY
+    $ python3 raven/raven-cli.py -oTraderBot -mHaobtcCNY,HuobiCNY
+    $ python3 raven/raven-cli.py -oTraderBot -mHaobtcCNY,OKCoinCNY
 
 balance statatistic 
 
-    $ python3 arbitrage/arbitrage.py -oBalanceDumper -mHaobtcCNY
+    $ python3 raven/raven-cli.py -oBalanceDumper -mHaobtcCNY
     
 bistar test
 
-    $ python3 arbitrage/bitstar_test.py
+    $ python3 raven/bitstar_test.py
 
     
 # TODO
