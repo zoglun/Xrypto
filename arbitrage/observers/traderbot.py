@@ -3,7 +3,6 @@ import config
 import time
 from .observer import Observer
 from .emailer import send_email
-from fiatconverter import FiatConverter
 from private_markets import huobicny,okcoincny,brokercny
 import os, time
 import sys
@@ -135,7 +134,8 @@ class TraderBot(BasicBot):
                         self.cancel_order(sell_order['market'], 'sell', sell_order['id'])
 
     def opportunity(self, profit, volume, buyprice, kask, sellprice, kbid, perc,
-                    weighted_buyprice, weighted_sellprice):
+                    weighted_buyprice, weighted_sellprice, 
+                    base_currency, market_currency):
         if kask not in self.clients:
             logging.warn("Can't automate this trade, client not available: %s" % kask)
             return

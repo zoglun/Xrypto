@@ -3,7 +3,6 @@ import config
 import time
 from .observer import Observer
 from .emailer import send_email
-from fiatconverter import FiatConverter
 from private_markets import okcoincny,btccprocny
 import os, time
 import sys

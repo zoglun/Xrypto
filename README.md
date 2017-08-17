@@ -1,27 +1,29 @@
-# bitcoin-arbitrage - opportunity detector and automated trading
+# opportunity detector and automated trading
+
+raven，权利的游戏里的渡鸦，可以洞察世间的一切，而crypto-raven寓意洞察全球区块链资产里价差并进行套利活动。
 
 It gets order books from supported exchanges and calculate arbitrage
 opportunities between each markets. It takes market depth into account.
 
 Currently supported exchanges to get data:
+ - Bitfinex (BCH_BTC)
+ - Bitfinex (BTC_USD)
+ - Bittrex (BCH_BTC)
  - Bitstamp (USD)
  - BTC-e (USD)
- - Bitfinex (USD)
- - Kraken (USD, EUR)
  - OkCoin (CNY)
- - Gemini (USD)
- - BTCC (CNY)
- - Coinbase Exchange (USD)
  - Huobi (CNY)
+ - Broker (CNY)
+ - Bitstar (Future)
 
 Currently supported exchanges to automate trade:
+ - Bitfinex (BCH_BTC)
+ - Bitfinex (BTC_USD)
+ - Bittrex (BCH_BTC)
  - Bitstamp (USD)
  - OkCoin (CNY)
  - Huobi (CNY)
  - Bitstar (Future)
- - Bitfinex (BCH_BTC)
- - Bitfinex (BTC_USD)
-
 
 # WARNING
 

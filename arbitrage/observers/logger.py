@@ -4,6 +4,7 @@ from .observer import Observer
 
 class Logger(Observer):
     def opportunity(self, profit, volume, buyprice, kask, sellprice, kbid, perc,
-                    weighted_buyprice, weighted_sellprice):
-        logging.info("profit: %f CNY with volume: %f BTC - buy at %.4f (%s) sell at %.4f (%s) ~%.2f%%" \
-            % (profit, volume, buyprice, kask, sellprice, kbid, perc))
+                    weighted_buyprice, weighted_sellprice,
+                    base_currency, market_currency):
+        logging.info("profit: %f %s with volume: %f %s - buy at %.8f (%s) sell at %.8f (%s) ~%.2f%%" \
+            % (profit, base_currency, volume, market_currency, buyprice, kask, sellprice, kbid, perc))
