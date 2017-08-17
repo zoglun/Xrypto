@@ -2,6 +2,8 @@
 
 raven，权利的游戏里的渡鸦，可以洞察世间的一切，而crypto-raven寓意洞察全球区块链资产价差并进行自动化套利活动。
 
+![加入我们](http://upload-images.jianshu.io/upload_images/7637-bd0d23de81f51928.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 It gets order books from supported exchanges and calculate arbitrage
 opportunities between each markets. It takes market depth into account.
 

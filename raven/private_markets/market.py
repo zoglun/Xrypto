@@ -6,7 +6,7 @@ class TradeException(Exception):
     pass
 
 class Market:
-    def __init__(self):
+    def __init__(self, base_currency, market_currency, pair_code):
         self.name = self.__class__.__name__
 
         self.base_currency = base_currency
@@ -15,19 +15,15 @@ class Market:
 
         self.btc_balance = 0.
         self.bch_balance = 0.
-        self.usd_balance = 0.
-        self.cny_balance = 0.
-        self.btc_frozen = 0.
-        self.bch_frozen = 0.
-        self.usd_frozen = 0.
-        self.cny_frozen = 0.
-        self.market = None
+        self.btc_available = 0.
+        self.bch_available = 0.
+        # self.market = None
 
     def __str__(self):
-        return "%s: %s" % (self.name, str({"cny_balance": self.cny_balance,
-                                           "btc_balance": self.btc_balance,
-                                           "cny_frozen": self.cny_frozen,
-                                           "btc_frozen": self.btc_frozen}))
+        return "%s: %s" % (self.name, str({"btc_balance": self.btc_balance,
+                                           "bch_balance": self.bch_balance,
+                                           "btc_available": self.btc_available,
+                                           "bch_available": self.bch_available}))
 
     def buy(self, amount, price, client_id=None):
         logging.verbose("BUY LIMIT%f %s at %f %s @%s" % (amount, self.market_currency, 
@@ -96,5 +92,5 @@ class Market:
     def withdraw(self, amount, address):
         raise NotImplementedError("%s.withdraw(self, amount, address)" % self.name)
 
-    def get_info(self):
-        raise NotImplementedError("%s.get_info(self)" % self.name)
+    def get_balances(self):
+        raise NotImplementedError("%s.get_balances(self)" % self.name)
