@@ -38,7 +38,7 @@ class PrivateBittrex_BCH_BTC(Market):
     def get_balances(self):
         """Get balance"""
         res = self.trade_client.get_balances()
-        print("get_balances response:", res)
+        # print("get_balances response:", res)
 
         for entry in res['result']:
             currency = entry['Currency']

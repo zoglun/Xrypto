@@ -2,8 +2,6 @@
 
 raven，权利的游戏里的渡鸦，可以洞察世间的一切，而crypto-raven寓意洞察全球区块链资产价差并进行自动化套利活动。
 
-![加入我们](xiaomiquan.jpg)
-
 It gets order books from supported exchanges and calculate arbitrage
 opportunities between each markets. It takes market depth into account.
 
@@ -71,7 +69,7 @@ To check your balance on an exchange (also a good way to check your accounts con
 
     $ python3 raven/raven-cli.py -m HaobtcCNY get-balance
     $ python3 raven/raven-cli.py -m Bitfinex_BCH_BTC get-balance
-    $ python3 raven/raven-cli.py -m HaobtcCNY,BitstampUSD get-balance
+    $ python3 raven/raven-cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC get-balance
     $ python3 raven/raven-cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
 
 Run tests
@@ -140,3 +138,6 @@ If for some reason you feel like donating a few micro btc to future development,
 ## Credits
 
 * @[Maxime Biais](https://github.com/maxme) for [the original work on **bitcoin-arbitrage**](https://github.com/maxme/https://github.com/maxme/bitcoin-arbitrage)
+
+![Join Us](xiaomiquan.jpg)
+

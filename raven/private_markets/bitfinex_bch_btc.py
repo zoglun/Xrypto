@@ -44,7 +44,7 @@ class PrivateBitfinex_BCH_BTC(Market):
     def get_balances(self):
         """Get balance"""
         res = self.trade_client.balances()
-        print("get_balances response:", res)
+        # print("get_balances response:", res)
 
         for entry in res:
             if entry['type'] != 'exchange':
