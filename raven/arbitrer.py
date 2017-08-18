@@ -16,12 +16,13 @@ import re,sys,re
 import string
 import signal
  
+
+is_sigint_up = False
+
 def sigint_handler(signum, frame):
     global is_sigint_up
     is_sigint_up = True
     print ('catched interrupt signal!')
- 
-is_sigint_up = False
 
 class Arbitrer(object):
     def __init__(self):
@@ -32,11 +33,13 @@ class Arbitrer(object):
         self.init_observers(config.observers)
         self.threadpool = ThreadPoolExecutor(max_workers=10)
 
-
     def init_markets(self, _markets):
         logging.debug("_markets:%s" % _markets)
         self.market_names = _markets
         for market_name in _markets:
+            if self.get_market(market_name):
+                continue
+
             try:
                 exec('import public_markets.' + market_name.lower())
                 market = eval('public_markets.' + market_name.lower() + '.' +
@@ -74,7 +77,6 @@ class Arbitrer(object):
             max_amount_sell += self.depths[kbid]["bids"][j]["amount"]
 
         max_amount_pair_t = min(max_amount_buy, max_amount_sell)
-        # max_amount_pair_t = min(max_amount_pair_t, config.max_tx_volume)
 
         buy_total = 0
         w_bprice = 0
@@ -165,7 +167,7 @@ class Arbitrer(object):
             w_sprice = self.arbitrage_depth_opportunity(kask, kbid)
 
         if volume == 0 or exe_bprice == 0 or exe_sprice == 0:
-            logging.warn("parameter exception")
+            logging.warn("parameter exception %s %s %s" % (volume, exe_bprice, exe_sprice))
             return
 
         # perc = (bid["price"] - ask["price"]) / bid["price"] * 100
@@ -248,7 +250,7 @@ class Arbitrer(object):
                 if not self.is_pair_market(kmarket1, kmarket2):  # same market
                     continue
 
-                logging.verbose("detect ask < bid in [%s %s]" % (kmarket1, kmarket2))
+                logging.debug("detect ask < bid in [%s %s]" % (kmarket1, kmarket2))
 
                 depth1 = self.depths[kmarket1]
                 depth2 = self.depths[kmarket2]
@@ -256,7 +258,7 @@ class Arbitrer(object):
                 if not self.pricediff_exist(depth1, depth2):
                     continue
 
-                logging.verbose("price diff exist in [%s %s]" % (kmarket1, kmarket2))
+                logging.debug("price diff exist in [%s %s]" % (kmarket1, kmarket2))
 
                 self.arbitrage_opportunity(kmarket1, depth1["asks"][0],
                                            kmarket2, depth2["bids"][0])
@@ -276,6 +278,7 @@ class Arbitrer(object):
     def update_depths(self):
         depths = {}
         futures = []
+
         for market in self.markets:
             futures.append(self.threadpool.submit(self.__get_market_depth,
                                                   market, depths))

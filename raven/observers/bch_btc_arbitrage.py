@@ -26,8 +26,6 @@ class BCH_BTC_Arbitrage(BasicBot):
         self.last_bid_price = 0
         self.trend_up = True
 
-        self.hedger = 'Bitfinex_BCH_BTC'
-
         logging.info('BCH_BTC_Arbitrage Setup complete')
 
     def begin_opportunity_finder(self, depths):
@@ -73,9 +71,9 @@ class BCH_BTC_Arbitrage(BasicBot):
 
                 if result['status'] == 'CLOSE' or result['status'] == 'CANCELED':
                     left_amount = result['amount'] - result['deal_size']
-                    if  result['status'] == 'CANCELED' or left_amount > 0.000001:
+                    if  result['status'] == 'CANCELED' or left_amount > 0.001:
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (buy_order['market'], result['price'], left_amount))
-                        self.clients[self.hedger].buy(left_amount, result['price']*(1+ 5*config.price_departure_perc))
+                        self.clients[buy_order['market']].buy_limit(left_amount, result['price']*(1+ 5*config.price_departure_perc))
 
                     self.remove_order(buy_order['id'])
                 else:
@@ -104,11 +102,11 @@ class BCH_BTC_Arbitrage(BasicBot):
                     continue
 
                 if result['status'] == 'CLOSE' or result['status'] == 'CANCELED':
-                    if result['status'] == 'CANCELED' or left_amount > 0.000001:
-                        left_amount = result['amount'] - result['deal_size']
+                    left_amount = result['amount'] - result['deal_size']
+                    if result['status'] == 'CANCELED' or left_amount > 0.001:
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (sell_order['market'], result['price'], left_amount))
 
-                        self.clients[self.hedger].sell(left_amount, result['price']*(1 - 5*config.price_departure_perc))
+                        self.clients[sell_order['market']].sell_limit(left_amount, result['price']*(1 - 5*config.price_departure_perc))
 
                     self.remove_order(sell_order['id'])
                 else:
@@ -144,7 +142,7 @@ class BCH_BTC_Arbitrage(BasicBot):
             return
 
         if profit > self.btc_profit_thresh and perc > self.btc_perc_thresh:
-            logging.info("Profit or profit percentage(%0.4f/%0.4f) higher than thresholds(%s/%s%%)" 
+            logging.info("Profit or profit percentage(%0.4f/%0.4f%%) higher than thresholds(%s/%s%%)" 
                             % (profit, perc, self.btc_profit_thresh, self.btc_perc_thresh))    
         else:
             logging.debug("Profit or profit percentage(%0.4f/%0.4f) out of scope thresholds(%s/%s%%)" 

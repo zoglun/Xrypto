@@ -56,6 +56,8 @@ class PrivateBitfinex_BCH_BTC(Market):
 
     def _get_order(self, order_id):
         res = self.trade_client.status_order(int(order_id))
+        logging.info('get_order: %s' % res)
+
         assert str(res['id']) == str(order_id)
         return self._order_status(res)
 
@@ -73,7 +75,7 @@ class PrivateBitfinex_BCH_BTC(Market):
     def get_balances(self):
         """Get balance"""
         res = self.trade_client.balances()
-        # print("get_balances response:", res)
+        logging.verbose("get_balances response: %s" % res)
 
         for entry in res:
             if entry['type'] != 'exchange':

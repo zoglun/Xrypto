@@ -113,7 +113,7 @@ class BasicBot(Observer):
                 'time': time.time()
             }
             self.orders.append(order)
-            logging.verbose("submit order %s" % (order))
+            logging.info("submit order %s" % (order))
 
             return order
 
@@ -126,6 +126,8 @@ class BasicBot(Observer):
             logging.warn("cancel %s #%s failed" % (type, order_id))
             return False
         else:
+            logging.info("cancel %s #%s ok" % (type, order_id))
+
             return True
 
     def remove_order(self, order_id):

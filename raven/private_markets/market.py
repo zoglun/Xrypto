@@ -31,7 +31,7 @@ class Market:
         if amount > config.bch_guide_dog_volume:
             raise
 
-        logging.verbose("BUY LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
+        logging.info("BUY LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
         if client_id:
             return self._buy_limit(amount, price, client_id)
@@ -43,7 +43,7 @@ class Market:
         if amount > config.bch_guide_dog_volume:
             raise
             
-        logging.verbose("SELL LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
+        logging.info("SELL LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
         if client_id:
             return self._sell_limit(amount, price, client_id)
@@ -52,14 +52,14 @@ class Market:
 
 
     def buy_maker(self, amount, price):
-        logging.verbose("BUY MAKER %f %s at %f %s @%s" % (amount, self.market_currency, 
+        logging.info("BUY MAKER %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
 
         return self._buy_maker(amount, price)
 
 
     def sell_maker(self, amount, price):
-        logging.verbose("SELL MAKER %f %s at %f %s @%s" % (amount, self.market_currency, 
+        logging.info("SELL MAKER %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
 
         return self._sell_maker(amount, price)

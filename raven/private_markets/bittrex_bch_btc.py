@@ -32,7 +32,6 @@ class PrivateBittrex_BCH_BTC(Market):
         return res['result']['uuid']
 
     def _order_status(self, res):
-        # print(res)
         resp = {}
         resp['order_id'] = res['OrderUuid']
         resp['amount'] = float(res['Quantity'])
@@ -49,6 +48,7 @@ class PrivateBittrex_BCH_BTC(Market):
 
     def _get_order(self, order_id):
         res = self.trade_client.get_order(order_id)
+        logging.info('get_order: %s' % res)
         assert str(res['result']['OrderUuid']) == str(order_id)
         return self._order_status(res['result'])
 
