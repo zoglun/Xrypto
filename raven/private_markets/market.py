@@ -15,16 +15,21 @@ class Market:
         self.market_currency = market_currency
         self.pair_code = pair_code
 
+        self.cny_balance = 0.
+        self.cny_available = 0.
+
         self.btc_balance = 0.
-        self.bch_balance = 0.
         self.btc_available = 0.
+
+        self.bch_balance = 0.
         self.bch_available = 0.
-        # self.market = None
 
     def __str__(self):
-        return "%s: %s" % (self.name[7:], str({"btc_balance": self.btc_balance,
+        return "%s: %s" % (self.name[7:], str({"cny_balance": self.cny_balance,
+                                            "cny_available": self.cny_available,
+                                            "btc_balance": self.btc_balance,
+                                            "btc_available": self.btc_available,
                                            "bch_balance": self.bch_balance,
-                                           "btc_available": self.btc_available,
                                            "bch_available": self.bch_available}))
 
     def buy_limit(self, amount, price, client_id=None):

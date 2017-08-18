@@ -9,6 +9,9 @@ Currently supported exchanges to get data:
  - Bitfinex (BCH_BTC)
  - Bitfinex (BTC_USD)
  - Bittrex (BCH_BTC)
+ - Viabtc (BCH_BTC)
+ - Viabtc (BTC_CNY)
+ - Viabtc (BCH_CNY)
  - Bitstamp (USD)
  - BTC-e (USD)
  - OkCoin (CNY)
@@ -20,6 +23,9 @@ Currently supported exchanges to automate trade:
  - Bitfinex (BCH_BTC)
  - Bitfinex (BTC_USD)
  - Bittrex (BCH_BTC)
+ - Viabtc (BCH_BTC)
+ - Viabtc (BTC_CNY)
+ - Viabtc (BCH_CNY)
  - Bitstamp (USD)
  - OkCoin (CNY)
  - Huobi (CNY)
@@ -64,10 +70,12 @@ To use the observer XMPPMessager you will need to install sleekxmpp:
 To run the opportunity watcher:
 
     $ python3 raven/raven-cli.py watch -v
+    $ python3 raven/raven-cli.py watch -v -mViabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY
 
 To check your balance on an exchange (also a good way to check your accounts configuration):
 
     $ python3 raven/raven-cli.py -m HaobtcCNY get-balance
+    $ python3 raven/raven-cli.py -m Viabtc_BCH_CNY get-balance
     $ python3 raven/raven-cli.py -m Bitfinex_BCH_BTC get-balance
     $ python3 raven/raven-cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC get-balance
     $ python3 raven/raven-cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance

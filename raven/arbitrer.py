@@ -84,6 +84,7 @@ class Arbitrer(object):
             price = self.depths[kask]["asks"][i]["price"]
             amount = min(max_amount_pair_t, buy_total + self.depths[kask]["asks"][i]["amount"]) - buy_total
             if amount <= 0.000001:
+                # logging.warn("buy amount left=%s", amount)
                 break
             buy_total += amount
             if w_bprice == 0 or buy_total == 0:
@@ -91,12 +92,16 @@ class Arbitrer(object):
             else:
                 w_bprice = (w_bprice * (buy_total - amount) + price * amount) / buy_total
 
+
+        tmp=0
         sell_total = 0
         w_sprice = 0
         for j in range(mj + 1):
             price = self.depths[kbid]["bids"][j]["price"]
+            tmp = self.depths[kbid]["bids"][j]["amount"]
             amount = min(max_amount_pair_t, sell_total + self.depths[kbid]["bids"][j]["amount"]) - sell_total
             if amount <= 0.000001:
+                # logging.warn("sell amount left=%s", amount)
                 break
             sell_total += amount
             if w_sprice == 0 or sell_total == 0:
@@ -106,7 +111,8 @@ class Arbitrer(object):
         
         # sell should == buy
         if abs(sell_total-buy_total) > 0.000001:
-            logging.warn("sell_total=%s, buy_total=%s", sell_total, buy_total)
+            logging.warn("sell_total=%s, buy_total=%s, max_amount_pair_t=%s ,tmp=%s", 
+                sell_total, buy_total, max_amount_pair_t, tmp)
             return 0, 0, 0, 0
 
         volume = buy_total # or sell_total

@@ -140,6 +140,7 @@ class ArbitrerCLI:
         args = parser.parse_args()
         self.init_logger(args)
         self.exec_command(args)
+        print('main end')
 
 def main():
     cli = ArbitrerCLI()
