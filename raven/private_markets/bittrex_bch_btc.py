@@ -19,8 +19,6 @@ class PrivateBittrex_BCH_BTC(Market):
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
-        print("buy limit...")
-        return
         res = self.trade_client.buy_limit(self.pair_code,
             amount,
             price)
@@ -28,19 +26,17 @@ class PrivateBittrex_BCH_BTC(Market):
 
     def _sell_limit(self, amount, price):
         """Create a sell limit order"""
-        print("sell limit...")
-        return
         res = self.trade_client.sell_limit(self.pair_code,
             amount,
             price)
         return res['result']['uuid']
 
     def _order_status(self, res):
-        print(res)
+        # print(res)
         resp = {}
         resp['order_id'] = res['OrderUuid']
         resp['amount'] = float(res['Quantity'])
-        resp['price'] = float(res['Price'])
+        resp['price'] = float(res['Limit'])
         resp['deal_size'] = float(res['Quantity']) - float(res['QuantityRemaining'])
         resp['avg_price'] = float(res['Price'])
 
@@ -53,14 +49,12 @@ class PrivateBittrex_BCH_BTC(Market):
 
     def _get_order(self, order_id):
         res = self.trade_client.get_order(order_id)
-        assert str(res['OrderUuid']) == str(order_id)
-        return self._order_status(res)
+        assert str(res['result']['OrderUuid']) == str(order_id)
+        return self._order_status(res['result'])
 
 
     def _cancel_order(self, order_id):
         res = self.trade_client.cancel(order_id)
-        assert str(res['id']) == str(order_id)
-
         if res['success'] == True:
             return True
         else:
@@ -85,5 +79,31 @@ class PrivateBittrex_BCH_BTC(Market):
                 self.btc_available = float(entry['Available'])
                 self.btc_balance = float(entry['Balance'])  
 
-            
+        return res
+
+    def test(self):
+        order_id = self.buy_limit(0.11, 0.02)
+        print(order_id)
+        order_status = self.get_order(order_id)
+        print(order_status)
+        balance = self.get_balances()
+        # print(balance)
+        cancel_status = self.cancel_order(order_id)
+        print(cancel_status)
+        order_status = self.get_order(order_id)
+        print(order_status)
+
+        order_id = self.sell_limit(0.12, 0.15)
+        print(order_id)
+        order_status = self.get_order(order_id)
+        print(order_status)
+
+        balance = self.get_balances()
+        # print(balance)
+
+        cancel_status = self.cancel_order(order_id)
+        print(cancel_status)
+        order_status = self.get_order(order_id)
+        print(order_status)
+
         

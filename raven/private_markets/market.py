@@ -58,9 +58,13 @@ class Market:
         return self._sell_maker(amount, price)
 
     def get_order(self, order_id):
+        if not order_id:
+            raise
         return self._get_order(order_id)
 
     def cancel_order(self, order_id):
+        if not order_id:
+            raise
         return self._cancel_order(order_id)
 
     def cancel_all(self):

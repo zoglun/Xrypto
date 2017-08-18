@@ -91,18 +91,32 @@ class PrivateBitfinex_BCH_BTC(Market):
             elif currency == 'BTC':
                 self.btc_available = float(entry['available'])
                 self.btc_balance = float(entry['amount'])
+        return res
 
     def test(self):
-        order_id = self.buy_limit(0.1, 0.02)
+        order_id = self.buy_limit(0.11, 0.02)
         print(order_id)
         order_status = self.get_order(order_id)
         print(order_status)
+        balance = self.get_balances()
+        print(balance)
         cancel_status = self.cancel_order(order_id)
         print(cancel_status)
         order_status = self.get_order(order_id)
         print(order_status)
 
+        order_id = self.sell_limit(0.12, 0.15)
+        print(order_id)
+        order_status = self.get_order(order_id)
+        print(order_status)
 
+        balance = self.get_balances()
+        print(balance)
+
+        cancel_status = self.cancel_order(order_id)
+        print(cancel_status)
+        order_status = self.get_order(order_id)
+        print(order_status)
 
 
 
