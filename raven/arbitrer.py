@@ -170,9 +170,6 @@ class Arbitrer(object):
             logging.warn("parameter exception %s %s %s" % (volume, exe_bprice, exe_sprice))
             return
 
-        # perc = (bid["price"] - ask["price"]) / bid["price"] * 100
-        w_perc = (w_sprice - w_bprice) / w_bprice * 100
-
         ask_market = self.get_market(kask)
         bid_market = self.get_market(kbid)
         if round(w_sprice * ask_market.fee_rate * config.Diff, 8)  >= round(w_bprice * bid_market.fee_rate, 8):
@@ -182,6 +179,8 @@ class Arbitrer(object):
 
         fee_rate = max(ask_market.fee_rate, bid_market.fee_rate)
         profit = round(profit*(1-fee_rate), 8)
+
+        w_perc = round((w_sprice - w_bprice) / w_bprice - fee_rate, 4)
 
         # notify observer
         for observer in self.observers:
@@ -230,7 +229,7 @@ class Arbitrer(object):
         bprice = float(depth2["bids"][0]['price'])
 
         if sprice >= bprice:
-            logging.verbose("orderbook pricediff_exist check failed: %s > %s" % (
+            logging.debug("orderbook pricediff_exist check failed: %s > %s" % (
                 round(sprice * config.FEE * config.Diff, 8), round(bprice * config.FEE, 8)))
             return False   
 

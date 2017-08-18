@@ -85,6 +85,8 @@ class BCH_BTC_Arbitrage(BasicBot):
                         continue
 
                     if abs(result['price']-ask_price)/result['price'] > config.price_departure_perc:
+                        print(result['price'], ask_price)
+                        logging.info("%s %s" % (abs(result['price']-ask_price)/result['price'], config.price_departure_perc))
                         left_amount = result['amount'] - result['deal_size']
                         logging.info("Fire:cancel %s ask_price %s result['price'] = %s, left_amount=%s" % (buy_order['market'], ask_price, result['price'], left_amount))
                         self.cancel_order(buy_order['market'], 'buy', buy_order['id'])
@@ -154,8 +156,8 @@ class BCH_BTC_Arbitrage(BasicBot):
             return
 
         max_avaliable_volume = self.get_min_tradeable_volume(bprice,
-                                                   self.clients[kask].btc_balance,
-                                                   self.clients[kbid].bch_balance)
+                                                   self.clients[kask].btc_available,
+                                                   self.clients[kbid].bch_avalibale)
         volume = min(volume, max_avaliable_volume)
         volume = min(volume, config.bch_max_tx_volume)
 
@@ -181,11 +183,11 @@ class BCH_BTC_Arbitrage(BasicBot):
 
         bch_frozen_volume = config.bch_frozen_volume
 
-        if self.clients[kask].btc_balance < max(volume*bprice, bch_frozen_volume*bprice):
+        if self.clients[kask].btc_available < max(volume*bprice, bch_frozen_volume*bprice):
             logging.warn("%s %s is insufficent" % (kask, base_currency))
             return
  
-        if self.clients[kbid].bch_balance < max(volume, bch_frozen_volume):
+        if self.clients[kbid].bch_avalibale < max(volume, bch_frozen_volume):
             logging.warn("%s %s is insufficent" % (kbid, market_currency))
             return
 
