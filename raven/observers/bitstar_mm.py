@@ -89,30 +89,30 @@ class MarketMaker(BasicBot):
             return
 
         if bid_price+1 < ask_price :
-            buyprice = bid_price + 1
+            bprice = bid_price + 1
         else:
-            buyprice = bid_price
+            bprice = bid_price
 
         if ask_price-1 > bid_price:
-            sellprice = ask_price - 1
+            sprice = ask_price - 1
         else:
-            sellprice = ask_price
+            sprice = ask_price
 
-        if buyprice == sellprice:
-            if buyprice > bid_price:
-                buyprice -=1
-            elif sellprice < ask_price:
-                sellprice +=1
+        if bprice == sprice:
+            if bprice > bid_price:
+                bprice -=1
+            elif sprice < ask_price:
+                sprice +=1
 
         peer_bid_hedge_price = int(peer_bid_price*(1+self.bid_fee_rate))
         peer_ask_hedge_price = int(peer_ask_price*(1-self.ask_fee_rate))
 
-        buyprice=min(buyprice, peer_bid_hedge_price) - self.bid_price_risk
-        sellprice=max(sellprice, peer_ask_hedge_price) + self.ask_price_risk
-        logging.debug("sellprice/buyprice=(%s/%s)" % (sellprice, buyprice))
+        bprice=min(bprice, peer_bid_hedge_price) - self.bid_price_risk
+        sprice=max(sprice, peer_ask_hedge_price) + self.ask_price_risk
+        logging.debug("sprice/bprice=(%s/%s)" % (sprice, bprice))
 
-        self.buyprice = buyprice
-        self.sellprice = sellprice
+        self.bprice = bprice
+        self.sprice = sprice
 
         # Update client balance
         self.update_balance()
@@ -133,14 +133,14 @@ class MarketMaker(BasicBot):
                     self.remove_order(buy_order['id'])
                 else:
                     current_time = time.time()
-                    if (result['price'] != buyprice) and \
+                    if (result['price'] != bprice) and \
                         ((result['price'] > peer_bid_hedge_price) or \
                         ( current_time - buy_order['time'] > self.trade_timeout and  \
                         (result['price'] < bid_price or result['price'] > (bid1_price + 1)))):
                         logging.info("[TraderBot] cancel last buy trade " +
                                      "occured %.2f seconds ago" %
                                      (current_time - buy_order['time']))
-                        logging.info("cancel buyprice %s result['price'] = %s[%s]" % (buyprice, result['price'], result['price'] != buyprice))
+                        logging.info("cancel bprice %s result['price'] = %s[%s]" % (bprice, result['price'], result['price'] != bprice))
 
                         self.cancel_order(kexchange, 'buy', buy_order['id'])
 
@@ -160,14 +160,14 @@ class MarketMaker(BasicBot):
                     self.remove_order(sell_order['id'])
                 else:
                     current_time = time.time()
-                    if (result['price'] != sellprice) and \
+                    if (result['price'] != sprice) and \
                         ((result['price'] < peer_ask_hedge_price) or \
                         (current_time - sell_order['time'] > self.trade_timeout and \
                             (result['price'] > ask_price or result['price'] < (ask1_price - 1)))):
                         logging.info("[TraderBot] cancel last SELL trade " +
                                      "occured %.2f seconds ago" %
                                      (current_time - sell_order['time']))
-                        logging.info("cancel sellprice %s result['price'] = %s [%s]" % (sellprice, result['price'], result['price'] != sellprice))
+                        logging.info("cancel sprice %s result['price'] = %s [%s]" % (sprice, result['price'], result['price'] != sprice))
 
                         self.cancel_order(kexchange, 'sell', sell_order['id'])
             
@@ -202,21 +202,21 @@ class MarketMaker(BasicBot):
                 self.cny_frozen = self.clients[kclient].cny_frozen
                 self.btc_frozen = self.clients[kclient].btc_frozen
 
-        cny_abs = abs(self.cny_total - self.cny_balance_total(self.buyprice))
+        cny_abs = abs(self.cny_total - self.cny_balance_total(self.bprice))
         cny_diff = self.cny_total*0.1
-        btc_abs = abs(self.btc_total - self.btc_balance_total(self.sellprice))
+        btc_abs = abs(self.btc_total - self.btc_balance_total(self.sprice))
         btc_diff = self.btc_total*0.1
 
-        self.cny_total = self.cny_balance_total(self.buyprice)
-        self.btc_total = self.btc_balance_total(self.sellprice)
+        self.cny_total = self.cny_balance_total(self.bprice)
+        self.btc_total = self.btc_balance_total(self.sprice)
 
         if (cny_abs > 5 and cny_abs < cny_diff) or (btc_abs > 0.001 and btc_abs < btc_diff):
             logging.debug("update_balance-->")
-            self.update_trade_history(time.time(), self.buyprice, self.cny_total, self.btc_total)
+            self.update_trade_history(time.time(), self.bprice, self.cny_total, self.btc_total)
 
         logging.debug("cny_balance=%s/%s, btc_balance=%s/%s, total_cny=%0.2f, total_btc=%0.2f", 
             self.cny_balance, self.cny_frozen, self.btc_balance, self.btc_frozen, 
-            self.cny_balance_total(self.buyprice), self.btc_balance_total(self.sellprice))
+            self.cny_balance_total(self.bprice), self.btc_balance_total(self.sprice))
 
     def cny_balance_total(self, price):
         return self.cny_balance + self.cny_frozen+ (self.btc_balance + self.btc_frozen)* price
@@ -239,5 +239,5 @@ class MarketMaker(BasicBot):
     def end_opportunity_finder(self):
         pass
 
-    def opportunity(self, profit, volume, buyprice, kask, sellprice, kbid, perc, weighted_buyprice, weighted_sellprice):
+    def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc, w_bprice, w_sprice):
         pass

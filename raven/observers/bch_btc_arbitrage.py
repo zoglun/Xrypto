@@ -48,8 +48,8 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
         # Execute only the best (more profitable)
         self.execute_trade(*self.potential_trades[0][1:])
 
-    def get_min_tradeable_volume(self, buyprice, cny_bal, btc_bal):
-        min1 = float(cny_bal) * (1. - config.balance_margin) / buyprice
+    def get_min_tradeable_volume(self, bprice, cny_bal, btc_bal):
+        min1 = float(cny_bal) * (1. - config.balance_margin) / bprice
         min2 = float(btc_bal) * (1. - config.balance_margin)
 
         return min(min1, min2)
@@ -71,10 +71,9 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
                     continue
 
                 if result['status'] == 'CLOSE' or result['status'] == 'CANCELED':
-                    if result['status'] == 'CANCELED':
-                        left_amount = result['amount']- result['deal_size']
+                    left_amount = result['amount'] - result['deal_size']
+                    if  result['status'] == 'CANCELED' or left_amount > 0.000001:
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (buy_order['market'], result['price'], left_amount))
-
                         self.clients[self.hedger].buy(left_amount, result['price'])
 
                     self.remove_order(buy_order['id'])
@@ -87,7 +86,7 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
                         continue
 
                     if abs(result['price']-ask_price) > config.arbitrage_cancel_price_diff:
-                        left_amount = result['amount']- result['deal_size']
+                        left_amount = result['amount'] - result['deal_size']
                         logging.info("Fire:cancel %s ask_price %s result['price'] = %s, left_amount=%s" % (buy_order['market'], ask_price, result['price'], left_amount))
                         self.cancel_order(buy_order['market'], 'buy', buy_order['id'])
 
@@ -104,8 +103,8 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
                     continue
 
                 if result['status'] == 'CLOSE' or result['status'] == 'CANCELED':
-                    if result['status'] == 'CANCELED':
-                        left_amount = result['amount']- result['deal_size']
+                    if result['status'] == 'CANCELED' or left_amount > 0.000001:
+                        left_amount = result['amount'] - result['deal_size']
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (sell_order['market'], result['price'], left_amount))
 
                         self.clients[self.hedger].sell(left_amount, result['price'])
@@ -120,13 +119,13 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
                         continue
 
                     if abs(result['price']-bid_price) > config.arbitrage_cancel_price_diff:
-                        left_amount = result['amount']- result['deal_size']
+                        left_amount = result['amount'] - result['deal_size']
 
                         logging.info("Fire:cancel %s bid_price %s result['price'] = %s,left_amount=%s" % (sell_order['market'], bid_price, result['price'], left_amount))
                         self.cancel_order(sell_order['market'], 'sell', sell_order['id'])
 
-    def opportunity(self, profit, volume, buyprice, kask, sellprice, kbid, perc,
-                    weighted_buyprice, weighted_sellprice, 
+    def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc,
+                    w_bprice, w_sprice, 
                     base_currency, market_currency):
         if kask not in self.clients:
             logging.warn("Can't automate this trade, client not available: %s" % kask)
@@ -157,7 +156,7 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
             logging.warn("Profit=%f seems malformed" % (perc, ))
             return
 
-        max_volume = self.get_min_tradeable_volume(buyprice,
+        max_volume = self.get_min_tradeable_volume(bprice,
                                                    self.clients[kask].cny_balance,
                                                    self.clients[kbid].btc_balance)
         volume = min(volume, max_volume, arbitrage_max_volume)
@@ -174,14 +173,14 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
             return
 
         self.potential_trades.append([profit, volume, kask, kbid,
-                                      weighted_buyprice, weighted_sellprice,
-                                      buyprice, sellprice])
+                                      w_bprice, w_sprice,
+                                      bprice, sprice])
 
-    def execute_trade(self, volume, kask, kbid, weighted_buyprice,
-                      weighted_sellprice, buyprice, sellprice):
+    def execute_trade(self, volume, kask, kbid, w_bprice,
+                      w_sprice, bprice, sprice):
         volume = float('%0.2f' % volume)
 
-        if self.clients[kask].cny_balance < max(volume*buyprice*10, 31*buyprice):
+        if self.clients[kask].cny_balance < max(volume*bprice*10, 31*bprice):
             logging.warn("%s cny is insufficent" % kask)
             return
  
@@ -189,46 +188,46 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
             logging.warn("%s btc is insufficent" % kbid)
             return
 
-        logging.info("Fire:Buy @%s/%0.2f and sell @%s/%0.2f %0.2f BTC" % (kask, buyprice, kbid, sellprice, volume))
+        logging.info("Fire:Buy @%s/%0.2f and sell @%s/%0.2f %0.2f BTC" % (kask, bprice, kbid, sprice, volume))
 
         # update trend
-        if self.last_bid_price < buyprice:
+        if self.last_bid_price < bprice:
             self.trend_up = True
         else:
             self.trend_up = False
 
-        logging.info("trend is %s[%s->%s]", "up, buy then sell" if self.trend_up else "down, sell then buy", self.last_bid_price, buyprice)
-        self.last_bid_price = buyprice
+        logging.info("trend is %s[%s->%s]", "up, buy then sell" if self.trend_up else "down, sell then buy", self.last_bid_price, bprice)
+        self.last_bid_price = bprice
 
         # trade
         if self.trend_up:
-            result = self.new_order(kask, 'buy', maker_only=False, amount=volume, price=buyprice)
+            result = self.new_order(kask, 'buy', maker_only=False, amount=volume, price=bprice)
             if not result:
                 logging.warn("Buy @%s %f BTC failed" % (kask, volume))
                 return
 
             self.last_trade = time.time()
 
-            result = self.new_order(kbid, 'sell', maker_only=False, amount= volume,  price=sellprice)
+            result = self.new_order(kbid, 'sell', maker_only=False, amount= volume,  price=sprice)
             if not result:
                 logging.warn("Sell @%s %f BTC failed" % (kbid, volume))
-                result = self.new_order(kask, 'sell', maker_only=False, amount=volume, price=buyprice)
+                result = self.new_order(kask, 'sell', maker_only=False, amount=volume, price=bprice)
                 if not result:
                     logging.warn("2nd sell @%s %f BTC failed" % (kask, volume))
                     return
         else:
 
-            result = self.new_order(kbid, 'sell', maker_only=False, amount= volume,  price=sellprice)
+            result = self.new_order(kbid, 'sell', maker_only=False, amount= volume,  price=sprice)
             if not result:
                 logging.warn("Sell @%s %f BTC failed" % (kbid, volume))
                 return
 
             self.last_trade = time.time()
 
-            result = self.new_order(kask, 'buy', maker_only=False, amount=volume, price=buyprice)
+            result = self.new_order(kask, 'buy', maker_only=False, amount=volume, price=bprice)
             if not result:
                 logging.warn("Buy @%s %f BTC failed" % (kask, volume))
-                result = self.new_order(kbid, 'buy', maker_only=False, amount= volume,  price=sellprice)
+                result = self.new_order(kbid, 'buy', maker_only=False, amount= volume,  price=sprice)
                 if not result:
                     logging.warn("2nd buy @%s %f BTC failed" % (kbid, volume))
                     return

@@ -102,5 +102,5 @@ class BalanceDumper(Observer):
     def end_opportunity_finder(self):
         pass
 
-    def opportunity(self, profit, volume, buyprice, kask, sellprice, kbid, perc, weighted_buyprice, weighted_sellprice):
+    def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc, w_bprice, w_sprice):
         pass

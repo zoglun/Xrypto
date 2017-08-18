@@ -35,8 +35,8 @@ class SpecializedTraderBot(Observer):
         # Execute only the best (more profitable)
         self.execute_trade(*self.potential_trades[0][1:])
 
-    def get_min_tradeable_volume(self, buyprice, cny_bal, btc_bal):
-        min1 = float(cny_bal) / ((1. + config.balance_margin) * buyprice)
+    def get_min_tradeable_volume(self, bprice, cny_bal, btc_bal):
+        min1 = float(cny_bal) / ((1. + config.balance_margin) * bprice)
         min2 = float(btc_bal) / (1. + config.balance_margin)
         return min(min1, min2) * 0.95
 
@@ -44,8 +44,8 @@ class SpecializedTraderBot(Observer):
         for kclient in self.clients:
             self.clients[kclient].get_info()
 
-    def opportunity(self, profit, volume, buyprice, kask, sellprice, kbid, perc,
-                    weighted_buyprice, weighted_sellprice):
+    def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc,
+                    w_bprice, w_sprice):
         if kask not in self.clients:
             logging.warn(
                 "Can't automate this trade, client not available: %s" % (kask))
@@ -68,7 +68,7 @@ class SpecializedTraderBot(Observer):
 
         # maximum volume transaction with current balances
         max_volume = self.get_min_tradeable_volume(
-            buyprice, self.clients[kask].cny_balance,
+            bprice, self.clients[kask].cny_balance,
             self.clients[kbid].btc_balance)
         volume = min(volume, max_volume, config.max_tx_volume)
         if volume < config.min_tx_volume:
@@ -82,13 +82,13 @@ class SpecializedTraderBot(Observer):
                          % (current_time - self.last_trade))
             return
 
-        self.potential_trades.append([profit, volume, kask, kbid, weighted_buyprice,
-                                      weighted_sellprice])
+        self.potential_trades.append([profit, volume, kask, kbid, w_bprice,
+                                      w_sprice])
 
-    def execute_trade(self, volume, kask, kbid, weighted_buyprice, weighted_sellprice):
+    def execute_trade(self, volume, kask, kbid, w_bprice, w_sprice):
         self.last_trade = time.time()
         logging.info("Buy @%s %f BTC and sell @%s" % (kask, volume, kbid))
         send_email("Bought @%s %f BTC and sold @%s" % (kask, volume, kbid),
-                   "weighted_buyprice=%f weighted_sellprice=%f" % (weighted_buyprice, weighted_sellprice))
+                   "w_bprice=%f w_sprice=%f" % (w_bprice, w_sprice))
         self.clients[kask].buy(volume)
         self.clients[kbid].sell(volume)

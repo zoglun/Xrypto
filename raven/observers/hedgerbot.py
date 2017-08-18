@@ -117,19 +117,19 @@ class HedgerBot(MarketMaker):
         peer_bid_price = peer_bid_price*(1-self.taker_fee) - self.bid_price_risk
         peer_ask_price = peer_ask_price*(1+self.taker_fee) + self.ask_price_risk
 
-        buyprice  = int(peer_bid_price) - 1
-        sellprice = int(peer_ask_price) + 1
+        bprice  = int(peer_bid_price) - 1
+        sprice = int(peer_ask_price) + 1
 
-        min_buy_price = buyprice - config.MAKER_BUY_QUEUE*config.MAKER_BUY_STAGE
-        max_sell_price = sellprice + config.MAKER_SELL_QUEUE*config.MAKER_SELL_STAGE
+        min_buy_price = bprice - config.MAKER_BUY_QUEUE*config.MAKER_BUY_STAGE
+        max_sell_price = sprice + config.MAKER_SELL_QUEUE*config.MAKER_SELL_STAGE
 
-        self.buyprice_spread = set(range(min_buy_price+1, buyprice+1))
-        self.sellprice_spread = set(range(sellprice, max_sell_price))
+        self.bprice_spread = set(range(min_buy_price+1, bprice+1))
+        self.sprice_spread = set(range(sprice, max_sell_price))
 
-        logging.debug("%s/%s", self.sellprice_spread, self.buyprice_spread)
+        logging.debug("%s/%s", self.sprice_spread, self.bprice_spread)
 
-        self.buyprice = buyprice
-        self.sellprice = sellprice
+        self.bprice = bprice
+        self.sprice = sprice
 
         # Update client balance
         self.update_balance()
@@ -153,8 +153,8 @@ class HedgerBot(MarketMaker):
 
                 if result['status'] == 'CLOSE' or result['status'] == 'CANCELED':
                     self.remove_order(buy_order['id'])
-                elif (result['price'] not in self.buyprice_spread):
-                    logging.info("cancel buyprice %s result['price'] = %s" % (self.buyprice_spread, result['price']))
+                elif (result['price'] not in self.bprice_spread):
+                    logging.info("cancel bprice %s result['price'] = %s" % (self.bprice_spread, result['price']))
                     self.cancel_order(kexchange, 'buy', buy_order['id'])
 
 
@@ -175,8 +175,8 @@ class HedgerBot(MarketMaker):
 
                 if result['status'] == 'CLOSE' or result['status'] == 'CANCELED':
                     self.remove_order(sell_order['id'])
-                elif (result['price'] not in self.sellprice_spread):
-                    logging.info("cancel sellprice %s result['price'] = %s" % (self.sellprice_spread, result['price']))
+                elif (result['price'] not in self.sprice_spread):
+                    logging.info("cancel sprice %s result['price'] = %s" % (self.sprice_spread, result['price']))
                     self.cancel_order(kexchange, 'sell', sell_order['id'])
             
         # excute maker trade
@@ -212,7 +212,7 @@ class HedgerBot(MarketMaker):
     def get_sell_price(self):
         sell_orders = self.get_orders('sell')
         sell_prices = [x['price'] for x in sell_orders]
-        price_candidate_set = set(self.sellprice_spread) - set(sell_prices)
+        price_candidate_set = set(self.sprice_spread) - set(sell_prices)
         price_candidate_list = list(price_candidate_set)
         # price_candidate_list.sort()
 
@@ -229,7 +229,7 @@ class HedgerBot(MarketMaker):
         buy_orders = self.get_orders('buy')
         buy_prices = [x['price'] for x in buy_orders]
 
-        price_candidate_set = set(self.buyprice_spread) - set(buy_prices)
+        price_candidate_set = set(self.bprice_spread) - set(buy_prices)
         price_candidate_list = list(price_candidate_set)
         # price_candidate_list.sort(reverse=True)
 
@@ -238,7 +238,7 @@ class HedgerBot(MarketMaker):
         
         return super().get_buy_price()
 
-        logging.error(self.buyprice_spread)
+        logging.error(self.bprice_spread)
         logging.error (buy_orders)
         logging.error (buy_prices)
         logging.error (price_candidate_set)

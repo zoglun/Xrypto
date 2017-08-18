@@ -148,11 +148,11 @@ class BasicBot(Observer):
         return len(self.get_orders('buy')) > 0
 
     def get_sell_price(self):
-        return self.sellprice
+        return self.sprice
 
     def get_buy_price(self):
-        return self.buyprice
+        return self.bprice
 
     def get_spread(self):
-        return self.sellprice - self.buyprice
+        return self.sprice - self.bprice
         
