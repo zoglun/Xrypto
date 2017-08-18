@@ -1,6 +1,7 @@
 # Copyright (C) 2017, Philsong <songbohr@gmail.com>
 
 import logging
+import config
 
 class TradeException(Exception):
     pass
@@ -27,6 +28,9 @@ class Market:
                                            "bch_available": self.bch_available}))
 
     def buy_limit(self, amount, price, client_id=None):
+        if amount > config.bch_guide_dog_volume:
+            raise
+
         logging.verbose("BUY LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
         if client_id:
@@ -36,6 +40,9 @@ class Market:
 
 
     def sell_limit(self, amount, price, client_id=None):
+        if amount > config.bch_guide_dog_volume:
+            raise
+            
         logging.verbose("SELL LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
         if client_id:

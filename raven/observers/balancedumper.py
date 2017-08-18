@@ -49,7 +49,7 @@ class BalanceDumper(Observer):
 
     def update_balance(self):
         for kclient in self.clients:
-            self.clients[kclient].get_info()
+            self.clients[kclient].get_balances()
             self.cny_balance = self.clients[kclient].cny_balance
             self.btc_balance = self.clients[kclient].btc_balance
             

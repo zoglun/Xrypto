@@ -186,7 +186,7 @@ class BTCCPro_OkSpot(BasicBot):
 
     def update_balance(self):
         for kclient in self.clients:
-            self.clients[kclient].get_info()
+            self.clients[kclient].get_balances()
 
     def begin_opportunity_finder(self, depths):
         self.hedgeALG1(depths)

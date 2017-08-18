@@ -45,7 +45,7 @@ class Arbitrer(object):
             except (ImportError, AttributeError) as e:
                 print("%s market name is invalid: Ignored (you should check your config file)" % (market_name))
                 logging.warn("exception import:%s" % e)
-                # traceback.print_exc()
+                traceback.print_exc()
 
     def init_observers(self, _observers):
         logging.debug("_observers:%s" % _observers)
@@ -59,7 +59,7 @@ class Arbitrer(object):
                 self.observers.append(observer)
             except (ImportError, AttributeError) as e:
                 print("%s observer name is invalid: Ignored (you should check your config file)" % (observer_name))
-                # print(e)
+                print(e)
                 
     def get_profit_for(self, mi, mj, kask, kbid):
         if self.depths[kask]["asks"][mi]["price"] >= self.depths[kbid]["bids"][mj]["price"]:
@@ -165,6 +165,7 @@ class Arbitrer(object):
             w_sprice = self.arbitrage_depth_opportunity(kask, kbid)
 
         if volume == 0 or exe_bprice == 0 or exe_sprice == 0:
+            logging.warn("parameter exception")
             return
 
         # perc = (bid["price"] - ask["price"]) / bid["price"] * 100
@@ -173,6 +174,8 @@ class Arbitrer(object):
         ask_market = self.get_market(kask)
         bid_market = self.get_market(kbid)
         if round(w_sprice * ask_market.fee_rate * config.Diff, 8)  >= round(w_bprice * bid_market.fee_rate, 8):
+            logging.verbose("weight pricediff_exist check failed: %s > %s" % (
+                round(w_sprice * ask_market.fee_rate * config.Diff, 8), round(w_bprice * bid_market.fee_rate, 8)))
             return
 
         fee_rate = max(ask_market.fee_rate, bid_market.fee_rate)
@@ -223,7 +226,15 @@ class Arbitrer(object):
         
         sprice = float(depth1["asks"][0]['price'])
         bprice = float(depth2["bids"][0]['price'])
+
+        if sprice >= bprice:
+            logging.verbose("orderbook pricediff_exist check failed: %s > %s" % (
+                round(sprice * config.FEE * config.Diff, 8), round(bprice * config.FEE, 8)))
+            return False   
+
         if round(sprice * config.FEE * config.Diff, 8)  >= round(bprice * config.FEE, 8):
+            logging.verbose("FEE*DIFF pricediff_exist check failed: %s > %s" % (
+                round(sprice * config.FEE * config.Diff, 8), round(bprice * config.FEE, 8)))
             return False
         
         return True
@@ -237,13 +248,15 @@ class Arbitrer(object):
                 if not self.is_pair_market(kmarket1, kmarket2):  # same market
                     continue
 
+                logging.verbose("detect ask < bid in [%s %s]" % (kmarket1, kmarket2))
+
                 depth1 = self.depths[kmarket1]
                 depth2 = self.depths[kmarket2]
 
                 if not self.pricediff_exist(depth1, depth2):
                     continue
 
-                logging.verbose("price diff exist")
+                logging.verbose("price diff exist in [%s %s]" % (kmarket1, kmarket2))
 
                 self.arbitrage_opportunity(kmarket1, depth1["asks"][0],
                                            kmarket2, depth2["bids"][0])

@@ -42,7 +42,7 @@ class SpecializedTraderBot(Observer):
 
     def update_balance(self):
         for kclient in self.clients:
-            self.clients[kclient].get_info()
+            self.clients[kclient].get_balances()
 
     def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc,
                     w_bprice, w_sprice):

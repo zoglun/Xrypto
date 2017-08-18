@@ -89,9 +89,9 @@ class BasicBot(Observer):
                     order_id = self.clients[kexchange].sell_maker(amount, price)
             else:
                 if type == 'buy':
-                    order_id = self.clients[kexchange].buy(amount, price)
+                    order_id = self.clients[kexchange].buy_limit(amount, price)
                 else:
-                    order_id = self.clients[kexchange].sell(amount, price)
+                    order_id = self.clients[kexchange].sell_limit(amount, price)
 
             if not order_id:
                 logging.warn("%s @%s %f/%f BTC failed, %s" % (type, kexchange, amount, price, order_id))

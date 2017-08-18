@@ -47,7 +47,7 @@ class TraderBot(BasicBot):
 
     def update_balance(self):
         for kclient in self.clients:
-            self.clients[kclient].get_info()
+            self.clients[kclient].get_balances()
 
     def end_opportunity_finder(self):
         if not self.potential_trades:

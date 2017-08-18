@@ -2,14 +2,13 @@ import logging
 import config
 import time
 from .observer import Observer
-from .emailer import send_email
 from private_markets import bitfinex_bch_btc,bittrex_bch_btc
 import os, time
 import sys
 import traceback
 from .basicbot import BasicBot
 
-class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
+class BCH_BTC_Arbitrage(BasicBot):
     def __init__(self):
         super().__init__()
 
@@ -19,15 +18,17 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
         }
 
 
-        self.profit_thresh = config.btc_profit_thresh
-        self.perc_thresh = config.btc_perc_thresh
+        self.btc_profit_thresh = config.btc_profit_thresh
+        self.btc_perc_thresh = config.btc_perc_thresh
         self.trade_wait = config.trade_wait  # in seconds
         self.last_trade = 0
 
         self.last_bid_price = 0
         self.trend_up = True
 
-        self.hedger = 'BrokerCNY'
+        self.hedger = 'Bitfinex_BCH_BTC'
+
+        logging.info('BCH_BTC_Arbitrage Setup complete')
 
     def begin_opportunity_finder(self, depths):
         self.potential_trades = []
@@ -39,7 +40,7 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
 
     def update_balance(self):
         for kclient in self.clients:
-            self.clients[kclient].get_info()
+            self.clients[kclient].get_balances()
 
     def end_opportunity_finder(self):
         if not self.potential_trades:
@@ -48,9 +49,9 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
         # Execute only the best (more profitable)
         self.execute_trade(*self.potential_trades[0][1:])
 
-    def get_min_tradeable_volume(self, bprice, cny_bal, btc_bal):
-        min1 = float(cny_bal) * (1. - config.balance_margin) / bprice
-        min2 = float(btc_bal) * (1. - config.balance_margin)
+    def get_min_tradeable_volume(self, bprice, btc_bal, bch_bal):
+        min1 = float(btc_bal)/bprice - config.bch_frozen_volume
+        min2 = float(bch_bal)  - config.bch_frozen_volume
 
         return min(min1, min2)
 
@@ -74,7 +75,7 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
                     left_amount = result['amount'] - result['deal_size']
                     if  result['status'] == 'CANCELED' or left_amount > 0.000001:
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (buy_order['market'], result['price'], left_amount))
-                        self.clients[self.hedger].buy(left_amount, result['price'])
+                        self.clients[self.hedger].buy(left_amount, result['price']*(1+ 5*config.price_departure_perc))
 
                     self.remove_order(buy_order['id'])
                 else:
@@ -85,7 +86,7 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
                         traceback.print_exc()
                         continue
 
-                    if abs(result['price']-ask_price) > config.arbitrage_cancel_price_diff:
+                    if abs(result['price']-ask_price)/result['price'] > config.price_departure_perc:
                         left_amount = result['amount'] - result['deal_size']
                         logging.info("Fire:cancel %s ask_price %s result['price'] = %s, left_amount=%s" % (buy_order['market'], ask_price, result['price'], left_amount))
                         self.cancel_order(buy_order['market'], 'buy', buy_order['id'])
@@ -107,7 +108,7 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
                         left_amount = result['amount'] - result['deal_size']
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (sell_order['market'], result['price'], left_amount))
 
-                        self.clients[self.hedger].sell(left_amount, result['price'])
+                        self.clients[self.hedger].sell(left_amount, result['price']*(1 - 5*config.price_departure_perc))
 
                     self.remove_order(sell_order['id'])
                 else:
@@ -118,7 +119,7 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
                         traceback.print_exc()
                         continue
 
-                    if abs(result['price']-bid_price) > config.arbitrage_cancel_price_diff:
+                    if abs(result['price']-bid_price)/result['price'] > config.price_departure_perc:
                         left_amount = result['amount'] - result['deal_size']
 
                         logging.info("Fire:cancel %s bid_price %s result['price'] = %s,left_amount=%s" % (sell_order['market'], bid_price, result['price'], left_amount))
@@ -134,35 +135,35 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
             logging.warn("Can't automate this trade, client not available: %s" % kbid)
             return
 
-        if self.buying_len() >= config.ARBITRAGER_BUY_QUEUE:
+        if self.buying_len() >= config.BUY_QUEUE:
             logging.warn("Can't automate this trade, BUY queue is full: %s" % self.buying_len())
             return
 
-        if self.selling_len() >= config.ARBITRAGER_SELL_QUEUE:
+        if self.selling_len() >= config.SELL_QUEUE:
             logging.warn("Can't automate this trade, SELL queue is full: %s" % self.selling_len())
             return
 
-        arbitrage_max_volume = config.max_tx_volume
-        if profit > self.profit_thresh and perc > self.perc_thresh:
-            logging.info("Profit or profit percentage(%0.4f/%0.4f) higher than thresholds(%s/%s)" 
-                            % (profit, perc, self.profit_thresh, self.perc_thresh))    
-            arbitrage_max_volume = config.max_tx_volume
+        if profit > self.btc_profit_thresh and perc > self.btc_perc_thresh:
+            logging.info("Profit or profit percentage(%0.4f/%0.4f) higher than thresholds(%s/%s%%)" 
+                            % (profit, perc, self.btc_profit_thresh, self.btc_perc_thresh))    
         else:
-            logging.debug("Profit or profit percentage(%0.4f/%0.4f) out of scope thresholds(%s~%s/%s~%s)" 
-                            % (profit, perc, self.reverse_profit_thresh, self.profit_thresh, self.perc_thresh, self.reverse_perc_thresh))
+            logging.debug("Profit or profit percentage(%0.4f/%0.4f) out of scope thresholds(%s/%s%%)" 
+                            % (profit, perc, self.btc_profit_thresh, self.btc_perc_thresh))
             return
 
         if perc > 20:  # suspicous profit, added after discovering btc-central may send corrupted order book
             logging.warn("Profit=%f seems malformed" % (perc, ))
             return
 
-        max_volume = self.get_min_tradeable_volume(bprice,
-                                                   self.clients[kask].cny_balance,
-                                                   self.clients[kbid].btc_balance)
-        volume = min(volume, max_volume, arbitrage_max_volume)
-        if volume < config.min_tx_volume:
+        max_avaliable_volume = self.get_min_tradeable_volume(bprice,
+                                                   self.clients[kask].btc_balance,
+                                                   self.clients[kbid].bch_balance)
+        volume = min(volume, max_avaliable_volume)
+        volume = min(volume, config.bch_max_tx_volume)
+
+        if volume < config.bch_min_tx_volume:
             logging.warn("Can't automate this trade, minimum volume transaction"+
-                         " not reached %f/%f" % (volume, config.min_tx_volume))
+                         " not reached %f/%f" % (volume, config.bch_min_tx_volume))
             return
 
         current_time = time.time()
@@ -174,21 +175,23 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
 
         self.potential_trades.append([profit, volume, kask, kbid,
                                       w_bprice, w_sprice,
-                                      bprice, sprice])
+                                      bprice, sprice, base_currency, market_currency])
 
     def execute_trade(self, volume, kask, kbid, w_bprice,
-                      w_sprice, bprice, sprice):
+                      w_sprice, bprice, sprice, base_currency, market_currency):
         volume = float('%0.2f' % volume)
 
-        if self.clients[kask].cny_balance < max(volume*bprice*10, 31*bprice):
-            logging.warn("%s cny is insufficent" % kask)
+        bch_frozen_volume = config.bch_frozen_volume
+
+        if self.clients[kask].btc_balance < max(volume*bprice, bch_frozen_volume*bprice):
+            logging.warn("%s %s is insufficent" % (kask, base_currency))
             return
  
-        if self.clients[kbid].btc_balance < max(volume*10, 31):
-            logging.warn("%s btc is insufficent" % kbid)
+        if self.clients[kbid].bch_balance < max(volume, bch_frozen_volume):
+            logging.warn("%s %s is insufficent" % (kbid, market_currency))
             return
 
-        logging.info("Fire:Buy @%s/%0.2f and sell @%s/%0.2f %0.2f BTC" % (kask, bprice, kbid, sprice, volume))
+        logging.info("Fire:Buy @%s/%0.4f and sell @%s/%0.4f %0.2f %s" % (kask, bprice, kbid, sprice, volume, market_currency))
 
         # update trend
         if self.last_bid_price < bprice:
@@ -198,38 +201,36 @@ class BitfinexBittrex_BCH_BCC_Arbitrage(BasicBot):
 
         logging.info("trend is %s[%s->%s]", "up, buy then sell" if self.trend_up else "down, sell then buy", self.last_bid_price, bprice)
         self.last_bid_price = bprice
+        self.last_trade = time.time()
 
         # trade
         if self.trend_up:
             result = self.new_order(kask, 'buy', maker_only=False, amount=volume, price=bprice)
             if not result:
-                logging.warn("Buy @%s %f BTC failed" % (kask, volume))
+                logging.warn("Buy @%s %f %s failed" % (kask, volume, market_currency))
                 return
 
-            self.last_trade = time.time()
 
-            result = self.new_order(kbid, 'sell', maker_only=False, amount= volume,  price=sprice)
+            result = self.new_order(kbid, 'sell', maker_only=False, amount=volume,  price=sprice)
             if not result:
-                logging.warn("Sell @%s %f BTC failed" % (kbid, volume))
+                logging.warn("Sell @%s %f %s failed" % (kbid, volume, market_currency))
                 result = self.new_order(kask, 'sell', maker_only=False, amount=volume, price=bprice)
                 if not result:
-                    logging.warn("2nd sell @%s %f BTC failed" % (kask, volume))
+                    logging.warn("2nd sell @%s %f %s failed" % (kask, volume, market_currency))
                     return
         else:
 
-            result = self.new_order(kbid, 'sell', maker_only=False, amount= volume,  price=sprice)
+            result = self.new_order(kbid, 'sell', maker_only=False, amount=volume,  price=sprice)
             if not result:
-                logging.warn("Sell @%s %f BTC failed" % (kbid, volume))
+                logging.warn("Sell @%s %f %s failed" % (kbid, volume, market_currency))
                 return
-
-            self.last_trade = time.time()
 
             result = self.new_order(kask, 'buy', maker_only=False, amount=volume, price=bprice)
             if not result:
-                logging.warn("Buy @%s %f BTC failed" % (kask, volume))
+                logging.warn("Buy @%s %f %s failed" % (kask, volume, market_currency))
                 result = self.new_order(kbid, 'buy', maker_only=False, amount= volume,  price=sprice)
                 if not result:
-                    logging.warn("2nd buy @%s %f BTC failed" % (kbid, volume))
+                    logging.warn("2nd buy @%s %f %s failed" % (kbid, volume, market_currency))
                     return
         return
 

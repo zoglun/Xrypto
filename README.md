@@ -93,6 +93,11 @@ arbitrage in haobtc, huobi or okcoin
     $ python3 raven/raven-cli.py -oTraderBot -mHaobtcCNY,HuobiCNY
     $ python3 raven/raven-cli.py -oTraderBot -mHaobtcCNY,OKCoinCNY
 
+bch bcc arbitrage in Bitfinex_BCH_BTC, Bittrex_BCH_BTC
+
+    $ python3 raven/raven-cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC
+
+
 balance statatistic 
 
     $ python3 raven/raven-cli.py -oBalanceDumper -mHaobtcCNY
