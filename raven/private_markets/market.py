@@ -87,7 +87,7 @@ class Market:
 
     def get_order(self, order_id):
         if not order_id:
-            raise
+            return None
 
         try:
             return self._get_order(order_id)
@@ -98,7 +98,7 @@ class Market:
 
     def cancel_order(self, order_id):
         if not order_id:
-            raise
+            return None
 
         try:
             return self._cancel_order(order_id)

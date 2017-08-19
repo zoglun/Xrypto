@@ -2,9 +2,9 @@
 
 from ._viabtc import Viabtc
 
-class PrivateViabtc_BCH_CNY(Viabtc):
+class PrivateViabtc_BTC_CNY(Viabtc):
     def __init__(self):
-        super().__init__("CNY", "BCH", "bcccny")
+        super().__init__("CNY", "BTC", "btccny")
 
     def test(self):
         # balance = self.get_balances()
