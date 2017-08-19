@@ -3,7 +3,6 @@
 """
 Created by bu on 2017-05-10
 """
-from __future__ import unicode_literals
 import json as complex_json
 import requests
 from .utils import verify_sign
@@ -38,7 +37,7 @@ class RequestClient(object):
                 json.update(complex_json.loads(data))
             self.set_authorization(json)
             result = requests.request(method, url, json=json, headers=self.headers)
-        return result.json()
+        return result
 
 
 class OAuthClient(object):

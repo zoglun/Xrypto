@@ -78,13 +78,17 @@ class Arbitrer(object):
 
         max_amount_pair_t = min(max_amount_buy, max_amount_sell)
 
+        tmp0=0
         buy_total = 0
         w_bprice = 0
         for i in range(mi + 1):
             price = self.depths[kask]["asks"][i]["price"]
+            tmp0 = self.depths[kbid]["asks"][i]["amount"]
+
+            print('b:', self.depths[kask]["asks"][i]["amount"], buy_total + self.depths[kask]["asks"][i]["amount"], buy_total)
             amount = min(max_amount_pair_t, buy_total + self.depths[kask]["asks"][i]["amount"]) - buy_total
             if amount <= 0.000001:
-                # logging.warn("buy amount left=%s", amount)
+                logging.warn("buy amount left=%s %0.8f", amount, amount)
                 break
             buy_total += amount
             if w_bprice == 0 or buy_total == 0:
@@ -99,9 +103,11 @@ class Arbitrer(object):
         for j in range(mj + 1):
             price = self.depths[kbid]["bids"][j]["price"]
             tmp = self.depths[kbid]["bids"][j]["amount"]
+            print('s:', self.depths[kask]["bids"][i]["amount"], sell_total + self.depths[kask]["bids"][i]["amount"], sell_total)
+
             amount = min(max_amount_pair_t, sell_total + self.depths[kbid]["bids"][j]["amount"]) - sell_total
             if amount <= 0.000001:
-                # logging.warn("sell amount left=%s", amount)
+                logging.warn("sell amount left=%s", amount)
                 break
             sell_total += amount
             if w_sprice == 0 or sell_total == 0:
@@ -111,8 +117,9 @@ class Arbitrer(object):
         
         # sell should == buy
         if abs(sell_total-buy_total) > 0.000001:
-            logging.warn("sell_total=%s, buy_total=%s, max_amount_pair_t=%s ,tmp=%s", 
-                sell_total, buy_total, max_amount_pair_t, tmp)
+            logging.warn("sell_total=%s, buy_total=%s, max_amount_pair_t=%s, tmp0=%s, tmp=%s", 
+                sell_total, buy_total, max_amount_pair_t, tmp0, tmp)
+            raise
             return 0, 0, 0, 0
 
         volume = buy_total # or sell_total

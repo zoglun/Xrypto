@@ -15,7 +15,7 @@ class PrivateBitfinex_BCH_BTC(Market):
                     api_key if api_key else config.Bitfinex_API_KEY,
                     api_secret if api_secret else config.Bitfinex_SECRET_TOKEN)
 
-        self.get_balances()
+        # self.get_balances()
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
@@ -72,15 +72,11 @@ class PrivateBitfinex_BCH_BTC(Market):
         else:
             return False
 
-    def get_balances(self):
+    def _get_balances(self):
         """Get balance"""
-        try:
-            res = self.trade_client.balances()
-        except Exception as e:
-            logging.error('get_balances except: %s' % e)
-            return None
+        res = self.trade_client.balances()
 
-        logging.debug("get_balances response: %s" % res)
+        logging.debug("bitfinex get_balances response: %s" % res)
 
         for entry in res:
             if entry['type'] != 'exchange':

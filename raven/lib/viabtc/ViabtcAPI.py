@@ -26,7 +26,7 @@ class ViabtcClient(object):
                 secret_key=self.secret_key
         )
         result = request_client.request('GET', 'https://www.viabtc.com/api/v1/balance/')
-        return result
+        return result.json()
 
     # 4. 获取订单状态
     def get_order_status(self, order_id, market="BCCCNY"):
@@ -67,9 +67,9 @@ class ViabtcClient(object):
                "market": market}
 
         result = request_client.request(
-            'POST',
-            'https://www.viabtc.com/api/v1/order/order',
-            json=data,
+            'GET',
+            'https://www.viabtc.com/api/v1/order/',
+            params=data,
         )
         return result.json()
 
@@ -221,4 +221,5 @@ class ViabtcClient(object):
             'https://www.viabtc.com/api/v1/order/pending',
             json=data,
         )
+
         return result.json()

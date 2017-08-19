@@ -38,10 +38,15 @@ class Market:
 
         logging.info("BUY LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
-        if client_id:
-            return self._buy_limit(amount, price, client_id)
-        else:
-            return self._buy_limit(amount, price)
+
+        try:
+            if client_id:
+                return self._buy_limit(amount, price, client_id)
+            else:
+                return self._buy_limit(amount, price)
+        except Exception as e:
+            logging.error('buy_limit except: %s' % e)
+            return None
 
 
     def sell_limit(self, amount, price, client_id=None):
@@ -50,37 +55,72 @@ class Market:
             
         logging.info("SELL LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
-        if client_id:
-            return self._sell_limit(amount, price, client_id)
-        else:
-            return self._sell_limit(amount, price)
+
+        try:
+            if client_id:
+                return self._sell_limit(amount, price, client_id)
+            else:
+                return self._sell_limit(amount, price)
+        except Exception as e:
+            logging.error('sell_limit except: %s' % e)
+            return None
 
 
     def buy_maker(self, amount, price):
         logging.info("BUY MAKER %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
 
-        return self._buy_maker(amount, price)
-
+        try:
+            return self._buy_maker(amount, price)
+        except Exception as e:
+            logging.error('buy_maker except: %s' % e)
+            return None
 
     def sell_maker(self, amount, price):
         logging.info("SELL MAKER %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
-
-        return self._sell_maker(amount, price)
+        try:
+            return self._sell_maker(amount, price)
+        except Exception as e:
+            logging.error('sell_maker except: %s' % e)
+            return None
 
     def get_order(self, order_id):
         if not order_id:
             raise
-        return self._get_order(order_id)
+
+        try:
+            return self._get_order(order_id)
+        except Exception as e:
+            logging.error('get_order except: %s' % e)
+            return None
+
 
     def cancel_order(self, order_id):
         if not order_id:
             raise
-        return self._cancel_order(order_id)
+
+        try:
+            return self._cancel_order(order_id)
+        except Exception as e:
+            logging.error('cancel_order except: %s' % e)
+            return None
+
+    def get_balances(self):
+        try:
+            res = self._get_balances()
+        except Exception as e:
+            logging.error('get_balances except: %s' % e)
+            return None
+        return res
 
     def cancel_all(self):
-        return self._cancel_all()
+        try:
+            res = self._cancel_all()
+        except Exception as e:
+            logging.error('cancel_all except: %s' % e)
+            return None
+        return res
 
     def _buy_limit(self, amount, price):
         raise NotImplementedError("%s.buy(self, amount, price)" % self.name)
@@ -109,8 +149,8 @@ class Market:
     def withdraw(self, amount, address):
         raise NotImplementedError("%s.withdraw(self, amount, address)" % self.name)
 
-    def get_balances(self):
+    def _get_balances(self):
         raise NotImplementedError("%s.get_balances(self)" % self.name)
 
     def test(self):
-        pass
+        raise

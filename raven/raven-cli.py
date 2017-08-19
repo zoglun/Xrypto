@@ -89,6 +89,7 @@ class ArbitrerCLI:
             total_btc = 0.
             total_bch = 0.
             for market in pmarketsi:
+                market.get_balances()
                 # print(market)
                 total_btc += market.btc_balance
                 total_bch += market.bch_balance

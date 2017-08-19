@@ -11,11 +11,13 @@ class Viabtc(Market):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
         super().__init__(base_currency, market_currency, pair_code)
 
+        self.orders = {}
+
         self.trade_client = ViabtcClient(
                     api_key if api_key else config.Viabtc_API_KEY,
                     api_secret if api_secret else config.Viabtc_SECRET_TOKEN)
 
-        self.get_balances()
+        # self.get_balances()
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
@@ -24,6 +26,9 @@ class Viabtc(Market):
             amount=str(amount),
             price=str(price),
             market=self.pair_code)
+
+        logging.verbose('_buy_limit: %s' % res)
+
         return res['data']['id']
 
     def _sell_limit(self, amount, price):
@@ -33,11 +38,11 @@ class Viabtc(Market):
             amount=str(amount),
             price=str(price),
             market=self.pair_code)
+        logging.verbose('_sell_limit: %s' % res)
+
         return res['data']['id']
 
     def _order_status(self, res):
-        print(res)
-
         resp = {}
         resp['order_id'] = res['id']
         resp['amount'] = float(res['amount'])
@@ -54,31 +59,32 @@ class Viabtc(Market):
 
     def _get_order(self, order_id):
         res = self.trade_client.get_order_status(int(order_id), market=self.pair_code)
-        logging.info('get_order: %s' % res)
+        logging.verbose('get_order: %s' % res)
+
+        if res['code'] == 600:
+            res = self.orders[order_id]
+            res['status'] = 'CLOSE'
+            del self.orders[order_id]
+            return res
 
         assert str(res['data']['id']) == str(order_id)
         return self._order_status(res['data'])
 
-
     def _cancel_order(self, order_id):
         res = self.trade_client.cancel_order(int(order_id), market=self.pair_code)
-        assert str(res['id']) == str(order_id)
+        logging.verbose('cancel_order: %s' % res)
 
-        resp = self._order_status(res)
-        if resp:
-            return True
-        else:
-            return False
+        assert str(res['data']['id']) == str(order_id)
 
-    def get_balances(self):
+        resp = self._order_status(res['data'])
+        if res['code'] == 0:
+            self.orders[order_id] = resp
+        return True
+
+    def _get_balances(self):
         """Get balance"""
-        try:
-            res = self.trade_client.get_account()
-        except Exception as e:
-            logging.error('get_balances except: %s' % e)
-            return None
-
-        logging.debug("get_balances response: %s" % res)
+        res = self.trade_client.get_account()
+        logging.debug("get_balances: %s" % res)
 
         entry = res['data']
 
@@ -90,33 +96,3 @@ class Viabtc(Market):
         self.cny_balance = float(entry['CNY']['available']) + float(entry['CNY']['frozen'])
 
         return res
-
-    def test(self):
-        order_id = self.buy_limit(0.11, 0.02)
-        print(order_id)
-        order_status = self.get_order(order_id)
-        print(order_status)
-        balance = self.get_balances()
-        print(balance)
-        cancel_status = self.cancel_order(order_id)
-        print(cancel_status)
-        order_status = self.get_order(order_id)
-        print(order_status)
-
-        order_id = self.sell_limit(0.12, 0.15)
-        print(order_id)
-        order_status = self.get_order(order_id)
-        print(order_status)
-
-        balance = self.get_balances()
-        print(balance)
-
-        cancel_status = self.cancel_order(order_id)
-        print(cancel_status)
-        order_status = self.get_order(order_id)
-        print(order_status)
-
-
-
-            
-        

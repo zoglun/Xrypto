@@ -15,7 +15,7 @@ class PrivateBittrex_BCH_BTC(Market):
                     api_key if api_key else config.Bittrex_API_KEY,
                     api_secret if api_secret else config.Bittrex_SECRET_TOKEN)
 
-        self.get_balances()
+        # self.get_balances()
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
@@ -60,7 +60,7 @@ class PrivateBittrex_BCH_BTC(Market):
         else:
             return False
 
-    def get_balances(self):
+    def _get_balances(self):
         """Get balance"""
         res = self.trade_client.get_balances()
         # print("get_balances response:", res)
