@@ -85,7 +85,7 @@ class Arbitrer(object):
             price = self.depths[kask]["asks"][i]["price"]
             tmp0 = self.depths[kbid]["asks"][i]["amount"]
 
-            print('b:', self.depths[kask]["asks"][i]["amount"], buy_total + self.depths[kask]["asks"][i]["amount"], buy_total)
+            print('b:', i, self.depths[kask]["asks"][i]["amount"], buy_total + self.depths[kask]["asks"][i]["amount"], buy_total)
             amount = min(max_amount_pair_t, buy_total + self.depths[kask]["asks"][i]["amount"]) - buy_total
             if amount <= 0.000001:
                 logging.warn("buy amount left=%s %0.8f", amount, amount)
@@ -103,7 +103,7 @@ class Arbitrer(object):
         for j in range(mj + 1):
             price = self.depths[kbid]["bids"][j]["price"]
             tmp = self.depths[kbid]["bids"][j]["amount"]
-            print('s:', self.depths[kask]["bids"][i]["amount"], sell_total + self.depths[kask]["bids"][i]["amount"], sell_total)
+            print('s:', j, self.depths[kask]["bids"][i]["amount"], sell_total + self.depths[kask]["bids"][i]["amount"], sell_total)
 
             amount = min(max_amount_pair_t, sell_total + self.depths[kbid]["bids"][j]["amount"]) - sell_total
             if amount <= 0.000001:
@@ -316,6 +316,9 @@ class Arbitrer(object):
                     self.depths[market] = depths[market]
             self.tick()
 
+    def update_balance(self):
+        pass
+
     def terminate(self):
         for observer in self.observers:
             observer.terminate()
@@ -333,6 +336,8 @@ class Arbitrer(object):
         signal.signal(signal.SIGTERM, sigint_handler)
 
         while True:
+            self.update_balance()
+            
             self.depths = self.update_depths()
 
             self.tick()

@@ -3,8 +3,8 @@
 from ._viabtc import Viabtc
 
 class PrivateViabtc_BCH_BTC(Viabtc):
-    def __init__(self):
-        super().__init__("BTC", "BCH", "bccbtc")
+    def __init__(self, api_key=None, api_secret=None):
+        super().__init__("BTC", "BCH", "bccbtc", api_key, api_secret)
 
     def test(self):
         # balance = self.get_balances()
