@@ -96,7 +96,7 @@ class ArbitrerCLI:
             total_bch = 0.
             for market in pmarketsi:
                 market.get_balances()
-                # print(market)
+                print(market)
                 total_btc += market.btc_balance
                 total_bch += market.bch_balance
                 snapshot.snapshot_balance(market.name[7:], market.btc_balance, market.bch_balance)
@@ -113,7 +113,7 @@ class ArbitrerCLI:
             self.arbitrer.init_markets(args.markets.split(","))
 
     def create_t_arbitrer(self, args):
-        from tarbitrer import TrigangularArbitrer
+        from t_arbitrer import TrigangularArbitrer
         self.arbitrer = TrigangularArbitrer()
         if args.observers:
             self.arbitrer.init_observers(args.observers.split(","))

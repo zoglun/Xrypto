@@ -77,12 +77,16 @@ To check your balance on an exchange (also a good way to check your accounts con
     $ python3 raven/raven-cli.py -m HaobtcCNY get-balance
     $ python3 raven/raven-cli.py -m Viabtc_BCH_CNY get-balance
     $ python3 raven/raven-cli.py -m Bitfinex_BCH_BTC get-balance
-    $ python3 raven/raven-cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC get-balance
+    $ python3 raven/raven-cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC get-balance
     $ python3 raven/raven-cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
 
 Run tests
 
     $ nosetests arbitrage/
+
+
+Run t-arbitrage
+    $ python3 raven/raven-cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch -v
 
 # Alternative usage
 
@@ -104,6 +108,7 @@ arbitrage in haobtc, huobi or okcoin
 bch bcc arbitrage in Bitfinex_BCH_BTC, Bittrex_BCH_BTC
 
     $ python3 raven/raven-cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC
+    $ python3 raven/raven-cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC
 
 
 balance statatistic 

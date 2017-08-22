@@ -65,6 +65,7 @@ class Arbitrer(object):
                 print(e)
                 
     def get_profit_for(self, mi, mj, kask, kbid):
+        print("mi, mj", mi, mj, kask, kbid)
         if self.depths[kask]["asks"][mi]["price"] >= self.depths[kbid]["bids"][mj]["price"]:
             return 0, 0, 0, 0
 
