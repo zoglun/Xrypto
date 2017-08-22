@@ -78,7 +78,7 @@ class Arbitrer(object):
             max_amount_sell += self.depths[kbid]["bids"][j]["amount"]
 
         max_amount_pair_t = min(max_amount_buy, max_amount_sell)
-
+        print('max_amount_pair_t:', max_amount_pair_t)
         tmp0=0
         buy_total = 0
         w_bprice = 0
@@ -88,6 +88,9 @@ class Arbitrer(object):
 
             print('b:', i, self.depths[kask]["asks"][i]["amount"], buy_total + self.depths[kask]["asks"][i]["amount"], buy_total)
             amount = min(max_amount_pair_t, buy_total + self.depths[kask]["asks"][i]["amount"]) - buy_total
+            if amount < 0.000001:
+                print('b:amount:', amount)
+
             buy_total += amount
 
             if w_bprice == 0 or buy_total == 0:
@@ -95,7 +98,7 @@ class Arbitrer(object):
             else:
                 w_bprice = (w_bprice * (buy_total - amount) + price * amount) / buy_total
             
-            if buy_total - max_amount_pair_t <= 0.000001:
+            if max_amount_pair_t - buy_total <= 0.000001:
                 break
 
         tmp=0
@@ -107,6 +110,10 @@ class Arbitrer(object):
             print('s:', j, self.depths[kask]["bids"][i]["amount"], sell_total + self.depths[kask]["bids"][i]["amount"], sell_total)
 
             amount = min(max_amount_pair_t, sell_total + self.depths[kbid]["bids"][j]["amount"]) - sell_total
+            if amount < 0.000001:
+                print('s:amount:', amount)
+            print('s:amount:', amount)
+
             sell_total += amount
 
             if w_sprice == 0 or sell_total == 0:
@@ -114,7 +121,7 @@ class Arbitrer(object):
             else:
                 w_sprice = (w_sprice * (sell_total - amount) + price * amount) / sell_total
         
-            if sell_total - max_amount_pair_t <= 0.000001:
+            if max_amount_pair_t - sell_total <= 0.000001:
                 break
 
         # sell should == buy
