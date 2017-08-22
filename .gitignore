@@ -37,9 +37,7 @@ nosetests.xml
 *.json
 
 # Project
-config.py
-config_local.py
-config_*.py
+local_config
 old/
 tmp/
 local_settings.py
@@ -56,4 +54,5 @@ download.sh
 # marketmaker.py
 *.sublime-*
 snapshot_*.txt
+
 

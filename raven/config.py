@@ -1,30 +1,41 @@
 markets = [
-# "BitfinexUSD",
 # "BitstampUSD",
 # "BTCCCNY",
-# "BtceEUR",
 # "BtceUSD",
-# "CampBXUSD",
 # "CoinbaseUSD",
 # "GeminiUSD",
 # "KrakenEUR",
 # "KrakenUSD",
 # "OKCoinCNY",
-"HaobtcCNY",
 # "HuobiCNY",
-# "PaymiumEUR",
+# "Bitfinex_BCH_BTC",
+# "Bittrex_BCH_BTC",
 ]
 
 # observers if any
-# ["Logger", "DetailedLogger", "TraderBot", "TraderBotSim", "HistoryDumper", "Emailer", "SpecializedTraderBot"]
-observers = ["DetailedLogger", "TraderBotSim"]
+# ["Logger", "TraderBot", "TraderBotSim", "HistoryDumper", "Emailer", "SpecializedTraderBot"]
+observers = ["Logger"]
 
 market_expiration_time = 120  # in seconds: 2 minutes
 
-refresh_rate = 20
+refresh_rate = 5
 
 trade_wait = 10
 
+btc_profit_thresh = 0.001  # in BTC
+btc_perc_thresh = 0.01  # in 0.01%
+bch_max_tx_volume = 5  # in BCH
+bch_min_tx_volume = 0.5  # in BCH
+bch_frozen_volume = 10
+
+price_departure_perc = 0.002 #in BTC 1%
+
+bch_guide_dog_volume = 10
+
+TFEE = 1.000 # 1+3*0.002
+
+FEE = 1.0025 # fee for every trade (0.25%)
+Diff = 1.001 # 0.1 % arbitrage to execute
 
 MAKER_TRADE_ENABLE = False
 TAKER_TRADE_ENABLE = True
@@ -36,7 +47,7 @@ MAKER_BUY_STAGE = 1
 MAKER_SELL_QUEUE = 3
 MAKER_SELL_STAGE = 2
 
-TAKER_MAX_VOLUME = 1
+TAKER_MAX_VOLUME = 5
 TAKER_MIN_VOLUME = 0.01
 
 bid_fee_rate = 0.001
@@ -46,12 +57,6 @@ ask_price_risk = 0
 
 
 #hedger
-balance_margin = 0.1  # 10%
-
-profit_thresh = 3  # in CNY
-perc_thresh = 0.01  # in 0.01%
-max_tx_volume = 3  # in BTC
-min_tx_volume = 0.5  # in BTC
 
 reverse_profit_thresh = 1
 reverse_perc_thresh = 0.01
@@ -60,10 +65,9 @@ reverse_max_tx_volume = 1  # in BTC
 stage0_percent=0.1
 stage1_percent=0.2
 
-ARBITRAGER_BUY_QUEUE = 5
-ARBITRAGER_SELL_QUEUE = 5
+BUY_QUEUE = 1
+SELL_QUEUE = 1
 
-arbitrage_cancel_price_diff = 2
 
 broker_min_amount = 0.01
 
@@ -95,12 +99,9 @@ BROKER_PORT = 18030
 #### Trader Bot Config
 # Access to Private APIs
 
-paymium_username = "FIXME"
-paymium_password = "FIXME"
-paymium_address = "FIXME"  # to deposit btc from markets / wallets
-
 bitstamp_username = "FIXME"
 bitstamp_password = "FIXME"
+
 
 HUOBI_API_KEY = ''
 HUOBI_SECRET_TOKEN = ''
@@ -120,6 +121,9 @@ Bitfinex_SECRET_TOKEN = ''
 Bittrex_API_KEY = ''
 Bittrex_SECRET_TOKEN = ''
 
+Viabtc_API_KEY = ''
+Viabtc_SECRET_TOKEN = ''
+
 
 SUPPORT_ZMQ = True
 ZMQ_HOST = "127.0.0.1"
@@ -132,6 +136,7 @@ WEBSOCKET_PORT = 13001
 ENV = 'local'
 
 try:
-    from config_local import *
+    from local_config import *
 except ImportError:
     pass
+
