@@ -76,17 +76,16 @@ class TrigangularArbitrer(Arbitrer):
         logging.verbose("synthetic_bid_price: %s t_price:%s" % (synthetic_bid_price, t_price))
 
         p_diff = synthetic_bid_price - t_price
+        profit = p_diff*hedge_bch_amount
 
-        if p_diff > 0:
-            profit = round(p_diff*hedge_bch_amount, 2)
-            logging.info('profit=%s' % profit)
-            logging.info("find t!!!: p_diff:%s synthetic_bid_price: %s  base_pair_ask_price: %s t_price: %s" % (
-                p_diff,
+        if profit > 0:
+            logging.info('profit=%0.4f, p_diff=%0.4f, bch=%s' % (profit, p_diff, hedge_bch_amount))
+            logging.info("synthetic_bid_price: %s  base_pair_ask_price: %s t_price: %s" % (
                 synthetic_bid_price, 
                 base_pair_ask_price,
                 t_price))
 
-            logging.info('buy %s BCH @%s, sell @synthetic: %s' % (self.base_pair, hedge_bch_amount, hedge_btc_amount))
+            logging.info('buy %s BCH @%s, sell BTC @synthetic: %s' % (self.base_pair, hedge_bch_amount, hedge_btc_amount))
             
 
             current_time = time.time()

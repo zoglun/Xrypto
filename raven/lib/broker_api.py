@@ -1,3 +1,5 @@
+# Copyright (C) 2016, Phil Song <songbohr@gmail.com>
+
 import thriftpy
 broker_thrift = thriftpy.load("raven/lib/broker.thrift", module_name="broker_thrift")
 
