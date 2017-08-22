@@ -15,10 +15,13 @@ class TrigangularArbitrer(Arbitrer):
 
         self.FEE = 0.002
 
+        t_api_key = config.t_Viabtc_API_KEY
+        t_secret_token = config.t_Viabtc_SECRET_TOKEN
+
         self.clients = {
-            self.base_pair: viabtc_bch_cny.PrivateViabtc_BCH_CNY(config.Viabtc_API_KEY, config.Viabtc_SECRET_TOKEN),
-            self.pair_1: viabtc_bch_btc.PrivateViabtc_BCH_BTC(config.Viabtc_API_KEY, config.Viabtc_SECRET_TOKEN),
-            self.pair_2: viabtc_btc_cny.PrivateViabtc_BTC_CNY(config.Viabtc_API_KEY, config.Viabtc_SECRET_TOKEN),
+            self.base_pair: viabtc_bch_cny.PrivateViabtc_BCH_CNY(t_api_key, t_secret_token),
+            self.pair_1: viabtc_bch_btc.PrivateViabtc_BCH_BTC(t_api_key, t_secret_token),
+            self.pair_2: viabtc_btc_cny.PrivateViabtc_BTC_CNY(t_api_key, t_secret_token),
         }
 
         self.last_trade = 0

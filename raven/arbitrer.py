@@ -88,15 +88,15 @@ class Arbitrer(object):
 
             print('b:', i, self.depths[kask]["asks"][i]["amount"], buy_total + self.depths[kask]["asks"][i]["amount"], buy_total)
             amount = min(max_amount_pair_t, buy_total + self.depths[kask]["asks"][i]["amount"]) - buy_total
-            if amount <= 0.000001:
-                logging.warn("buy amount left=%s %0.8f", amount, amount)
-                break
             buy_total += amount
+
             if w_bprice == 0 or buy_total == 0:
                 w_bprice = price
             else:
                 w_bprice = (w_bprice * (buy_total - amount) + price * amount) / buy_total
-
+            
+            if buy_total - max_amount_pair_t <= 0.000001:
+                break
 
         tmp=0
         sell_total = 0
@@ -107,15 +107,16 @@ class Arbitrer(object):
             print('s:', j, self.depths[kask]["bids"][i]["amount"], sell_total + self.depths[kask]["bids"][i]["amount"], sell_total)
 
             amount = min(max_amount_pair_t, sell_total + self.depths[kbid]["bids"][j]["amount"]) - sell_total
-            if amount <= 0.000001:
-                logging.warn("sell amount left=%s", amount)
-                break
             sell_total += amount
+
             if w_sprice == 0 or sell_total == 0:
                 w_sprice = price
             else:
                 w_sprice = (w_sprice * (sell_total - amount) + price * amount) / sell_total
         
+            if sell_total - max_amount_pair_t <= 0.000001:
+                break
+
         # sell should == buy
         if abs(sell_total-buy_total) > 0.000001:
             logging.warn("sell_total=%s, buy_total=%s, max_amount_pair_t=%s, tmp0=%s, tmp=%s", 
@@ -337,6 +338,8 @@ class Arbitrer(object):
         signal.signal(signal.SIGTERM, sigint_handler)
 
         while True:
+            print('1:.....')
+
             self.update_balance()
             
             self.depths = self.update_depths()
@@ -344,8 +347,9 @@ class Arbitrer(object):
             self.tick()
             time.sleep(config.refresh_rate)
             
+            print('2:.....')
             if is_sigint_up:
                 # 中断时需要处理的代码
-                self.terminate()
                 print ("Exit")
+                self.terminate()
                 break
