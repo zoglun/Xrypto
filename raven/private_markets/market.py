@@ -2,6 +2,10 @@
 
 import logging
 import config
+import inspect
+
+def get_current_function_name():
+    return inspect.stack()[1][3]
 
 class TradeException(Exception):
     pass
@@ -45,7 +49,7 @@ class Market:
             else:
                 return self._buy_limit(amount, price)
         except Exception as e:
-            logging.error('buy_limit except: %s' % e)
+            logging.error('%s %s except: %s' % (self.name, get_current_function_name(), e))
             return None
 
 
@@ -62,7 +66,7 @@ class Market:
             else:
                 return self._sell_limit(amount, price)
         except Exception as e:
-            logging.error('sell_limit except: %s' % e)
+            logging.error('%s %s except: %s' % (self.name, get_current_function_name(), e))
             return None
 
 
@@ -73,7 +77,7 @@ class Market:
         try:
             return self._buy_maker(amount, price)
         except Exception as e:
-            logging.error('buy_maker except: %s' % e)
+            logging.error('%s %s except: %s' % (self.name, get_current_function_name(), e))
             return None
 
     def sell_maker(self, amount, price):
@@ -82,7 +86,7 @@ class Market:
         try:
             return self._sell_maker(amount, price)
         except Exception as e:
-            logging.error('sell_maker except: %s' % e)
+            logging.error('%s %s except: %s' % (self.name, get_current_function_name(), e))
             return None
 
     def get_order(self, order_id):
@@ -92,7 +96,7 @@ class Market:
         try:
             return self._get_order(order_id)
         except Exception as e:
-            logging.error('get_order except: %s' % e)
+            logging.error('%s %s except: %s' % (self.name, get_current_function_name(), e))
             return None
 
 
@@ -103,14 +107,15 @@ class Market:
         try:
             return self._cancel_order(order_id)
         except Exception as e:
-            logging.error('cancel_order except: %s' % e)
+            logging.error('%s %s except: %s' % (self.name, get_current_function_name(), e))
+
             return None
 
     def get_balances(self):
         try:
             res = self._get_balances()
         except Exception as e:
-            logging.error('get_balances except: %s' % e)
+            logging.error('%s %s except: %s' % (self.name, get_current_function_name(), e))
             return None
         return res
 
@@ -118,7 +123,7 @@ class Market:
         try:
             res = self._cancel_all()
         except Exception as e:
-            logging.error('cancel_all except: %s' % e)
+            logging.error('%s %s except: %s' % (self.name, get_current_function_name(), e))
             return None
         return res
 
