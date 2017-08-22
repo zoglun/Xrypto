@@ -38,10 +38,8 @@ Currently supported exchanges to automate trade:
 
 # Installation And Configuration
 
-    $ cp raven/config.py-example raven/config.py
-
-Then edit config.py file to setup your preferences: watched markets
-and observers
+Create and edit local_config.py file to setup your preferences: watched markets
+and observers and keys.The config field in local_config.py will override those keys in config.py
 
 You need Python3 to run this program. To install on Debian, Ubuntu, or
 variants of them, use:

@@ -37,7 +37,7 @@ nosetests.xml
 *.json
 
 # Project
-local_config
+local_config*.py
 old/
 tmp/
 local_settings.py
