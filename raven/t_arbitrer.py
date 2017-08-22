@@ -39,8 +39,6 @@ class TrigangularArbitrer(Arbitrer):
 
 
     def forward(self):
-        print("t3:")
-
         base_pair_ask_amount = self.depths[self.base_pair]["asks"][0]["amount"]
         base_pair_ask_price = self.depths[self.base_pair]["asks"][0]["price"]
 
@@ -79,17 +77,16 @@ class TrigangularArbitrer(Arbitrer):
 
         p_diff = synthetic_bid_price - t_price
 
-        profit = round(p_diff*hedge_bch_amount, 2)
-        logging.verbose('profit=%s' % profit)
-
         if p_diff > 0:
-            logging.verbose("find t!!!: p_diff:%s synthetic_bid_price: %s  base_pair_ask_price: %s t_price: %s" % (
+            profit = round(p_diff*hedge_bch_amount, 2)
+            logging.info('profit=%s' % profit)
+            logging.info("find t!!!: p_diff:%s synthetic_bid_price: %s  base_pair_ask_price: %s t_price: %s" % (
                 p_diff,
                 synthetic_bid_price, 
                 base_pair_ask_price,
                 t_price))
 
-            logging.verbose('buy %s BCH @%s, sell @synthetic: %s' % (self.base_pair, hedge_bch_amount, hedge_btc_amount))
+            logging.info('buy %s BCH @%s, sell @synthetic: %s' % (self.base_pair, hedge_bch_amount, hedge_btc_amount))
             
 
             current_time = time.time()
