@@ -65,7 +65,6 @@ class Arbitrer(object):
                 print(e)
                 
     def get_profit_for(self, mi, mj, kask, kbid):
-        print("mi, mj", mi, mj, kask, kbid)
         if self.depths[kask]["asks"][mi]["price"] >= self.depths[kbid]["bids"][mj]["price"]:
             return 0, 0, 0, 0
 
@@ -78,18 +77,12 @@ class Arbitrer(object):
             max_amount_sell += self.depths[kbid]["bids"][j]["amount"]
 
         max_amount_pair_t = min(max_amount_buy, max_amount_sell)
-        print('max_amount_pair_t:', max_amount_pair_t)
-        tmp0=0
+
         buy_total = 0
         w_bprice = 0
         for i in range(mi + 1):
             price = self.depths[kask]["asks"][i]["price"]
-            tmp0 = self.depths[kbid]["asks"][i]["amount"]
-
-            print('b:', i, self.depths[kask]["asks"][i]["amount"], buy_total + self.depths[kask]["asks"][i]["amount"], buy_total)
             amount = min(max_amount_pair_t, buy_total + self.depths[kask]["asks"][i]["amount"]) - buy_total
-            if amount < 0.000001:
-                print('b:amount:', amount)
 
             buy_total += amount
 
@@ -101,18 +94,11 @@ class Arbitrer(object):
             if max_amount_pair_t - buy_total <= 0.000001:
                 break
 
-        tmp=0
         sell_total = 0
         w_sprice = 0
         for j in range(mj + 1):
             price = self.depths[kbid]["bids"][j]["price"]
-            tmp = self.depths[kbid]["bids"][j]["amount"]
-            print('s:', j, self.depths[kask]["bids"][i]["amount"], sell_total + self.depths[kask]["bids"][i]["amount"], sell_total)
-
             amount = min(max_amount_pair_t, sell_total + self.depths[kbid]["bids"][j]["amount"]) - sell_total
-            if amount < 0.000001:
-                print('s:amount:', amount)
-            print('s:amount:', amount)
 
             sell_total += amount
 
@@ -126,8 +112,8 @@ class Arbitrer(object):
 
         # sell should == buy
         if abs(sell_total-buy_total) > 0.000001:
-            logging.warn("sell_total=%s, buy_total=%s, max_amount_pair_t=%s, tmp0=%s, tmp=%s", 
-                sell_total, buy_total, max_amount_pair_t, tmp0, tmp)
+            logging.warn("sell_total=%s, buy_total=%s, max_amount_pair_t=%s", 
+                sell_total, buy_total, max_amount_pair_t)
             raise
             return 0, 0, 0, 0
 
@@ -345,18 +331,16 @@ class Arbitrer(object):
         signal.signal(signal.SIGTERM, sigint_handler)
 
         while True:
-            print('1:.....')
-
             self.update_balance()
-            
+
             self.depths = self.update_depths()
 
             self.tick()
-            time.sleep(config.refresh_rate)
             
-            print('2:.....')
             if is_sigint_up:
                 # 中断时需要处理的代码
-                print ("Exit")
+                logging.info("APP Exit")
                 self.terminate()
                 break
+            
+            time.sleep(config.refresh_rate)

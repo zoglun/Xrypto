@@ -13,7 +13,11 @@ class TrigangularArbitrer(Arbitrer):
         self.pair_1 = 'Viabtc_BCH_BTC'
         self.pair_2 = 'Viabtc_BTC_CNY'
 
-        self.FEE = 0.002
+        # 从2017年8月22日15:00起，免去所有交易对的交易手续费，并将人民币提现手续费率降至0.1%。
+        # 活动为期一个月，截止时间为2017年9月22日8点。
+        # 活动结束后，人民币提现费率保持0.1%不变，Taker、Maker变更为0.1%，API用户的Maker将继续保持0费率。
+
+        self.FEE = 0.000
 
         t_api_key = config.t_Viabtc_API_KEY
         t_secret_token = config.t_Viabtc_SECRET_TOKEN

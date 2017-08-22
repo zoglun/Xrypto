@@ -19,7 +19,7 @@ class Market(object):
         self.fee_rate = fee_rate
 
         self.depth_updated = 0
-        self.update_rate = 1
+        self.update_rate = 3
 
         self.is_terminated = False
         self.request_timeout = 5 #5s
@@ -31,10 +31,9 @@ class Market(object):
         timediff = time.time() - self.depth_updated
         # logging.warn('Market: %s order book1:(%s>%s)', self.name, timediff, self.depth_updated)
         if timediff > self.update_rate:
-            # print('should update...')
+            logging.debug('%s should update...', self.name)
             self.ask_update_depth()
         
-
         timediff = time.time() - self.depth_updated
         # logging.warn('Market: %s order book2:(%s>%s)', self.name, timediff, self.depth_updated)
 
