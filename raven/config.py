@@ -32,7 +32,7 @@ price_departure_perc = 0.002 #in BTC 1%
 
 bch_guide_dog_volume = 10
 
-TFEE = 1.000 # 1+3*0.002
+TFEE = 1.003 # 1+3*0.001
 
 FEE = 1.0025 # fee for every trade (0.25%)
 Diff = 1.001 # 0.1 % arbitrage to execute
