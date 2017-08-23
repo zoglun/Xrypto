@@ -3,25 +3,27 @@
 from .market import Market, TradeException
 import config
 import logging
-from lib.viabtc.ViabtcAPI import ViabtcClient
+from lib.yunbi.client import YunbiClient
 
-class Viabtc(Market):
+# python3 raven/raven-cli.py -m Bitfinex_BCH_BTC get-balance
+
+class Yunbi(Market):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
         super().__init__(base_currency, market_currency, pair_code)
 
         self.orders = {}
 
-        self.trade_client = ViabtcClient(
+        self.trade_client = YunbiClient(
                     api_key if api_key else config.Viabtc_API_KEY,
                     api_secret if api_secret else config.Viabtc_SECRET_TOKEN)
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
-        res = self.trade_client.order_limit(
-            'buy',
+        res = self.trade_client.buy_limit(
+            market=self.pair_code
             amount=str(amount),
-            price=str(price),
-            market=self.pair_code)
+            price=str(price)
+            )
 
         logging.verbose('_buy_limit: %s' % res)
 
@@ -29,11 +31,10 @@ class Viabtc(Market):
 
     def _sell_limit(self, amount, price):
         """Create a sell limit order"""
-        res = self.trade_client.order_limit(
-            'sell',
+        res = self.trade_client.sell_limit(
+            market=self.pair_code
             amount=str(amount),
-            price=str(price),
-            market=self.pair_code)
+            price=str(price))
         logging.verbose('_sell_limit: %s' % res)
 
         return res['data']['id']
@@ -54,7 +55,7 @@ class Viabtc(Market):
         return resp
 
     def _get_order(self, order_id):
-        res = self.trade_client.get_order_status(int(order_id), market=self.pair_code)
+        res = self.trade_client.get_order(int(order_id))
         logging.verbose('get_order: %s' % res)
 
         if res['code'] == 600:
@@ -67,7 +68,7 @@ class Viabtc(Market):
         return self._order_status(res['data'])
 
     def _cancel_order(self, order_id):
-        res = self.trade_client.cancel_order(int(order_id), market=self.pair_code)
+        res = self.trade_client.cancel_order(int(order_id))
         logging.verbose('cancel_order: %s' % res)
 
         assert str(res['data']['id']) == str(order_id)
@@ -79,7 +80,7 @@ class Viabtc(Market):
 
     def _get_balances(self):
         """Get balance"""
-        res = self.trade_client.get_account()
+        res = self.trade_client.get_balances()
         logging.debug("get_balances: %s" % res)
 
         entry = res['data']

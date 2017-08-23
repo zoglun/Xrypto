@@ -43,7 +43,7 @@ def get_api_path(name):
     path_pattern = API_PATH_DICT[name]
     return path_pattern % API_BASE_PATH
 
-class Client():
+class YunbiClient():
 
     def __init__(self, access_key=None, secret_key=None):
         if access_key and secret_key:
@@ -84,3 +84,28 @@ class Client():
         data = resp.readlines()
         if len(data):
             return json.loads(data[0])
+
+    def get_depth(self, market):
+        params = {"market": market}
+        return self.get(get_api_path('order_book'), params)
+
+    def get_balance(self):
+        return self.get(get_api_path('members'))
+
+    def get_order(self, order_id):
+        params = {"id": order_id}
+        return self.get(get_api_path('order'), params)
+
+    def cancel_order(self, order_id):
+        params = {"id": order_id}
+        return self.post(get_api_path('delete_order'), params)
+
+    def _place_order(self, market, side, amount, price):
+        params = {'market': market, 'side': side, 'volume': amount, 'price': price, 'ord_type': 'limit'}
+        return self.post(get_api_path('orders'), params)
+
+    def sell_limit(self, market, amount, price):
+        return self._place_order(market, "sell", amount, price)
+
+    def buy_limit(self, market, amount, price):
+        return self._place_order(market, "buy", amount, price)

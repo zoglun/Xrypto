@@ -13,8 +13,6 @@ class TrigangularArbitrer(Arbitrer):
         self.pair_1 = 'Viabtc_BCH_BTC'
         self.pair_2 = 'Viabtc_BTC_CNY'
 
-        # self.TFEE = config.TFEE
-
         t_api_key = config.t_Viabtc_API_KEY
         t_secret_token = config.t_Viabtc_SECRET_TOKEN
 
@@ -52,7 +50,7 @@ class TrigangularArbitrer(Arbitrer):
         pair_2to1_bch_amount = pair2_bid_amount/pair1_bid_price
         # print(pair2_bid_amount, pair1_bid_price, pair_2to1_bch_amount)
 
-        max_trade_amount = 1
+        max_trade_amount = config.bch_max_tx_volume
         hedge_bch_amount = min(base_pair_ask_amount, pair1_bid_amount)
         hedge_bch_amount = min(hedge_bch_amount, pair_2to1_bch_amount)
         hedge_bch_amount = min(max_trade_amount, hedge_bch_amount)

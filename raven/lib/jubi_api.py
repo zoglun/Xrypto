@@ -81,7 +81,7 @@ class JubiAPI(object):
         url = self.base_url + '/api/v1/balance/'
         return self._post(url)
 
-    def get_orders(self, coin):
+    def get_trades(self, coin):
         url = self.base_url + '/api/v1/trade_list/'
         params = {'coin': coin, 'type': 'all'}
         return self._post(url, params)
