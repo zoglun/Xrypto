@@ -155,5 +155,5 @@ If for some reason you feel like donating a few micro btc to future development,
 
 * @[Maxime Biais](https://github.com/maxme) for [the original work on **bitcoin-arbitrage**](https://github.com/maxme/https://github.com/maxme/bitcoin-arbitrage)
 
-![Join Us](xiaomiquan.jpg)
+![Join Us](docs/xmq.jpg)
 
