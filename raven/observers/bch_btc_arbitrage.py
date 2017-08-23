@@ -158,7 +158,7 @@ class BCH_BTC_Arbitrage(BasicBot):
 
         max_avaliable_volume = self.get_min_tradeable_volume(bprice,
                                                    self.clients[kask].btc_available,
-                                                   self.clients[kbid].bch_avalibale)
+                                                   self.clients[kbid].bch_available)
         volume = min(volume, max_avaliable_volume)
         volume = min(volume, config.bch_max_tx_volume)
 
