@@ -188,7 +188,7 @@ class BCH_BTC_Arbitrage(BasicBot):
             logging.warn("%s %s is insufficent" % (kask, base_currency))
             return
  
-        if self.clients[kbid]. < max(volume, bch_frozen_volume):
+        if self.clients[kbid].bch_available < max(volume, bch_frozen_volume):
             logging.warn("%s %s is insufficent" % (kbid, market_currency))
             return
 
