@@ -1,7 +1,5 @@
 # opportunity detector and automated trading
 
-raven，权利的游戏里的渡鸦，可以洞察世间的一切，而crypto-raven寓意洞察全球区块链资产价差并进行自动化套利活动。
-
 It gets order books from supported exchanges and calculate arbitrage
 opportunities between each markets. It takes market depth into account.
 
@@ -61,22 +59,22 @@ To use the observer XMPPMessager you will need to install sleekxmpp:
 
 # Debug
 
-    $ python3 raven/raven-cli.py watch -d
+    $ python3 hydra/cli.py watch -d
 
 # Run
 
 To run the opportunity watcher:
 
-    $ python3 raven/raven-cli.py watch -v
-    $ python3 raven/raven-cli.py watch -v -mViabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY
+    $ python3 hydra/cli.py watch -v
+    $ python3 hydra/cli.py watch -v -mViabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY
 
 To check your balance on an exchange (also a good way to check your accounts configuration):
 
-    $ python3 raven/raven-cli.py -m HaobtcCNY get-balance
-    $ python3 raven/raven-cli.py -m Viabtc_BCH_CNY get-balance
-    $ python3 raven/raven-cli.py -m Bitfinex_BCH_BTC get-balance
-    $ python3 raven/raven-cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC get-balance
-    $ python3 raven/raven-cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
+    $ python3 hydra/cli.py -m HaobtcCNY get-balance
+    $ python3 hydra/cli.py -m Viabtc_BCH_CNY get-balance
+    $ python3 hydra/cli.py -m Bitfinex_BCH_BTC get-balance
+    $ python3 hydra/cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC get-balance
+    $ python3 hydra/cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
 
 Run tests
 
@@ -84,38 +82,38 @@ Run tests
 
 
 Run t-arbitrage
-    $ python3 raven/raven-cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch -v
+    $ python3 hydra/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch -v
 
 # Alternative usage
 
 List supported public markets:
 
-      $ python3 raven/raven-cli.py list-public-markets
+      $ python3 hydra/cli.py list-public-markets
 
 Help
       
-      $ python3 raven/raven-cli.py -h
+      $ python3 hydra/cli.py -h
 
 # Example
 
 arbitrage in haobtc, huobi or okcoin
 
-    $ python3 raven/raven-cli.py -oTraderBot -mHaobtcCNY,HuobiCNY
-    $ python3 raven/raven-cli.py -oTraderBot -mHaobtcCNY,OKCoinCNY
+    $ python3 hydra/cli.py -oTraderBot -mHaobtcCNY,HuobiCNY
+    $ python3 hydra/cli.py -oTraderBot -mHaobtcCNY,OKCoinCNY
 
 bch bcc arbitrage in Bitfinex_BCH_BTC, Bittrex_BCH_BTC
 
-    $ python3 raven/raven-cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC
-    $ python3 raven/raven-cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC
+    $ python3 hydra/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC
+    $ python3 hydra/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC
 
 
 balance statatistic 
 
-    $ python3 raven/raven-cli.py -oBalanceDumper -mHaobtcCNY
+    $ python3 hydra/cli.py -oBalanceDumper -mHaobtcCNY
     
 bistar test
 
-    $ python3 raven/bitstar_test.py
+    $ python3 hydra/bitstar_test.py
 
     
 # TODO

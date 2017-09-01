@@ -130,7 +130,7 @@ class ArbitrerCLI:
         logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s',
                             level=level)
 
-        Rthandler = RotatingFileHandler('raven.log', maxBytes=100*1024*1024,backupCount=10)
+        Rthandler = RotatingFileHandler('hydra.log', maxBytes=100*1024*1024,backupCount=10)
         Rthandler.setLevel(level)
         formatter = logging.Formatter('%(asctime)-12s [%(levelname)s] %(message)s')  
         Rthandler.setFormatter(formatter)

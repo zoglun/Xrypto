@@ -5,7 +5,7 @@ import config
 import logging
 from lib.yunbi.client import YunbiClient
 
-# python3 raven/raven-cli.py -m Bitfinex_BCH_BTC get-balance
+# python3 hydra/cli.py -m Bitfinex_BCH_BTC get-balance
 
 class Yunbi(Market):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):

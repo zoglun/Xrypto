@@ -1,5 +1,5 @@
 
-# python3 raven/raven-cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch -v
+# python3 hydra/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch -v
 import logging
 import time
 import config

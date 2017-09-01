@@ -5,7 +5,7 @@ import config
 import logging
 import bitfinex
 
-# python3 raven/raven-cli.py -m Bitfinex_BCH_BTC get-balance
+# python3 hydra/cli.py -m Bitfinex_BCH_BTC get-balance
 
 class PrivateBitfinex_BCH_BTC(Market):
     def __init__(self, api_key = None, api_secret = None):

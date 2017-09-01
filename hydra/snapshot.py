@@ -36,4 +36,4 @@ class Snapshot(object):
 
         if market == "ALL":
             body =("localtime=%s, total_btc=%0.4f, total_bch=%0.4f") % (localtime, total_btc, total_bch)
-            send_email('raven balance snapshot', body)
+            send_email('hydra balance snapshot', body)

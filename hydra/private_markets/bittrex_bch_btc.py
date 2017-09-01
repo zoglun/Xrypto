@@ -5,7 +5,7 @@ import config
 import logging
 from bittrex import bittrex
  
-# python3 raven/raven-cli.py -m Bittrex_BCH_BTC get-balance
+# python3 hydra/cli.py -m Bittrex_BCH_BTC get-balance
 
 class PrivateBittrex_BCH_BTC(Market):
     def __init__(self, api_key = None, api_secret = None):
