@@ -5,7 +5,7 @@ import urllib.error
 import urllib.parse
 import json
 from .market import Market
-import lib.bitstar_sdk as ApiClient
+import lib.bitstar_api as ApiClient
 
 class BS_StandardCNY(Market):
     def __init__(self):

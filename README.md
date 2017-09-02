@@ -1,9 +1,9 @@
 # opportunity detector and automated trading
 
-It gets order books from supported exchanges and calculate arbitrage
+It gets order books from supported exchanges and calculate arbitrage and triangular-arbitrage
 opportunities between each markets. It takes market depth into account.
 
-Currently supported exchanges to get data:
+Currently supported exchanges to get/feed data:
  - Bitfinex (BCH_BTC)
  - Bitfinex (BTC_USD)
  - Bittrex (BCH_BTC)
@@ -16,6 +16,9 @@ Currently supported exchanges to get data:
  - Huobi (CNY)
  - Broker (CNY)
  - Bitstar (Future)
+ - OKEx (Future)
+ - Yunbi (CNY)
+ - Jubi (CNY)
 
 Currently supported exchanges to automate trade:
  - Bitfinex (BCH_BTC)
@@ -28,6 +31,9 @@ Currently supported exchanges to automate trade:
  - OkCoin (CNY)
  - Huobi (CNY)
  - Bitstar (Future)
+ - OkEx (Future)
+ - Yunbi (CNY)
+ - Jubi (CNY)
 
 # WARNING
 
@@ -76,11 +82,6 @@ To check your balance on an exchange (also a good way to check your accounts con
     $ python3 hydra/cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC get-balance
     $ python3 hydra/cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
 
-Run tests
-
-    $ nosetests arbitrage/
-
-
 Run t-arbitrage
     $ python3 hydra/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch -v
 
@@ -89,6 +90,19 @@ Run t-arbitrage
 List supported public markets:
 
       $ python3 hydra/cli.py list-public-markets
+
+Test public market:
+      
+      $ python3 hydra/cli.py test_pub -m OKEx_Future_Quarter
+
+Test private market:
+      
+      $ python3 hydra/cli.py test_pri -m Viabtc_BCH_BTC
+      $ python3 hydra/cli.py test_pri -m Jubi_EOS_CNY
+
+Run tests
+
+    $ nosetests arbitrage/
 
 Help
       
@@ -120,21 +134,17 @@ bistar test
 
  * Tests
  * Write documentation
- * Add other exchanges:
-   * okex
- * Update order books with a WebSocket client for supported exchanges
  * Better history handling for observer "HistoryDumper" (Redis ?)
  * Move EUR / USD from a market to an other:
    * Coupons
    * Negative Operations
- * use Ethercoin or other cryptocurrencies for triangular arbitrage
 
 # LICENSE
 
 
 MIT
 
-Copyright (c) 2016 Phil Song <songbohr@gmail.com>
+Copyright (c) 2016-2017 Phil Song <songbohr@gmail.com>
 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:

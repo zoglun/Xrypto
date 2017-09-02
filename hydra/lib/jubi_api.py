@@ -77,7 +77,7 @@ class JubiAPI(object):
         url = self.base_url + '/api/v1/allticker/'
         return self._get(url)
 
-    def get_balance(self):
+    def get_balances(self):
         url = self.base_url + '/api/v1/balance/'
         return self._post(url)
 
@@ -101,10 +101,10 @@ class JubiAPI(object):
         params = { 'type': trade_type, 'coin': coin, 'amount': amount, 'price': price,}
         return self._post(url, params)
 
-    def sell(self, coin, amount, price):
+    def sell_limit(self, coin, amount, price):
         return self.trade_add(coin, "sell", amount, price)
 
-    def buy(self, coin, amount, price):
+    def buy_limit(self, coin, amount, price):
         return self.trade_add(coin, "buy", amount, price)
 
 if __name__ == '__main__':
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     # print(trader.get_orders('btc'))
     # print(trader.get_all_ticker())
 
-    # print(trader.get_balance())
+    # print(trader.get_balances())
     # print(trader.get_orders('eos'))
     print(trader.trade_add('eos', 'buy', 10, 1))
     print(trader.trade_add('eos', 'sell', 100, 10))

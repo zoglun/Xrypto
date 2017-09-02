@@ -21,6 +21,9 @@ class HistoryDumper(Observer):
         json.dump(depths, fp)
         logging.debug (depths)
 
+        for depth in depths:
+            print(depth)
+
     def end_opportunity_finder(self):
         pass
 

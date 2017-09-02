@@ -1,6 +1,6 @@
 # Copyright (C) 2013, Maxime Biais <maxime@biais.org>
 # Copyright (C) 2016, Phil Song <songbohr@gmail.com>
-
+import os
 import logging
 import argparse
 import sys
@@ -45,8 +45,10 @@ class ArbitrerCLI:
             self.list_markets()
         if "get-broker-balance" in args.command:
             self.get_broker_balance(args)
-        if "test" in args.command:
-            self.test(args)
+        if "test_pub" in args.command:
+            self.test_pub(args)
+        if "test_pri" in args.command:
+            self.test_pri(args)
 
     def list_markets(self):
         logging.debug('list_markets') 
@@ -62,7 +64,22 @@ class ArbitrerCLI:
         sys.exit(0)
 
 
-    def test(self, args):
+    def test_pub(self, args):
+        if not args.markets:
+            logging.error("You must use --markets argument to specify markets")
+            sys.exit(2)
+        pmarkets = args.markets.split(",")
+        pmarketsi = []
+        for pmarket in pmarkets:
+            exec('import public_markets.' + pmarket.lower())
+            market = eval('public_markets.' + pmarket.lower() + '.' +
+                           pmarket + '()')
+            pmarketsi.append(market)
+
+        for market in pmarketsi:
+            print(market.get_ticker())
+
+    def test_pri(self, args):
         if not args.markets:
             logging.error("You must use --markets argument to specify markets")
             sys.exit(2)
