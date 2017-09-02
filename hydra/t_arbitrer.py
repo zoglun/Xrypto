@@ -1,3 +1,4 @@
+# Copyright (C) 2017, Phil Song <songbohr@gmail.com>
 
 # python3 hydra/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch -v
 import logging
