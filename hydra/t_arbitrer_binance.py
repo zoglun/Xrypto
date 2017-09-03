@@ -14,6 +14,8 @@ class TrigangularArbitrer_Binance(Arbitrer):
         self.pair_1 = pair1
         self.pair_2 = pair2
 
+        self.tFee = config.TFEE
+
         self.monitor_only = monitor_only
 
         t_api_key = config.t_Binance_API_KEY
@@ -70,7 +72,7 @@ class TrigangularArbitrer_Binance(Arbitrer):
 
         synthetic_bid_price = round(pair1_bid_price*pair2_bid_price, 8)
 
-        t_price = round(base_pair_ask_price*config.TFEE*config.Diff, 8)
+        t_price = round(base_pair_ask_price*self.tFee*config.Diff, 8)
         logging.verbose("synthetic_bid_price: %s t_price:%s" % (synthetic_bid_price, t_price))
 
         p_diff = synthetic_bid_price - t_price

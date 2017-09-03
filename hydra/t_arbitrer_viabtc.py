@@ -8,7 +8,7 @@ from arbitrer import Arbitrer
 from private_markets import viabtc_bch_cny, viabtc_bch_btc, viabtc_btc_cny
 
 class TrigangularArbitrer_Viabtc(Arbitrer):
-    def __init__(self, base_pair, pair1, pair2, monitor_only=True):
+    def __init__(self, base_pair, pair1, pair2, monitor_only=False):
         super().__init__()
         self.base_pair = base_pair or 'Viabtc_BCH_CNY'
         self.pair_1 = pair1 or 'Viabtc_BCH_BTC'

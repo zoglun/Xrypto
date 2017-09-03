@@ -144,7 +144,9 @@ class ArbitrerCLI:
 
     def create_t_arbitrer_viabtc_bcc(self, args):
         from t_arbitrer_viabtc import TrigangularArbitrer_Viabtc
-        self.arbitrer = TrigangularArbitrer_Viabtc()
+        self.arbitrer = TrigangularArbitrer_Viabtc(base_pair='Viabtc_BCH_CNY',
+                                                    pair1='Viabtc_BCH_BTC',
+                                                    pair2='Viabtc_BTC_CNY')
         self.init_observers_and_markets(args)
 
     def create_t_arbitrer_binance_wtc(self, args):
