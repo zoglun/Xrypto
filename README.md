@@ -19,6 +19,7 @@ Currently supported exchanges to get/feed data:
  - OKEx (Future)
  - Yunbi (CNY)
  - Jubi (CNY)
+ - Binance
 
 Currently supported exchanges to automate trade:
  - Bitfinex (BCH_BTC)
@@ -34,6 +35,7 @@ Currently supported exchanges to automate trade:
  - OkEx (Future)
  - Yunbi (CNY)
  - Jubi (CNY)
+ - Binance
 
 # WARNING
 
@@ -72,7 +74,6 @@ To use the observer XMPPMessager you will need to install sleekxmpp:
 To run the opportunity watcher:
 
     $ python3 hydra/cli.py watch -v
-    $ python3 hydra/cli.py watch -v -mViabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY
 
 To check your balance on an exchange (also a good way to check your accounts configuration):
 
@@ -83,7 +84,11 @@ To check your balance on an exchange (also a good way to check your accounts con
     $ python3 hydra/cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
 
 Run t-arbitrage
-    $ python3 hydra/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch -v
+    $ python3 hydra/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch-viabtc-bcc -v
+    $ python3 hydra/cli.py -m Binance_WTC_BTC,Binance_WTC_ETH,Binance_ETH_BTC t-watch-binance-wtc -v
+    $ python3 hydra/cli.py -m Binance_BNB_BTC,Binance_BNB_ETH,Binance_ETH_BTC t-watch-binance-bnb -v
+    $ python3 hydra/cli.py -m Binance_LRC_BTC,Binance_LRC_ETH,Binance_ETH_BTC t-watch-binance-lrc -v
+    $ python3 hydra/cli.py -m Binance_MCO_BTC,Binance_MCO_ETH,Binance_ETH_BTC t-watch-binance-mco -v
 
 # Alternative usage
 

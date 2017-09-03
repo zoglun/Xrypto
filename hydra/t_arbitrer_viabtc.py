@@ -7,12 +7,14 @@ import config
 from arbitrer import Arbitrer
 from private_markets import viabtc_bch_cny, viabtc_bch_btc, viabtc_btc_cny
 
-class TrigangularArbitrer(Arbitrer):
-    def __init__(self):
+class TrigangularArbitrer_Viabtc(Arbitrer):
+    def __init__(self, base_pair, pair1, pair2, monitor_only=True):
         super().__init__()
-        self.base_pair = 'Viabtc_BCH_CNY'
-        self.pair_1 = 'Viabtc_BCH_BTC'
-        self.pair_2 = 'Viabtc_BTC_CNY'
+        self.base_pair = base_pair or 'Viabtc_BCH_CNY'
+        self.pair_1 = pair1 or 'Viabtc_BCH_BTC'
+        self.pair_2 = pair2 or 'Viabtc_BTC_CNY'
+
+        self.monitor_only = monitor_only
 
         t_api_key = config.t_Viabtc_API_KEY
         t_secret_token = config.t_Viabtc_SECRET_TOKEN
@@ -89,11 +91,11 @@ class TrigangularArbitrer(Arbitrer):
                              "occured %.2f seconds ago" %
                              (current_time - self.last_trade))
                 return
-
-
-            self.clients[self.base_pair].buy_limit(hedge_bch_amount, base_pair_ask_price)
-            self.clients[self.pair_1].sell_limit(hedge_bch_amount, pair1_bid_price)
-            self.clients[self.pair_2].sell_limit(hedge_btc_amount, pair2_bid_price)
+            
+            if not self.monitor_only:
+                self.clients[self.base_pair].buy_limit(hedge_bch_amount, base_pair_ask_price)
+                self.clients[self.pair_1].sell_limit(hedge_bch_amount, pair1_bid_price)
+                self.clients[self.pair_2].sell_limit(hedge_btc_amount, pair2_bid_price)
 
             self.last_trade = time.time()
 
