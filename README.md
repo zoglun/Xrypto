@@ -89,6 +89,7 @@ Run t-arbitrage
     $ python3 hydra/cli.py -m Binance_BNB_BTC,Binance_BNB_ETH,Binance_ETH_BTC t-watch-binance-bnb -v
     $ python3 hydra/cli.py -m Binance_LRC_BTC,Binance_LRC_ETH,Binance_ETH_BTC t-watch-binance-lrc -v
     $ python3 hydra/cli.py -m Binance_MCO_BTC,Binance_MCO_ETH,Binance_ETH_BTC t-watch-binance-mco -v
+    $ python3 hydra/cli.py -m Binance_QTUM_BTC,Binance_QTUM_ETH,Binance_ETH_BTC t-watch-binance-qtum -v
 
 # Alternative usage
 

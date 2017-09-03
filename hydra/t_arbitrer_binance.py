@@ -79,13 +79,13 @@ class TrigangularArbitrer_Binance(Arbitrer):
         profit = p_diff*hedge_bch_amount
 
         if profit > 0:
-            logging.info('profit=%0.4f, p_diff=%0.4f, bch=%s' % (profit, p_diff, hedge_bch_amount))
+            logging.info('profit=%0.8f, p_diff=%0.8f, amount=%s' % (profit, p_diff, hedge_bch_amount))
             logging.info("synthetic_bid_price: %s  base_pair_ask_price: %s t_price: %s" % (
                 synthetic_bid_price, 
                 base_pair_ask_price,
                 t_price))
 
-            logging.info('buy %s BCH @%s, sell BTC @synthetic: %s' % (self.base_pair, hedge_bch_amount, hedge_btc_amount))
+            logging.info('buy %s @%s, sell BTC @synthetic: %s' % (self.base_pair, hedge_bch_amount, hedge_btc_amount))
             
 
             current_time = time.time()

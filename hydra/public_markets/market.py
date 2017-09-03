@@ -23,7 +23,9 @@ class Market(object):
 
         self.is_terminated = False
         self.request_timeout = 5 #5s
-
+        self.depth = {'asks': [{'price': 0, 'amount': 0}], 'bids': [
+                {'price': 0, 'amount': 0}]}
+                
     def terminate(self):
         self.is_terminated = True
 
@@ -99,7 +101,8 @@ class Market(object):
 
     def get_ticker(self):
         depth = self.get_depth()
-        res = {'ask': 0, 'bid': 0}
+        res = {'ask': {'price': 0, 'amount': 0}, 'bid': {'price': 0, 'amount': 0}}
+
         if len(depth['asks']) > 0 and len(depth["bids"]) > 0:
             res = {'ask': depth['asks'][0],
                    'bid': depth['bids'][0]}

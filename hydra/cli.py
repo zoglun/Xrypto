@@ -52,6 +52,10 @@ class ArbitrerCLI:
             self.create_t_arbitrer_binance_mco(args)
             self.arbitrer.loop()
 
+        if "t-watch-binance-qtum" in args.command:
+            self.create_t_arbitrer_binance_qtum(args)
+            self.arbitrer.loop()
+
         if "replay-history" in args.command:
             self.create_arbitrer(args)
             self.arbitrer.replay_history(args.replay_history)
@@ -169,12 +173,21 @@ class ArbitrerCLI:
                                                     pair1='Binance_LRC_ETH',
                                                     pair2='Binance_ETH_BTC')
         self.init_observers_and_markets(args)
+
     def create_t_arbitrer_binance_mco(self, args):
         from t_arbitrer_binance import TrigangularArbitrer_Binance
         self.arbitrer = TrigangularArbitrer_Binance(base_pair='Binance_MCO_BTC',
                                                     pair1='Binance_MCO_ETH',
                                                     pair2='Binance_ETH_BTC')
         self.init_observers_and_markets(args)
+
+    def create_t_arbitrer_binance_qtum(self, args):
+        from t_arbitrer_binance import TrigangularArbitrer_Binance
+        self.arbitrer = TrigangularArbitrer_Binance(base_pair='Binance_QTUM_BTC',
+                                                    pair1='Binance_QTUM_ETH',
+                                                    pair2='Binance_ETH_BTC')
+        self.init_observers_and_markets(args)
+
 
     def init_observers_and_markets(self, args):
         if args.observers:
