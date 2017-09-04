@@ -18,6 +18,8 @@ class TrigangularArbitrer_Binance(Arbitrer):
 
         self.monitor_only = monitor_only
 
+        self.max_trade_amount = 100
+
         t_api_key = config.t_Binance_API_KEY
         t_secret_token = config.t_Binance_SECRET_TOKEN
 
@@ -56,7 +58,7 @@ class TrigangularArbitrer_Binance(Arbitrer):
         pair_2to1_bch_amount = pair2_bid_amount/pair1_bid_price
         # print(pair2_bid_amount, pair1_bid_price, pair_2to1_bch_amount)
 
-        max_trade_amount = config.bch_max_tx_volume
+        max_trade_amount = self.max_trade_amount
         hedge_bch_amount = min(base_pair_ask_amount, pair1_bid_amount)
         hedge_bch_amount = min(hedge_bch_amount, pair_2to1_bch_amount)
         hedge_bch_amount = min(max_trade_amount, hedge_bch_amount)
@@ -87,9 +89,12 @@ class TrigangularArbitrer_Binance(Arbitrer):
 
             logging.info('buy %s @%s, sell BTC @synthetic: %s' % (self.base_pair, hedge_bch_amount, hedge_btc_amount))
             
+            if profit < 0.0005:
+                logging.warn('profit should >= 0.0005 BTC')
+                return
 
             current_time = time.time()
-            if current_time - self.last_trade < 10:
+            if current_time - self.last_trade < 5:
                 logging.warn("Can't automate this trade, last trade " +
                              "occured %.2f seconds ago" %
                              (current_time - self.last_trade))

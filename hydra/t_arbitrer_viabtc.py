@@ -83,10 +83,12 @@ class TrigangularArbitrer_Viabtc(Arbitrer):
                 t_price))
 
             logging.info('buy %s BCH @%s, sell BTC @synthetic: %s' % (self.base_pair, hedge_bch_amount, hedge_btc_amount))
-            
+            if profit < 10:
+                logging.warn('profit should >= 10 CNY')
+                return
 
             current_time = time.time()
-            if current_time - self.last_trade < 10:
+            if current_time - self.last_trade < 5:
                 logging.warn("Can't automate this trade, last trade " +
                              "occured %.2f seconds ago" %
                              (current_time - self.last_trade))
