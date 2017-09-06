@@ -2,7 +2,7 @@ import logging
 import config
 import time
 from .observer import Observer
-from private_markets import haobtccny,huobicny,okcoincny
+from brokers import haobtccny,huobicny,okcoincny
 
 from .emailer import send_email
 

@@ -11,7 +11,7 @@ class PrivateBittrex_BCH_BTC(Market):
     def __init__(self, api_key = None, api_secret = None):
         super().__init__("BTC", "BCH", "BTC-BCC")
 
-        self.trade_client = bittrex.Bittrex(
+        self.client = bittrex.Bittrex(
                     api_key if api_key else config.Bittrex_API_KEY,
                     api_secret if api_secret else config.Bittrex_SECRET_TOKEN)
 
@@ -19,14 +19,14 @@ class PrivateBittrex_BCH_BTC(Market):
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
-        res = self.trade_client.buy_limit(self.pair_code,
+        res = self.client.buy_limit(self.pair_code,
             amount,
             price)
         return res['result']['uuid']
 
     def _sell_limit(self, amount, price):
         """Create a sell limit order"""
-        res = self.trade_client.sell_limit(self.pair_code,
+        res = self.client.sell_limit(self.pair_code,
             amount,
             price)
         return res['result']['uuid']
@@ -47,14 +47,14 @@ class PrivateBittrex_BCH_BTC(Market):
         return resp
 
     def _get_order(self, order_id):
-        res = self.trade_client.get_order(order_id)
+        res = self.client.get_order(order_id)
         logging.info('get_order: %s' % res)
         assert str(res['result']['OrderUuid']) == str(order_id)
         return self._order_status(res['result'])
 
 
     def _cancel_order(self, order_id):
-        res = self.trade_client.cancel(order_id)
+        res = self.client.cancel(order_id)
         if res['success'] == True:
             return True
         else:
@@ -62,7 +62,7 @@ class PrivateBittrex_BCH_BTC(Market):
 
     def _get_balances(self):
         """Get balance"""
-        res = self.trade_client.get_balances()
+        res = self.client.get_balances()
         # print("get_balances response:", res)
 
         for entry in res['result']:

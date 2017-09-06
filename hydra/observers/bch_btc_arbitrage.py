@@ -2,7 +2,7 @@ import logging
 import config
 import time
 from .observer import Observer
-from private_markets import bitfinex_bch_btc,bittrex_bch_btc, viabtc_bch_btc
+from brokers import bitfinex_bch_btc,bittrex_bch_btc, viabtc_bch_btc
 import os, time
 import sys
 import traceback

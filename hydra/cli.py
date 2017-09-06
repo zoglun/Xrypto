@@ -106,8 +106,8 @@ class ArbitrerCLI:
         pmarkets = args.markets.split(",")
         pmarketsi = []
         for pmarket in pmarkets:
-            exec('import private_markets.' + pmarket.lower())
-            market = eval('private_markets.' + pmarket.lower()
+            exec('import brokers.' + pmarket.lower())
+            market = eval('brokers.' + pmarket.lower()
                           + '.Private' + pmarket + '()')
             pmarketsi.append(market)
 
@@ -121,8 +121,8 @@ class ArbitrerCLI:
         pmarkets = args.markets.split(",")
         pmarketsi = []
         for pmarket in pmarkets:
-            exec('import private_markets.' + pmarket.lower())
-            market = eval('private_markets.' + pmarket.lower()
+            exec('import brokers.' + pmarket.lower())
+            market = eval('brokers.' + pmarket.lower()
                           + '.Private' + pmarket + '()')
             pmarketsi.append(market)
 

@@ -13,13 +13,13 @@ class Yunbi(Market):
 
         self.orders = {}
 
-        self.trade_client = YunbiClient(
+        self.client = YunbiClient(
                     api_key if api_key else config.Viabtc_API_KEY,
                     api_secret if api_secret else config.Viabtc_SECRET_TOKEN)
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
-        res = self.trade_client.buy_limit(
+        res = self.client.buy_limit(
             market=self.pair_code
             amount=str(amount),
             price=str(price)
@@ -31,7 +31,7 @@ class Yunbi(Market):
 
     def _sell_limit(self, amount, price):
         """Create a sell limit order"""
-        res = self.trade_client.sell_limit(
+        res = self.client.sell_limit(
             market=self.pair_code
             amount=str(amount),
             price=str(price))
@@ -55,7 +55,7 @@ class Yunbi(Market):
         return resp
 
     def _get_order(self, order_id):
-        res = self.trade_client.get_order(int(order_id))
+        res = self.client.get_order(int(order_id))
         logging.verbose('get_order: %s' % res)
 
         if res['code'] == 600:
@@ -68,7 +68,7 @@ class Yunbi(Market):
         return self._order_status(res['data'])
 
     def _cancel_order(self, order_id):
-        res = self.trade_client.cancel_order(int(order_id))
+        res = self.client.cancel_order(int(order_id))
         logging.verbose('cancel_order: %s' % res)
 
         assert str(res['data']['id']) == str(order_id)
@@ -80,7 +80,7 @@ class Yunbi(Market):
 
     def _get_balances(self):
         """Get balance"""
-        res = self.trade_client.get_balances()
+        res = self.client.get_balances()
         logging.debug("get_balances: %s" % res)
 
         entry = res['data']

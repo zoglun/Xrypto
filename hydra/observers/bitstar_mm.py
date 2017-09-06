@@ -3,7 +3,7 @@ from .observer import Observer
 import json
 import time
 import os
-from private_markets import bitstampusd,bitstarcny,huobicny,okcoincny
+from brokers import bitstampusd,bitstarcny,huobicny,okcoincny
 import math
 import os, time
 import sys

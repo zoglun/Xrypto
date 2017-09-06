@@ -12,10 +12,6 @@ class Binance(Market):
         self.client = Client(None, None)
 
     def update_depth(self):
-        try:
-            raw_depth = self.client.get_order_book(symbol=self.pair_code)
-        except Exception as e:
-            logging.error('Binance get_order_book except: %s' %  e)
-            return
+        raw_depth = self.client.get_order_book(symbol=self.pair_code)
         self.depth = self.format_depth(raw_depth)
 

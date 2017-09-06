@@ -3,7 +3,7 @@ import config
 import time
 from .observer import Observer
 from .emailer import send_email
-from private_markets import huobicny,okcoincny,brokercny
+from brokers import huobicny,okcoincny,brokercny
 import os, time
 import sys
 import traceback

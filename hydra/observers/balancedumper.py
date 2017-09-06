@@ -2,7 +2,7 @@ from .observer import Observer
 import json
 import time
 import os
-from private_markets import haobtccny,huobicny,okcoincny,brokercny
+from brokers import haobtccny,huobicny,okcoincny,brokercny
 import sys
 import traceback
 import config

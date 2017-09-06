@@ -11,13 +11,13 @@ class Viabtc(Market):
 
         self.orders = {}
 
-        self.trade_client = ViabtcClient(
+        self.client = ViabtcClient(
                     api_key if api_key else config.Viabtc_API_KEY,
                     api_secret if api_secret else config.Viabtc_SECRET_TOKEN)
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
-        res = self.trade_client.order_limit(
+        res = self.client.order_limit(
             'buy',
             amount=str(amount),
             price=str(price),
@@ -29,7 +29,7 @@ class Viabtc(Market):
 
     def _sell_limit(self, amount, price):
         """Create a sell limit order"""
-        res = self.trade_client.order_limit(
+        res = self.client.order_limit(
             'sell',
             amount=str(amount),
             price=str(price),
@@ -54,7 +54,7 @@ class Viabtc(Market):
         return resp
 
     def _get_order(self, order_id):
-        res = self.trade_client.get_order_status(int(order_id), market=self.pair_code)
+        res = self.client.get_order_status(int(order_id), market=self.pair_code)
         logging.verbose('get_order: %s' % res)
 
         if res['code'] == 600:
@@ -67,7 +67,7 @@ class Viabtc(Market):
         return self._order_status(res['data'])
 
     def _cancel_order(self, order_id):
-        res = self.trade_client.cancel_order(int(order_id), market=self.pair_code)
+        res = self.client.cancel_order(int(order_id), market=self.pair_code)
         logging.verbose('cancel_order: %s' % res)
 
         assert str(res['data']['id']) == str(order_id)
@@ -79,7 +79,7 @@ class Viabtc(Market):
 
     def _get_balances(self):
         """Get balance"""
-        res = self.trade_client.get_account()
+        res = self.client.get_account()
         logging.debug("get_balances: %s" % res)
 
         entry = res['data']
