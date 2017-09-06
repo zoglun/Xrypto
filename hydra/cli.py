@@ -4,7 +4,7 @@ import os
 import logging
 import argparse
 import sys
-import public_markets
+import markets
 import glob
 import inspect
 from arbitrer import Arbitrer
@@ -72,10 +72,10 @@ class ArbitrerCLI:
 
     def list_markets(self):
         logging.debug('list_markets') 
-        for filename in glob.glob(os.path.join(public_markets.__path__[0], "*.py")):
+        for filename in glob.glob(os.path.join(markets.__path__[0], "*.py")):
             module_name = os.path.basename(filename).replace('.py', '')
             if not module_name.startswith('_'):
-                module = __import__("public_markets." + module_name)
+                module = __import__("markets." + module_name)
                 test = eval('module.' + module_name)
                 for name, obj in inspect.getmembers(test):
                     if inspect.isclass(obj) and 'Market' in (j.__name__ for j in obj.mro()[1:]):
@@ -91,8 +91,8 @@ class ArbitrerCLI:
         pmarkets = args.markets.split(",")
         pmarketsi = []
         for pmarket in pmarkets:
-            exec('import public_markets.' + pmarket.lower())
-            market = eval('public_markets.' + pmarket.lower() + '.' +
+            exec('import markets.' + pmarket.lower())
+            market = eval('markets.' + pmarket.lower() + '.' +
                            pmarket + '()')
             pmarketsi.append(market)
 

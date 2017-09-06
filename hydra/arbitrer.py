@@ -3,7 +3,7 @@
 # Copyright (C) 2013, Maxime Biais <maxime@biais.org>
 # Copyright (C) 2016, Phil Song <songbohr@gmail.com>
 
-import public_markets
+import markets
 import observers
 import config
 import time
@@ -41,8 +41,8 @@ class Arbitrer(object):
                 continue
 
             try:
-                exec('import public_markets.' + market_name.lower())
-                market = eval('public_markets.' + market_name.lower() + '.' +
+                exec('import markets.' + market_name.lower())
+                market = eval('markets.' + market_name.lower() + '.' +
                               market_name + '()')
                 self.markets.append(market)
             except (ImportError, AttributeError) as e:
