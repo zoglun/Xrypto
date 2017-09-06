@@ -18,7 +18,7 @@ import traceback
 import config
 import logging
 
-class PrivateHuobiCNY(Market):
+class BrokerHuobiCNY(Market):
     def __init__(self,HUOBI_API_KEY=None, HUOBI_SECRET_TOKEN=None):
         super().__init__()
         if HUOBI_API_KEY == None:

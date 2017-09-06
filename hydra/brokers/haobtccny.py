@@ -15,7 +15,7 @@ from lib.exchange import exchange
 from lib.settings import HAOBTC_API_URL
 import logging
 
-class PrivateHaobtcCNY(Market):
+class BrokerHaobtcCNY(Market):
     def __init__(self, HAOBTC_API_KEY=None, HAOBTC_SECRET_TOKEN=None):
         super().__init__()
         if HAOBTC_API_KEY == None:

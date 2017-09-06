@@ -9,9 +9,9 @@ from .emailer import send_email
 
 class SpecializedTraderBot(Observer):
     def __init__(self):
-        self.haobtc = haobtccny.PrivateHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN)
+        self.haobtc = haobtccny.BrokerHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN)
 
-        self.okcoin = okcoincny.PrivateOkCoinCNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN)
+        self.okcoin = okcoincny.BrokerOkCoinCNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN)
 
         self.clients = {
             "HaobtcCNY": self.haobtc,

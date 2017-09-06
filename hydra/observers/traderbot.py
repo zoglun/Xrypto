@@ -14,10 +14,10 @@ class TraderBot(BasicBot):
         super().__init__()
 
         self.clients = {
-            # "HaobtcCNY": haobtccny.PrivateHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
-            # "OKCoinCNY": okcoincny.PrivateOkCoinCNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN),
-            # "HuobiCNY": huobicny.PrivateHuobiCNY(config.HUOBI_API_KEY, config.HUOBI_SECRET_TOKEN),
-            # "BrokerCNY": brokercny.PrivateBrokerCNY(),
+            # "HaobtcCNY": haobtccny.BrokerHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
+            # "OKCoinCNY": okcoincny.BrokerOkCoinCNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN),
+            # "HuobiCNY": huobicny.BrokerHuobiCNY(config.HUOBI_API_KEY, config.HUOBI_SECRET_TOKEN),
+            # "BrokerCNY": brokercny.BrokerBrokerCNY(),
         }
 
         self.reverse_profit_thresh = config.reverse_profit_thresh

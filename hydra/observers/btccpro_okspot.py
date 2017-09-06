@@ -19,8 +19,8 @@ class BTCCPro_OkSpot(BasicBot):
         super().__init__()
 
         self.clients = {
-            "OKCoinCNY": okcoincny.PrivateOkCoinCNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN),
-            "BtccProCNY": btccprocny.PrivateBtccProCNY(),
+            "OKCoinCNY": okcoincny.BrokerOkCoinCNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN),
+            "BtccProCNY": btccprocny.BrokerBtccProCNY(),
         }
 
         self.trade_wait = config.trade_wait  # in seconds

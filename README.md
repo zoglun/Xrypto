@@ -107,7 +107,7 @@ Test public market:
       
       $ python3 hydra/cli.py test_pub -m OKEx_Future_Quarter
 
-Test private market:
+Test Broker market:
       
       $ python3 hydra/cli.py test_pri -m Viabtc_BCH_BTC
       $ python3 hydra/cli.py test_pri -m Jubi_EOS_CNY

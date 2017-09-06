@@ -26,7 +26,7 @@ class MarketMaker(BasicBot):
 
         self.clients = {
             # TODO: move that to the config file
-            "HaobtcCNY": haobtccny.PrivateHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
+            "HaobtcCNY": haobtccny.BrokerHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
         }
         
         self.trade_timeout = 10  # in seconds

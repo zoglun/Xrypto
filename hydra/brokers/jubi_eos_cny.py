@@ -2,7 +2,7 @@
 
 from ._jubi import Jubi
 
-class PrivateJubi_EOS_CNY(Jubi):
+class BrokerJubi_EOS_CNY(Jubi):
     def __init__(self, api_key=None, api_secret=None):
         super().__init__("CNY", "EOS", "eoscny", api_key, api_secret)
 

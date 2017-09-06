@@ -22,8 +22,8 @@ class HedgerBot(MarketMaker):
         super().__init__()
 
         self.clients = {
-            "HaobtcCNY": haobtccny.PrivateHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
-            "BrokerCNY": brokercny.PrivateBrokerCNY(),
+            "HaobtcCNY": haobtccny.BrokerHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
+            "BrokerCNY": brokercny.BrokerBrokerCNY(),
         }
 
         self.taker_fee = 0.002

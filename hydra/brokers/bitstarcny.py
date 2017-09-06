@@ -14,7 +14,7 @@ import config
 from lib.bitstar_sdk import ApiClient
 import logging
 
-class PrivateBitstarCNY(Market):
+class BrokerBitstarCNY(Market):
     def __init__(self, API_KEY = None, API_SECRET = None):
         super().__init__()
     

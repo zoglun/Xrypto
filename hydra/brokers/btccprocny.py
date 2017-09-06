@@ -14,7 +14,7 @@ import config
 from lib.helpers import *
 
 
-class PrivateBtccProCNY(Market):
+class BrokerBtccProCNY(Market):
     balance_url = "http://localhost:8080/btcc/account"
     buy_url = "http://localhost:8080/btcc/buy"
     sell_url = "http://localhost:8080/btcc/sell"

@@ -16,8 +16,8 @@ class BalanceDumper(Observer):
 
     def __init__(self):
         self.clients = {
-            # "HaobtcCNY": haobtccny.PrivateHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
-            "BrokerCNY": brokercny.PrivateBrokerCNY(),
+            # "HaobtcCNY": haobtccny.BrokerHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
+            "BrokerCNY": brokercny.BrokerBrokerCNY(),
         }
         
         self.cny_balance = 0

@@ -15,7 +15,7 @@ from lib.exchange import exchange
 from lib.settings import OKCOIN_API_URL
 import logging
 
-class PrivateOkCoinCNY(Market):
+class BrokerOkCoinCNY(Market):
     def __init__(self, OKCOIN_API_KEY = None, OKCOIN_SECRET_TOKEN = None):
         super().__init__()
         if OKCOIN_API_KEY == None:

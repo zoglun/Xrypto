@@ -2,7 +2,7 @@
 
 from ._yunbi import Yunbi
 
-class PrivateYunbi_EOS_CNY(Viabtc):
+class BrokerYunbi_EOS_CNY(Viabtc):
     def __init__(self, api_key=None, api_secret=None):
         super().__init__("CNY", "EOS", "eoscny", api_key, api_secret)
 

@@ -29,9 +29,9 @@ class JubiAPI(object):
         m.update(s.encode())
         return m.hexdigest()
 
-    def generate_signature(self, msg, private_key):
+    def generate_signature(self, msg, secret_key):
         msg = msg.encode('utf-8')
-        md5_hash = self.get_md5(self.secret_key)
+        md5_hash = self.get_md5(secret_key)
         key = md5_hash.encode('utf-8')
         signature = hmac.new(key, msg, digestmod = hashlib.sha256).hexdigest()
         return signature

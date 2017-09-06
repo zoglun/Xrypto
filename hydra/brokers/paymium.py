@@ -14,7 +14,7 @@ import json
 import config
 
 
-class PrivatePaymium(Market):
+class BrokerPaymium(Market):
     balance_url = "https://paymium.com/api/v1/balances/"
     trade_url = "https://paymium.com/api/v1/trade_orders/"
     withdraw_url = "https://paymium.com/api/v1/transfers/send_bitcoins/"
@@ -91,6 +91,6 @@ class PrivatePaymium(Market):
             self.cny_balance = self.fc.convert(self.eur_balance, "EUR", "CNY")
 
 if __name__ == "__main__":
-    market = PrivatePaymium()
+    market = BrokerPaymium()
     market.get_info()
     print(market)

@@ -15,7 +15,7 @@ import logging
 import lib.broker_api as exchange_api
 import traceback
 
-class PrivateBrokerCNY(Market):
+class BrokerBrokerCNY(Market):
     def __init__(self):
         super().__init__()
         exchange_api.init_broker()

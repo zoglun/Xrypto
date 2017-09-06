@@ -98,7 +98,7 @@ BROKER_HOST = "127.0.0.1"
 BROKER_PORT = 18030
 
 #### Trader Bot Config
-# Access to Private APIs
+# Access to Broker APIs
 
 bitstamp_username = "FIXME"
 bitstamp_password = "FIXME"

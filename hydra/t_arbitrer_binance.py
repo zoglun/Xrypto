@@ -24,9 +24,9 @@ class TrigangularArbitrer_Binance(Arbitrer):
         t_secret_token = config.t_Binance_SECRET_TOKEN
 
         # self.clients = {
-        #     self.base_pair: viabtc_bch_cny.PrivateViabtc_BCH_CNY(t_api_key, t_secret_token),
-        #     self.pair_1: viabtc_bch_btc.PrivateViabtc_BCH_BTC(t_api_key, t_secret_token),
-        #     self.pair_2: viabtc_btc_cny.PrivateViabtc_BTC_CNY(t_api_key, t_secret_token),
+        #     self.base_pair: viabtc_bch_cny.BrokerViabtc_BCH_CNY(t_api_key, t_secret_token),
+        #     self.pair_1: viabtc_bch_btc.BrokerViabtc_BCH_BTC(t_api_key, t_secret_token),
+        #     self.pair_2: viabtc_btc_cny.BrokerViabtc_BTC_CNY(t_api_key, t_secret_token),
         # }
 
         self.last_trade = 0

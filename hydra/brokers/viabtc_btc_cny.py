@@ -2,7 +2,7 @@
 
 from ._viabtc import Viabtc
 
-class PrivateViabtc_BTC_CNY(Viabtc):
+class BrokerViabtc_BTC_CNY(Viabtc):
     def __init__(self, api_key=None, api_secret=None):
         super().__init__("CNY", "BTC", "btccny", api_key, api_secret)
 

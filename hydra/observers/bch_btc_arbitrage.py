@@ -13,9 +13,9 @@ class BCH_BTC_Arbitrage(BasicBot):
         super().__init__()
 
         self.clients = {
-            "Bitfinex_BCH_BTC": bitfinex_bch_btc.PrivateBitfinex_BCH_BTC(config.Bitfinex_API_KEY, config.Bitfinex_SECRET_TOKEN),
-            "Bittrex_BCH_BTC": bittrex_bch_btc.PrivateBittrex_BCH_BTC(config.Bittrex_API_KEY, config.Bittrex_SECRET_TOKEN),
-            "Viabtc_BCH_BTC": viabtc_bch_btc.PrivateViabtc_BCH_BTC(config.Viabtc_API_KEY, config.Viabtc_SECRET_TOKEN),
+            "Bitfinex_BCH_BTC": bitfinex_bch_btc.BrokerBitfinex_BCH_BTC(config.Bitfinex_API_KEY, config.Bitfinex_SECRET_TOKEN),
+            "Bittrex_BCH_BTC": bittrex_bch_btc.BrokerBittrex_BCH_BTC(config.Bittrex_API_KEY, config.Bittrex_SECRET_TOKEN),
+            "Viabtc_BCH_BTC": viabtc_bch_btc.BrokerViabtc_BCH_BTC(config.Viabtc_API_KEY, config.Viabtc_SECRET_TOKEN),
         }
 
 

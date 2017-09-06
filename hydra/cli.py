@@ -108,7 +108,7 @@ class ArbitrerCLI:
         for pmarket in pmarkets:
             exec('import brokers.' + pmarket.lower())
             market = eval('brokers.' + pmarket.lower()
-                          + '.Private' + pmarket + '()')
+                          + '.Broker' + pmarket + '()')
             pmarketsi.append(market)
 
         for market in pmarketsi:
@@ -123,7 +123,7 @@ class ArbitrerCLI:
         for pmarket in pmarkets:
             exec('import brokers.' + pmarket.lower())
             market = eval('brokers.' + pmarket.lower()
-                          + '.Private' + pmarket + '()')
+                          + '.Broker' + pmarket + '()')
             pmarketsi.append(market)
 
         snapshot = Snapshot()

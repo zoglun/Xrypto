@@ -13,7 +13,7 @@ import json
 import config
 
 
-class PrivateBitstampUSD(Market):
+class BrokerBitstampUSD(Market):
     balance_url = "https://www.bitstamp.net/api/balance/"
     buy_url = "https://www.bitstamp.net/api/buy/"
     sell_url = "https://www.bitstamp.net/api/sell/"
