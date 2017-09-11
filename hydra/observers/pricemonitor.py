@@ -11,15 +11,22 @@ import traceback
 import config
 from .basicbot import BasicBot
 import threading
+import requests
 
 class PriceMonitor(Observer):
     out_dir = './'
+    last_diff = 0
 
     def __init__(self):
         super().__init__()
         self.OKCoin_BTC_CNY = 'OKCoin_BTC_CNY'
         self.OKEx_Future_Quarter = 'OKEx_Future_Quarter'
-        self.rate = 6.5754
+        self.rate = self.get_exchange_rate()
+
+    def get_exchange_rate(self):
+        response = requests.request("GET", 'https://www.okex.com/api/v1/exchange_rate.do', timeout=10)
+        exchange_rate = response.json()
+        return exchange_rate['rate']
 
     def tick(self, depths):
 
@@ -27,6 +34,11 @@ class PriceMonitor(Observer):
         OKCoin_BTC_CNY_ask = (depths[self.OKCoin_BTC_CNY]["asks"][0]['price'])
 
         diff = int(OKEx_Future_Quarter_bid*self.rate - OKCoin_BTC_CNY_ask)
+
+        if self.last_diff != diff:
+            self.last_diff = diff
+        else:
+            return
 
         logging.info("refer_bid_price, refer_ask_price=(%s/%s), diff=%s" % (OKEx_Future_Quarter_bid*self.rate, OKCoin_BTC_CNY_ask, diff))
        
