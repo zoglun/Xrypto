@@ -13,7 +13,7 @@ class TradeException(Exception):
 class Market:
     def __init__(self, base_currency, market_currency, pair_code):
         self.name = self.__class__.__name__
-        self.brief_name  = self.name[7:]
+        self.brief_name  = self.name[6:]
 
         self.base_currency = base_currency
         self.market_currency = market_currency

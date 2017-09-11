@@ -50,8 +50,8 @@ and observers and keys.The config field in local_config.py will override those k
 You need Python3 to run this program. To install on Debian, Ubuntu, or
 variants of them, use:
 
-    $ sudo apt-get install python3 python3-pip python-nose
-    $ pip3 install -r requirements.txt
+    sudo apt-get install python3 python3-pip python-nose
+    pip3 install -r requirements.txt
 
 You need market broker service, please read its README to install then run it. 
   
@@ -59,37 +59,40 @@ You need market broker service, please read its README to install then run it.
 
 To connect the broker server you will need to install thriftpy:
 
-    $ pip3 install cython thriftpy
+    pip3 install cython thriftpy
 
 To use the observer XMPPMessager you will need to install sleekxmpp:
 
-    $ pip3 install sleekxmpp
+    pip3 install sleekxmpp
 
 # Debug
 
-    $ python3 hydra/cli.py watch -d
+    python3 hydra/cli.py watch -d
 
 # Run
 
 To run the opportunity watcher:
 
-    $ python3 hydra/cli.py watch -v
+    python3 hydra/cli.py watch -v
 
 To check your balance on an exchange (also a good way to check your accounts configuration):
 
-    $ python3 hydra/cli.py -m HaobtcCNY get-balance
-    $ python3 hydra/cli.py -m Viabtc_BCH_CNY get-balance
-    $ python3 hydra/cli.py -m Bitfinex_BCH_BTC get-balance
-    $ python3 hydra/cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC get-balance
-    $ python3 hydra/cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
+    python3 hydra/cli.py -m HaobtcCNY get-balance
+    python3 hydra/cli.py -m Viabtc_BCH_CNY get-balance
+    python3 hydra/cli.py -m Bitfinex_BCH_BTC get-balance
+    python3 hydra/cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC get-balance
+    python3 hydra/cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
 
 Run t-arbitrage
-    $ python3 hydra/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch-viabtc-bcc -v
-    $ python3 hydra/cli.py -m Binance_WTC_BTC,Binance_WTC_ETH,Binance_ETH_BTC t-watch-binance-wtc -v
-    $ python3 hydra/cli.py -m Binance_BNB_BTC,Binance_BNB_ETH,Binance_ETH_BTC t-watch-binance-bnb -v
-    $ python3 hydra/cli.py -m Binance_LRC_BTC,Binance_LRC_ETH,Binance_ETH_BTC t-watch-binance-lrc -v
-    $ python3 hydra/cli.py -m Binance_MCO_BTC,Binance_MCO_ETH,Binance_ETH_BTC t-watch-binance-mco -v
-    $ python3 hydra/cli.py -m Binance_QTUM_BTC,Binance_QTUM_ETH,Binance_ETH_BTC t-watch-binance-qtum -v
+
+    python3 hydra/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch-viabtc-bcc -v
+    python3 hydra/cli.py -m Binance_WTC_BTC,Binance_WTC_ETH,Binance_ETH_BTC t-watch-binance-wtc -v
+    python3 hydra/cli.py -m Binance_BNB_BTC,Binance_BNB_ETH,Binance_ETH_BTC t-watch-binance-bnb -v
+    python3 hydra/cli.py -m Binance_LRC_BTC,Binance_LRC_ETH,Binance_ETH_BTC t-watch-binance-lrc -v
+    python3 hydra/cli.py -m Binance_MCO_BTC,Binance_MCO_ETH,Binance_ETH_BTC t-watch-binance-mco -v
+    python3 hydra/cli.py -m Binance_QTUM_BTC,Binance_QTUM_ETH,Binance_ETH_BTC t-watch-binance-qtum -v
+
+Run in background
 
     python3 hydra/cli.py -m Binance_WTC_BTC,Binance_WTC_ETH,Binance_ETH_BTC t-watch-binance-wtc  &
     python3 hydra/cli.py -m Binance_BNB_BTC,Binance_BNB_ETH,Binance_ETH_BTC t-watch-binance-bnb  &
@@ -101,45 +104,49 @@ Run t-arbitrage
 
 List supported public markets:
 
-      $ python3 hydra/cli.py list-public-markets
+      python3 hydra/cli.py list-public-markets
 
 Test public market:
       
-      $ python3 hydra/cli.py test_pub -m OKEx_Future_Quarter
+        python3 hydra/cli.py test_pub -m OKEx_Future_Quarter
+        python3 hydra/cli.py test_pub -m KKEX_BCH_BTC
+        python3 hydra/cli.py test_pub -m KKEX_ETH_BTC
 
 Test Broker market:
       
-      $ python3 hydra/cli.py test_pri -m Viabtc_BCH_BTC
-      $ python3 hydra/cli.py test_pri -m Jubi_EOS_CNY
+      python3 hydra/cli.py test_pri -m Viabtc_BCH_BTC
+      python3 hydra/cli.py test_pri -m Jubi_EOS_CNY
+      python3 hydra/cli.py test_pri -m KKEX_BCH_BTC
+      python3 hydra/cli.py test_pri -m KKEX_ETH_BTC
 
 Run tests
 
-    $ nosetests arbitrage/
+    nosetests arbitrage/
 
 Help
       
-      $ python3 hydra/cli.py -h
+      python3 hydra/cli.py -h
 
 # Example
 
 arbitrage in haobtc, huobi or okcoin
 
-    $ python3 hydra/cli.py -oTraderBot -mHaobtcCNY,HuobiCNY
-    $ python3 hydra/cli.py -oTraderBot -mHaobtcCNY,OKCoinCNY
+    python3 hydra/cli.py -oTraderBot -mHaobtcCNY,HuobiCNY
+    python3 hydra/cli.py -oTraderBot -mHaobtcCNY,OKCoinCNY
 
 bch bcc arbitrage in Bitfinex_BCH_BTC, Bittrex_BCH_BTC
 
-    $ python3 hydra/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC
-    $ python3 hydra/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC
+    python3 hydra/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC
+    python3 hydra/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC
 
 
 balance statatistic 
 
-    $ python3 hydra/cli.py -oBalanceDumper -mHaobtcCNY
+    python3 hydra/cli.py -oBalanceDumper -mHaobtcCNY
     
 bistar test
 
-    $ python3 hydra/bitstar_test.py
+    python3 hydra/bitstar_test.py
 
     
 # TODO
