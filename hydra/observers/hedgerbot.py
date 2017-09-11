@@ -77,7 +77,7 @@ class HedgerBot(MarketMaker):
             traceback.print_exc()
 
 
-    def market_maker(self, depths):
+    def tick(self, depths):
         # super().market_maker(depths)
         kexchange = self.exchange
 

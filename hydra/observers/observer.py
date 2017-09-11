@@ -8,6 +8,9 @@ class Observer(object, metaclass=abc.ABCMeta):
     def terminate(self):
         self.is_terminated = True
     
+    def tick(self, depths):
+        pass
+        
     def begin_opportunity_finder(self, depths):
         pass
 
@@ -15,7 +18,7 @@ class Observer(object, metaclass=abc.ABCMeta):
         pass
 
     ## abstract
-    @abc.abstractmethod
+    # @abc.abstractmethod
     def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc, 
                         w_bprice, w_sprice, 
                         base_currency="CNY", market_currency="BTC"):

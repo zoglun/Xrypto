@@ -111,6 +111,21 @@ class Market:
 
             return None
 
+    def get_orders(self, order_ids):
+        try:
+            return self._get_orders(order_ids)
+        except Exception as e:
+            logging.error('%s %s except: %s' % (self.name, get_current_function_name(), e))
+            return None
+
+    def get_orders_history(self):
+        try:
+            return self._get_orders_history()
+        except Exception as e:
+            logging.error('%s %s except: %s' % (self.name, get_current_function_name(), e))
+            return None
+
+
     def get_balances(self):
         try:
             res = self._get_balances()
@@ -144,6 +159,12 @@ class Market:
 
     def _cancel_order(self, order_id):
         raise NotImplementedError("%s.cancel_order(self, order_id)" % self.name)
+
+    def _get_orders(self, order_ids):
+        raise NotImplementedError("%s.get_orders(self, order_ids)" % self.name)
+
+    def _get_orders_history(self):
+        raise NotImplementedError("%s._get_orders_history(self)" % self.name)
 
     def _cancel_all(self):
         raise NotImplementedError("%s.cancel_all(self)" % self.name)

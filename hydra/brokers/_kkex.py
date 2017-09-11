@@ -44,6 +44,7 @@ class KKEX(Market):
         resp['price'] = float(res['price'])
         resp['deal_size'] = float(res['deal_amount'])
         resp['avg_price'] = float(res['avg_price'])
+        resp['type'] = res['type']
 
         if res['status'] == 0 or res['status'] == 1 or res['status'] == 4:
             resp['status'] = 'OPEN'
@@ -58,6 +59,17 @@ class KKEX(Market):
 
         assert str(res['order']['order_id']) == str(order_id)
         return self._order_status(res['order'])
+
+    def _get_orders(self, order_ids):
+        orders = []
+        res = self.client.orders_info(self.pair_code, order_ids) 
+        print(order_ids)
+        print(res)   
+        for order in res['orders']:
+            resp_order = self._order_status(order)
+            orders.append(resp_order)
+                  
+        return orders
 
     def _cancel_order(self, order_id):
         res = self.client.cancel_order(self.pair_code, int(order_id))
@@ -81,3 +93,12 @@ class KKEX(Market):
 
         logging.debug(self)
         return res
+
+    def _get_orders_history(self):
+        orders = []
+        res = self.client.get_orders_history(self.pair_code, pagesize=200)    
+        for order in res['orders']:
+            resp_order = self._order_status(order)
+            orders.append(resp_order)
+                  
+        return orders

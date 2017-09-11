@@ -3,9 +3,9 @@
 from ._kkex import KKEX
 import time
 
-class BrokerKKEX_BCH_BTC(KKEX):
+class BrokerKKEX_ETH_BTC(KKEX):
     def __init__(self, api_key=None, api_secret=None):
-        super().__init__("BTC", "BCH", "BCCBTC", api_key, api_secret)
+        super().__init__("BTC", "ETH", "ETHBTC", api_key, api_secret)
 
     def test(self):
         balance = self.get_balances()

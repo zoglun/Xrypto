@@ -103,9 +103,10 @@ class Market(object):
         depth = self.get_depth()
         res = {'ask': {'price': 0, 'amount': 0}, 'bid': {'price': 0, 'amount': 0}}
 
-        if len(depth['asks']) > 0 and len(depth["bids"]) > 0:
-            res = {'ask': depth['asks'][0],
-                   'bid': depth['bids'][0]}
+        if len(depth['asks']) > 0:
+            res['ask'] = depth['asks'][0]
+        if len(depth["bids"]) > 0:
+            res['bid'] = depth['bids'][0] 
         return res
 
     def sort_and_format(self, l, reverse=False):

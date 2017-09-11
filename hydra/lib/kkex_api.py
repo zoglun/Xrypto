@@ -69,7 +69,7 @@ class Client:
     def get_userinfo(self):
         return self.trade_api('/api/v1/userinfo')
 
-    def get_orders(self, symbol, status=0, page=1, pagesize=10):
+    def get_orders_history(self, symbol, status=0, page=1, pagesize=10):
         params = {
             'symbol': symbol,
             'status': status,
@@ -128,3 +128,8 @@ class Client:
         params = {'symbol': symbol}
         params['order_id'] = order_id
         return self.trade_api('/api/v1/order_info', params)
+
+    def orders_info(self, symbol, order_ids):
+        params = {'symbol': symbol}
+        params['order_id'] = ','.join(order_ids)
+        return self.trade_api('/api/v1/orders_info', params)

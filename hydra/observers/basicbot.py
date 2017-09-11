@@ -4,7 +4,6 @@ import json
 import time
 import os
 import math
-import os, time
 import sys
 import traceback
 import config
@@ -27,7 +26,6 @@ class BasicBot(Observer):
 
     def msg_server(self):
         import zmq
-        import time
         context = zmq.Context()
         socket = context.socket(zmq.PULL)
         socket.bind("tcp://*:%s"%config.ZMQ_PORT)
@@ -61,81 +59,62 @@ class BasicBot(Observer):
         message = {'type':type, 'price':price}
         self.notify_obj(message)
 
-    def new_order(self, kexchange, type, maker_only=True, amount=None, price=None):
+    def new_order(self, market, type, maker_only=False, amount=None, price=None):
         if type == 'buy' or type == 'sell':
             if not price or not amount:
-                if type == 'buy':
-                    price = self.get_buy_price()
-                    amount = math.floor((self.cny_balance/price)*10)/10
-                else:
-                    price = self.get_sell_price()
-                    amount = math.floor(self.btc_balance * 10) / 10
-            
-            if maker_only:
-                amount = min(self.max_maker_volume, amount)
-                if amount < self.min_maker_volume:
-                    logging.warn('Maker amount is too low %s %s' % (type, amount))
-                    return None
-            else:
-                amount = min(self.max_taker_volume, amount)
-                if amount < self.min_taker_volume:
-                    logging.warn('Taker amount is too low %s %s' % (type, amount))
-                    return None
-            
+                print(price)
+                print(amount)
+                assert(False)
+
             if maker_only:                
                 if type == 'buy':
-                    order_id = self.clients[kexchange].buy_maker(amount, price)
+                    order_id = self.clients[market].buy_maker(amount, price)
                 else:
-                    order_id = self.clients[kexchange].sell_maker(amount, price)
+                    order_id = self.clients[market].sell_maker(amount, price)
             else:
                 if type == 'buy':
-                    order_id = self.clients[kexchange].buy_limit(amount, price)
+                    order_id = self.clients[market].buy_limit(amount, price)
                 else:
-                    order_id = self.clients[kexchange].sell_limit(amount, price)
+                    order_id = self.clients[market].sell_limit(amount, price)
 
-            if not order_id:
-                logging.warn("%s @%s %f/%f BTC failed, %s" % (type, kexchange, amount, price, order_id))
+            if not order_id or order_id == -1:
+                logging.warn("%s @%s %f/%f failed, %s" % (type, market, amount, price, order_id))
                 return None
-            
-            if order_id == -1:
-                logging.warn("%s @%s %f/%f BTC failed, %s" % (type, kexchange, amount, price, order_id))
-                return None
+    
 
             order = {
-                'market': kexchange, 
-                'id': order_id,
+                'market': market, 
+                'order_id': order_id,
                 'price': price,
                 'amount': amount,
                 'deal_amount':0,
                 'deal_index': 0, 
                 'type': type,
-                'maker_only': maker_only,
                 'time': time.time()
             }
             self.orders.append(order)
-            logging.info("submit order %s" % (order))
+            logging.verbose("submit order %s" % (order))
 
             return order
 
         return None
-        
 
-    def cancel_order(self, kexchange, type, order_id):
-        result = self.clients[kexchange].cancel_order(order_id)
-        if not result:
-            logging.warn("cancel %s #%s failed" % (type, order_id))
-            return False
-        else:
-            logging.info("cancel %s #%s ok" % (type, order_id))
-
-            return True
 
     def remove_order(self, order_id):
-        self.orders = [x for x in self.orders if not x['id'] == order_id]
+        self.orders = [x for x in self.orders if not x['order_id'] == order_id]
+
+    def get_order(self, order_id):
+        for x in self.orders:
+            if x['order_id'] == order_id:
+                return x
 
     def get_orders(self, type):
         orders_snapshot = [x for x in self.orders if x['type'] == type]
         return orders_snapshot
+
+    def get_order_ids(self):
+        order_ids = [x['order_id'] for x in self.orders]
+        return order_ids
 
     def selling_len(self):
         return len(self.get_orders('sell'))
@@ -158,3 +137,27 @@ class BasicBot(Observer):
     def get_spread(self):
         return self.sprice - self.bprice
         
+    def cancel_order(self, market, type, order_id):
+        result = self.clients[market].cancel_order(order_id)
+        if not result:
+            logging.warn("cancel %s #%s failed" % (type, order_id))
+            return False
+        else:
+            logging.info("cancel %s #%s ok" % (type, order_id))
+            return True
+
+    def cancel_all_orders(self, market):
+        orders = self.clients[market].get_orders_history()
+
+        print(orders)
+        if not orders:
+            return
+
+        for order in orders:
+            logging.info("Cancelling: %s %s @ %s" % (order['type'], order['amount'], order['price']))
+            while True:
+                result = self.cancel_order(market, order['type'], order['order_id']); 
+                if not result:
+                    time.sleep(10) 
+                else:
+                    break

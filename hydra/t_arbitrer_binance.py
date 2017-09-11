@@ -7,7 +7,7 @@ import config
 from arbitrer import Arbitrer
 # from brokers import viabtc_bch_cny, viabtc_bch_btc, viabtc_btc_cny
 
-class TrigangularArbitrer_Binance(Arbitrer):
+class TrigangularArbitrer_Binance(Datafeed):
     def __init__(self, base_pair, pair1, pair2, monitor_only=True):
         super().__init__()
         self.base_pair = base_pair

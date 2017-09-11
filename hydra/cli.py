@@ -1,23 +1,24 @@
-# Copyright (C) 2013, Maxime Biais <maxime@biais.org>
-# Copyright (C) 2016, Phil Song <songbohr@gmail.com>
+
+# Copyright (C) 2016-2017, Phil Song <songbohr@gmail.com>
 import os
 import logging
 import argparse
 import sys
-import markets
 import glob
 import inspect
-from arbitrer import Arbitrer
 
 from logging.handlers import RotatingFileHandler
-import lib.broker_api as exchange_api
 import datetime
 import time
 import config
 import traceback
-from snapshot import Snapshot
 
-class ArbitrerCLI:
+import markets
+from snapshot import Snapshot
+from datafeed import Datafeed
+from arbitrer import Arbitrer
+
+class CLI:
     def __init__(self):
         self.inject_verbose_info()
 
@@ -29,32 +30,36 @@ class ArbitrerCLI:
     def exec_command(self, args):
         logging.debug('exec_command:%s' % args)
         if "watch" in args.command:
+            self.create_datafeed(args)
+            self.datafeed.run_loop()
+
+        if "b-watch" in args.command:
             self.create_arbitrer(args)
-            self.arbitrer.loop()
+            self.arbitrer.run_loop()
 
         if "t-watch-viabtc-bcc" in args.command:
             self.create_t_arbitrer_viabtc_bcc(args)
-            self.arbitrer.loop()
+            self.arbitrer.run_loop()
 
         if "t-watch-binance-wtc" in args.command:
             self.create_t_arbitrer_binance_wtc(args)
-            self.arbitrer.loop()
+            self.arbitrer.run_loop()
 
         if "t-watch-binance-bnb" in args.command:
             self.create_t_arbitrer_binance_bnb(args)
-            self.arbitrer.loop()
+            self.arbitrer.run_loop()
 
         if "t-watch-binance-lrc" in args.command:
             self.create_t_arbitrer_binance_lrc(args)
-            self.arbitrer.loop()
+            self.arbitrer.run_loop()
 
         if "t-watch-binance-mco" in args.command:
             self.create_t_arbitrer_binance_mco(args)
-            self.arbitrer.loop()
+            self.arbitrer.run_loop()
 
         if "t-watch-binance-qtum" in args.command:
             self.create_t_arbitrer_binance_qtum(args)
-            self.arbitrer.loop()
+            self.arbitrer.run_loop()
 
         if "replay-history" in args.command:
             self.create_arbitrer(args)
@@ -142,6 +147,10 @@ class ArbitrerCLI:
 
             time.sleep(60*10)
 
+    def create_datafeed(self, args):
+        self.datafeed = Datafeed()
+        self.init_observers_and_markets(args)
+
     def create_arbitrer(self, args):
         self.arbitrer = Arbitrer()
         self.init_observers_and_markets(args)
@@ -191,9 +200,9 @@ class ArbitrerCLI:
 
     def init_observers_and_markets(self, args):
         if args.observers:
-            self.arbitrer.init_observers(args.observers.split(","))
+            self.datafeed.init_observers(args.observers.split(","))
         if args.markets:
-            self.arbitrer.init_markets(args.markets.split(","))
+            self.datafeed.init_markets(args.markets.split(","))
 
     def init_logger(self, args):
         level = logging.INFO
@@ -231,9 +240,10 @@ class ArbitrerCLI:
         self.init_logger(args)
         self.exec_command(args)
         print('main end')
+        exit(-1)
 
 def main():
-    cli = ArbitrerCLI()
+    cli = CLI()
     cli.main()
 
 if __name__ == "__main__":

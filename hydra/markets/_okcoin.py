@@ -9,7 +9,7 @@ from .market import Market
 
 class OKCoin(Market):
     def __init__(self, base_currency, market_currency, pair_code):
-        super().__init__(base_currency, market_currency, pair_code)
+        super().__init__(base_currency, market_currency, pair_code, 0.002)
         
         self.event = 'okcoin_depth'
         self.subscribe_depth()
