@@ -44,16 +44,16 @@ class PriceMonitor(Observer):
 
         if self.last_cross_diff != cross_diff:
             self.last_cross_diff = cross_diff
-        
+            self.save_to_csv('cross_diff.csv', cross_diff)
+            self.render_to_html_cross()
+
         if self.last_diff != diff:
             self.last_diff = diff
+            self.save_to_csv('diff.csv', diff)
+            self.render_to_html()
 
         logging.info("rate=%s, diff=%s, cross_diff=%s" % (self.rate, diff, cross_diff))
 
-        self.save_to_csv('diff.csv', diff)
-        self.save_to_csv('cross_diff.csv', cross_diff)
-
-        self.render_to_html()
 
         return
 
@@ -77,16 +77,30 @@ class PriceMonitor(Observer):
         from pyecharts import Line
 
         df = pd.read_csv('./data/diff.csv')
-        df_cross = pd.read_csv('./data/cross_diff.csv')
 
         attr = [i[0] for i in df.values]
         v1 = [i[1] for i in df.values]
+
+        line = Line("统计套利-现货期货价差监控")
+        line.add("现货期货价差", attr, v1, mark_point=["average"])
+        # line.add("外盘内盘价差", attr2, v2, is_smooth=True, mark_line=["max", "average"])
+        line.render('./data/index.html')
+
+    def render_to_html_cross(self):
+        import pandas as pd
+        from pyecharts import Line
+
+        # df = pd.read_csv('./data/diff.csv')
+        df_cross = pd.read_csv('./data/cross_diff.csv')
+
+        # attr = [i[0] for i in df.values]
+        # v1 = [i[1] for i in df.values]
 
         attr2 = [i[0] for i in df_cross.values]
 
         v2 = [i[1] for i in df_cross.values]
 
-        line = Line("统计套利-现货期货价差监控")
-        line.add("现货期货价差", attr, v1, mark_point=["average"])
+        line = Line("统计套利-外盘内盘价差")
+        # line.add("现货期货价差", attr, v1, mark_point=["average"])
         line.add("外盘内盘价差", attr2, v2, is_smooth=True, mark_line=["max", "average"])
-        line.render('./data/index.html')
+        line.render('./data/c.html')
