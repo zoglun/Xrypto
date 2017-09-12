@@ -134,7 +134,7 @@ Viabtc_API_KEY = ''
 Viabtc_SECRET_TOKEN = ''
 
 
-SUPPORT_ZMQ = True
+SUPPORT_ZMQ = False
 ZMQ_HOST = "127.0.0.1"
 ZMQ_PORT = 18031
 
