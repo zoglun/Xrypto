@@ -54,4 +54,5 @@ download.sh
 *.sublime-*
 snapshot_*.txt
 .vscode
+*.html
 
