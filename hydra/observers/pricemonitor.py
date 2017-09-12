@@ -44,12 +44,12 @@ class PriceMonitor(Observer):
 
         if self.last_diff != diff:
             self.last_diff = diff
-            self.save_to_csv('ok_diff.csv', OKCoin_BTC_CNY_ask, OKEx_Future_Quarter_bid, diff)
+            self.save_to_csv('ok_diff.csv', OKCoin_BTC_CNY_ask, OKEx_Future_Quarter_bid*self.rate, diff)
             self.render_to_html()
 
         if self.last_cross_diff != cross_diff:
             self.last_cross_diff = cross_diff
-            self.save_to_csv('bitfinex_diff.csv', OKCoin_BTC_CNY_bid, Bitfinex_BTC_USD_ask, cross_diff)
+            self.save_to_csv('bitfinex_diff.csv', OKCoin_BTC_CNY_bid, Bitfinex_BTC_USD_ask*self.rate, cross_diff)
             self.render_to_html_cross()
 
         logging.info("rate=%s, okdiff=%s, bitfinex_diff=%s" % (self.rate, diff, cross_diff))
