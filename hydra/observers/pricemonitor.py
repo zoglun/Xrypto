@@ -14,7 +14,7 @@ import threading
 import requests
 
 class PriceMonitor(Observer):
-    out_dir = './'
+    out_dir = './data/'
     last_diff = 0
 
     def __init__(self):

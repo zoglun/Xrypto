@@ -66,28 +66,28 @@ class MM(BasicBot):
         # excute trade
         if self.buying_len() < config.LIQUID_BUY_ORDER_PAIRS:
             if self.mm_broker.btc_available < config.LIQUID_BUY_RESERVE:
-                logging.warn("btc_available(%s) < reserve(%s)" % (self.mm_broker.btc_available, config.LIQUID_BUY_RESERVE))
+                logging.verbose("btc_available(%s) < reserve(%s)" % (self.mm_broker.btc_available, config.LIQUID_BUY_RESERVE))
             else:
                 bprice = refer_bid_price*(1-config.LIQUID_DIFF)
 
                 amount = round(liquid_max_amount*random.random(), 2)
                 price = round(bprice*(1-0.1*random.random()), 5)
 
-                if self.mm_broker.btc_available < amount:
-                    logging.warn("btc_available(%s) < amount(%s)" % (self.mm_broker.btc_available, amount))
+                if self.mm_broker.btc_available < amount*price:
+                    logging.verbose("btc_available(%s) < amount(%s)" % (self.mm_broker.btc_available, amount))
                 else:
                     self.new_order(self.mm_market, 'buy', amount=amount, price=price)
 
         if self.selling_len() < config.LIQUID_SELL_ORDER_PAIRS:
             if self.mm_broker.bch_available < config.LIQUID_BUY_RESERVE:
-                logging.warn("bch_available(%s) <  reserve(%s)" % (self.mm_broker.btc_available, config.LIQUID_BUY_RESERVE))
+                logging.verbose("bch_available(%s) <  reserve(%s)" % (self.mm_broker.btc_available, config.LIQUID_BUY_RESERVE))
             else:
                 sprice = refer_ask_price*(1+config.LIQUID_DIFF)
 
                 amount = round(liquid_max_amount*random.random(), 2)
                 price = round(sprice*(1+0.1*random.random()), 5)
                 if self.mm_broker.bch_available < amount:
-                    logging.warn("bch_available(%s) < amount(%s)" % (self.mm_broker.bch_available, amount))
+                    logging.verbose("bch_available(%s) < amount(%s)" % (self.mm_broker.bch_available, amount))
                 else:
                     self.new_order(self.mm_market, 'sell', amount=amount, price=price)
 
@@ -108,6 +108,7 @@ class MM(BasicBot):
                 self.hedge_order(local_order, order)
 
                 if order['status'] == 'CLOSE' or order['status'] == 'CANCELED':
+                    logging.info("order#%s closed: amount %s order['price'] = %s" % (order['order_id'], order['amount'], order['price']))
                     self.remove_order(order['order_id'])
 
                 if order['type'] =='buy':
