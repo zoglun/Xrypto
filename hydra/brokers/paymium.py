@@ -1,4 +1,4 @@
-from .market import Market
+from .broker import Broker
 import time
 import base64
 import hmac
@@ -14,7 +14,7 @@ import json
 import config
 
 
-class BrokerPaymium(Market):
+class BrokerPaymium(Broker):
     balance_url = "https://paymium.com/api/v1/balances/"
     trade_url = "https://paymium.com/api/v1/trade_orders/"
     withdraw_url = "https://paymium.com/api/v1/transfers/send_bitcoins/"

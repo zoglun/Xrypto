@@ -13,7 +13,7 @@ class SpecializedTraderBot(Observer):
 
         self.okcoin = okcoincny.BrokerOkCoinCNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN)
 
-        self.clients = {
+        self.brokers = {
             "HaobtcCNY": self.haobtc,
             "OkCoinCNY": self.okcoin,
         }
@@ -41,16 +41,16 @@ class SpecializedTraderBot(Observer):
         return min(min1, min2) * 0.95
 
     def update_balance(self):
-        for kclient in self.clients:
-            self.clients[kclient].get_balances()
+        for kclient in self.brokers:
+            self.brokers[kclient].get_balances()
 
     def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc,
                     w_bprice, w_sprice):
-        if kask not in self.clients:
+        if kask not in self.brokers:
             logging.warn(
                 "Can't automate this trade, client not available: %s" % (kask))
             return
-        if kbid not in self.clients:
+        if kbid not in self.brokers:
             logging.warn(
                 "Can't automate this trade, client not available: %s" % (kbid))
             return
@@ -68,12 +68,12 @@ class SpecializedTraderBot(Observer):
 
         # maximum volume transaction with current balances
         max_volume = self.get_min_tradeable_volume(
-            bprice, self.clients[kask].cny_balance,
-            self.clients[kbid].btc_balance)
+            bprice, self.brokers[kask].cny_balance,
+            self.brokers[kbid].btc_balance)
         volume = min(volume, max_volume, config.max_tx_volume)
         if volume < config.min_tx_volume:
             logging.warn("Can't automate this trade, minimum volume transaction not reached %f/%f" % (volume, config.min_tx_volume))
-            logging.info("Balance on %s: %f CNY - Balance on %s: %f BTC" % (kask, self.clients[kask].cny_balance, kbid, self.clients[kbid].btc_balance))
+            logging.info("Balance on %s: %f CNY - Balance on %s: %f BTC" % (kask, self.brokers[kask].cny_balance, kbid, self.brokers[kbid].btc_balance))
             return
 
         current_time = time.time()
@@ -90,5 +90,5 @@ class SpecializedTraderBot(Observer):
         logging.info("Buy @%s %f BTC and sell @%s" % (kask, volume, kbid))
         send_email("Bought @%s %f BTC and sold @%s" % (kask, volume, kbid),
                    "w_bprice=%f w_sprice=%f" % (w_bprice, w_sprice))
-        self.clients[kask].buy(volume)
-        self.clients[kbid].sell(volume)
+        self.brokers[kask].buy(volume)
+        self.brokers[kbid].sell(volume)

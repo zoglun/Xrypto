@@ -15,7 +15,7 @@ class BalanceDumper(Observer):
     out_dir = 'balance_history/'
 
     def __init__(self):
-        self.clients = {
+        self.brokers = {
             # "HaobtcCNY": haobtccny.BrokerHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
             "BrokerCNY": brokercny.BrokerBrokerCNY(),
         }
@@ -48,13 +48,13 @@ class BalanceDumper(Observer):
         fp.close()
 
     def update_balance(self):
-        for kclient in self.clients:
-            self.clients[kclient].get_balances()
-            self.cny_balance = self.clients[kclient].cny_balance
-            self.btc_balance = self.clients[kclient].btc_balance
+        for kclient in self.brokers:
+            self.brokers[kclient].get_balances()
+            self.cny_balance = self.brokers[kclient].cny_balance
+            self.btc_balance = self.brokers[kclient].btc_balance
             
-            self.cny_frozen = self.clients[kclient].cny_frozen
-            self.btc_frozen = self.clients[kclient].btc_frozen
+            self.cny_frozen = self.brokers[kclient].cny_frozen
+            self.btc_frozen = self.brokers[kclient].btc_frozen
 
     def cny_balance_total(self, price):
         return self.cny_balance + self.cny_frozen+ (self.btc_balance + self.btc_frozen)* price

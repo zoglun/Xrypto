@@ -1,6 +1,6 @@
 # Copyright (C) 2016, Philsong <songbohr@gmail.com>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import time
 import base64
 import hmac
@@ -15,7 +15,7 @@ import logging
 import lib.broker_api as exchange_api
 import traceback
 
-class BrokerBrokerCNY(Market):
+class BrokerBrokerCNY(Broker):
     def __init__(self):
         super().__init__()
         exchange_api.init_broker()

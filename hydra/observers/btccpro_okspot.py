@@ -18,7 +18,7 @@ class BTCCPro_OkSpot(BasicBot):
     def __init__(self):
         super().__init__()
 
-        self.clients = {
+        self.brokers = {
             "OKCoinCNY": okcoincny.BrokerOkCoinCNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN),
             "BtccProCNY": btccprocny.BrokerBtccProCNY(),
         }
@@ -128,13 +128,13 @@ class BTCCPro_OkSpot(BasicBot):
                 logging.warn("sell in btcc %s , buy in ok %s ..too small [%s]btc", bid_price, hedger_ask_price, hedge_amount)
                 return
             
-            btc_balance = int(self.clients[self.exchange].cny_balance/(bid_price-self.spread))
+            btc_balance = int(self.brokers[self.exchange].cny_balance/(bid_price-self.spread))
             if btc_balance < hedge_amount:
                 logging.warn("btcc btc balance %s insufficent", btc_balance)
                 return
 
-            if self.clients[self.hedger].cny_balance < hedge_amount*(hedger_ask_price+self.spread):
-                logging.warn("okcoin cny balance %s insufficent", self.clients[self.hedger].cny_balance )
+            if self.brokers[self.hedger].cny_balance < hedge_amount*(hedger_ask_price+self.spread):
+                logging.warn("okcoin cny balance %s insufficent", self.brokers[self.hedger].cny_balance )
                 return       
 
             logging.info("sell in btcc %s , buy in ok %s [%s]btc", bid_price, hedger_ask_price, hedge_amount)
@@ -151,13 +151,13 @@ class BTCCPro_OkSpot(BasicBot):
                 logging.warn("sell in ok %s, buy in btcc %s ..insufficent [%s]btc", ask_price, hedger_bid_price, hedge_amount)
                 return
 
-            btc_balance = int(self.clients[self.exchange].cny_balance/(ask_price+self.spread))
+            btc_balance = int(self.brokers[self.exchange].cny_balance/(ask_price+self.spread))
             if btc_balance < hedge_amount:
                 logging.warn("btcc cny balance %s insufficent", btc_balance)
                 return
 
-            if self.clients[self.hedger].btc_balance < hedge_amount:
-                logging.warn("okcoin btc balance %s insufficent", self.clients[self.hedger].btc_balance )
+            if self.brokers[self.hedger].btc_balance < hedge_amount:
+                logging.warn("okcoin btc balance %s insufficent", self.brokers[self.hedger].btc_balance )
                 return       
                 
             logging.info("sell in ok %s, buy in btcc %s [%s]btc", ask_price, hedger_bid_price, hedge_amount)
@@ -185,8 +185,8 @@ class BTCCPro_OkSpot(BasicBot):
         fp.close()
 
     def update_balance(self):
-        for kclient in self.clients:
-            self.clients[kclient].get_balances()
+        for kclient in self.brokers:
+            self.brokers[kclient].get_balances()
 
     def begin_opportunity_finder(self, depths):
         self.hedgeALG1(depths)

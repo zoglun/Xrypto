@@ -1,13 +1,13 @@
 # Copyright (C) 2017, Philsong <songbohr@gmail.com>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import config
 import logging
 from lib.yunbi.client import YunbiClient
 
 # python3 hydra/cli.py -m Bitfinex_BCH_BTC get-balance
 
-class Yunbi(Market):
+class Yunbi(Broker):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
         super().__init__(base_currency, market_currency, pair_code)
 

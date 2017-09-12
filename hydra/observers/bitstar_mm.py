@@ -24,7 +24,7 @@ class MarketMaker(BasicBot):
     def __init__(self):
         super().__init__()
 
-        self.clients = {
+        self.brokers = {
             # TODO: move that to the config file
             "BitstarCNY": bitstarcny.BrokerBitstarCNY(config.BITSTAR_API_KEY, config.BITSTAR_SECRET_TOKEN),
         }
@@ -49,7 +49,7 @@ class MarketMaker(BasicBot):
         except:
             pass
 
-        self.clients[self.exchange].cancel_all()
+        self.brokers[self.exchange].cancel_all()
 
         logging.info('MarketMaker Setup complete')
         # time.sleep(2)
@@ -57,7 +57,7 @@ class MarketMaker(BasicBot):
     def terminate(self):
         super().terminate()
         
-        self.clients[self.exchange].cancel_all()
+        self.brokers[self.exchange].cancel_all()
 
         logging.info('terminate complete')
 
@@ -121,7 +121,7 @@ class MarketMaker(BasicBot):
         if self.is_buying():
             for buy_order in self.get_orders('buy'):
                 logging.debug(buy_order)
-                result = self.clients[kexchange].get_order(buy_order['id'])
+                result = self.brokers[kexchange].get_order(buy_order['id'])
                 logging.debug(result)
                 if not result:
                     logging.warn("get_order buy #%s failed" % (buy_order['id']))
@@ -148,7 +148,7 @@ class MarketMaker(BasicBot):
         if self.is_selling():
             for sell_order in self.get_orders('sell'):
                 logging.debug(sell_order)
-                result = self.clients[kexchange].get_order(sell_order['id'])
+                result = self.brokers[kexchange].get_order(sell_order['id'])
                 logging.debug(result)
                 if not result:
                     logging.warn("get_order sell #%s failed" % (sell_order['id']))
@@ -193,14 +193,14 @@ class MarketMaker(BasicBot):
         fp.close()
 
     def update_balance(self):
-        for kclient in self.clients:
+        for kclient in self.brokers:
             if kclient == self.exchange:
-                self.clients[kclient].get_balances()
-                self.cny_balance = self.clients[kclient].cny_balance
-                self.btc_balance = self.clients[kclient].btc_balance
+                self.brokers[kclient].get_balances()
+                self.cny_balance = self.brokers[kclient].cny_balance
+                self.btc_balance = self.brokers[kclient].btc_balance
                 
-                self.cny_frozen = self.clients[kclient].cny_frozen
-                self.btc_frozen = self.clients[kclient].btc_frozen
+                self.cny_frozen = self.brokers[kclient].cny_frozen
+                self.btc_frozen = self.brokers[kclient].btc_frozen
 
         cny_abs = abs(self.cny_total - self.cny_balance_total(self.bprice))
         cny_diff = self.cny_total*0.1

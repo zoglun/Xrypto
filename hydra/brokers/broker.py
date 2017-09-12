@@ -10,7 +10,7 @@ def get_current_function_name():
 class TradeException(Exception):
     pass
 
-class Market:
+class Broker(object):
     def __init__(self, base_currency, market_currency, pair_code):
         self.name = self.__class__.__name__
         self.brief_name  = self.name[6:]
@@ -37,7 +37,8 @@ class Market:
                                            "bch_available": self.bch_available}))
 
     def buy_limit(self, amount, price, client_id=None):
-        if amount > config.bch_guide_dog_volume:
+        if amount > config.RISK_PROTECT_MAX_VOLUMN:
+            logging.error('risk alert: amount %s > risk amount:%s' % (amount, config.RISK_PROTECT_MAX_VOLUMN))
             raise
 
         logging.info("BUY LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
@@ -54,7 +55,8 @@ class Market:
 
 
     def sell_limit(self, amount, price, client_id=None):
-        if amount > config.bch_guide_dog_volume:
+        if amount > config.RISK_PROTECT_MAX_VOLUMN:
+            logging.error('risk alert: amount %s > risk amount:%s' % (amount, config.RISK_PROTECT_MAX_VOLUMN))
             raise
             
         logging.info("SELL LIMIT %f %s at %f %s @%s" % (amount, self.market_currency, 
@@ -71,6 +73,10 @@ class Market:
 
 
     def buy_maker(self, amount, price):
+        if amount > config.RISK_PROTECT_MAX_VOLUMN:
+            logging.error('risk alert: amount %s > risk amount:%s' % (amount, config.RISK_PROTECT_MAX_VOLUMN))
+            raise
+
         logging.info("BUY MAKER %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
 
@@ -81,6 +87,10 @@ class Market:
             return None
 
     def sell_maker(self, amount, price):
+        if amount > config.RISK_PROTECT_MAX_VOLUMN:
+            logging.error('risk alert: amount %s > risk amount:%s' % (amount, config.RISK_PROTECT_MAX_VOLUMN))
+            raise
+            
         logging.info("SELL MAKER %f %s at %f %s @%s" % (amount, self.market_currency, 
                         price, self.base_currency, self.brief_name))
         try:

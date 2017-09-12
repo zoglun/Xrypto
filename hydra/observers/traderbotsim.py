@@ -68,7 +68,7 @@ class TraderBotSim(TraderBot):
         self.huobi = MockMarket("huobi", 0.000, 5000) # 0.0% fee
         self.broker = MockMarket("broker", 0.000, 5000) # 0.0% fee
 
-        self.clients = {
+        self.brokers = {
             "KrakenEUR": self.kraken,
             "PaymiumEUR": self.paymium,
             "BitstampUSD": self.bitstamp,
@@ -86,17 +86,17 @@ class TraderBotSim(TraderBot):
 
     def total_balance(self, price):
         market_balances = [i.balance_total(
-            price) for i in set(self.clients.values())]
+            price) for i in set(self.brokers.values())]
         return sum(market_balances)
 
     def total_cny_balance(self):
-        return sum([i.cny_balance for i in set(self.clients.values())])
+        return sum([i.cny_balance for i in set(self.brokers.values())])
     
     def total_usd_balance(self):
-        return sum([i.usd_balance for i in set(self.clients.values())])
+        return sum([i.usd_balance for i in set(self.brokers.values())])
 
     def total_btc_balance(self):
-        return sum([i.btc_balance for i in set(self.clients.values())])
+        return sum([i.btc_balance for i in set(self.brokers.values())])
 
 
 if __name__ == "__main__":

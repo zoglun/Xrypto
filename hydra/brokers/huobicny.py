@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-s = u’示例’
 # Copyright (C) 2016, Philsong <songbohr@gmail.com>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import time
 import base64
 import hmac
@@ -18,19 +18,19 @@ import traceback
 import config
 import logging
 
-class BrokerHuobiCNY(Market):
+class BrokerHuobiCNY(Broker):
     def __init__(self,HUOBI_API_KEY=None, HUOBI_SECRET_TOKEN=None):
         super().__init__()
         if HUOBI_API_KEY == None:
             HUOBI_API_KEY = config.HUOBI_API_KEY
             HUOBI_SECRET_TOKEN = config.HUOBI_SECRET_TOKEN
-        self.market = exchange(HUOBI_API_URL, HUOBI_API_KEY, HUOBI_SECRET_TOKEN, 'huobi')
+        self.broker = exchange(HUOBI_API_URL, HUOBI_API_KEY, HUOBI_SECRET_TOKEN, 'huobi')
         self.currency = "CNY"
         self.get_info()
 
     def _buy(self, amount, price):
         """Create a buy limit order"""
-        response = self.market.buy(amount, price)
+        response = self.broker.buy(amount, price)
         if response and "code" in response:
             logging.warn("buy ex:%s", response)
             return False
@@ -42,7 +42,7 @@ class BrokerHuobiCNY(Market):
 
     def _sell(self, amount, price):
         """Create a sell limit order"""
-        response = self.market.sell(amount, price)
+        response = self.broker.sell(amount, price)
         if response and "code" in response:
             logging.warn("sell ex:%s", response)
             return False
@@ -54,7 +54,7 @@ class BrokerHuobiCNY(Market):
 
     def _get_order(self, order_id):
         try:
-            response = self.market.orderInfo(order_id)
+            response = self.broker.orderInfo(order_id)
         except  Exception as ex:
             logging.warn("orderInfo failed :%s" % ex)
             traceback.print_exc()
@@ -85,7 +85,7 @@ class BrokerHuobiCNY(Market):
 
     def _cancel_order(self, order_id):
         try:
-            response = self.market.cancel(order_id)
+            response = self.broker.cancel(order_id)
         except  Exception as ex:
             logging.warn("cancel failed :%s" % ex)
             traceback.print_exc()
@@ -103,7 +103,7 @@ class BrokerHuobiCNY(Market):
     def get_info(self):
         """Get balance"""
         try:
-            response = self.market.accountInfo()
+            response = self.broker.accountInfo()
             if response and "code" in response:
                 logging.warn(response)
                 return False

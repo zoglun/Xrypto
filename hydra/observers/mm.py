@@ -18,10 +18,12 @@ class MM(BasicBot):
 
         self.mm_market = mm_market
 
-        self.clients = {
+        self.brokers = {
             # TODO: move that to the config file
-            "KKEX_BCH_BTC": kkex_bch_btc.BrokerKKEX_BCH_BTC(config.KKEX_API_KEY, config.KKEX_SECRET_TOKEN),
+            mm_market: kkex_bch_btc.BrokerKKEX_BCH_BTC(config.KKEX_API_KEY, config.KKEX_SECRET_TOKEN),
         }
+
+        self.mm_broker = self.brokers[mm_market]
         
         self.refer_market ='Viabtc_BCH_BTC'
 
@@ -60,20 +62,36 @@ class MM(BasicBot):
         return refer_bid_price, refer_ask_price
 
     def place_orders(self, refer_bid_price, refer_ask_price):
-        bprice = refer_bid_price*(1-config.LIQUID_DIFF)
-        sprice = refer_ask_price*(1+config.LIQUID_DIFF)
-        
-        base_amount = 10
+        liquid_max_amount = config.LIQUID_MAX_AMOUNT
         # excute trade
         if self.buying_len() < config.LIQUID_BUY_ORDER_PAIRS:
-            amount = round(base_amount*random.random(), 2)
-            go_bprice = round(bprice*(1-0.1*random.random()), 5)
-            self.new_order(self.mm_market, 'buy', amount=amount, price=go_bprice)
-        if self.selling_len() < config.LIQUID_SELL_ORDER_PAIRS:
-            amount = round(base_amount*random.random(), 2)
-            go_sprice = round(sprice*(1+0.1*random.random()), 5)
-            self.new_order(self.mm_market, 'sell',amount=amount, price=go_sprice)
+            if self.mm_broker.btc_available < config.LIQUID_BUY_RESERVE:
+                logging.warn("btc_available(%s) < reserve(%s)" % (self.mm_broker.btc_available, config.LIQUID_BUY_RESERVE))
+            else:
+                bprice = refer_bid_price*(1-config.LIQUID_DIFF)
 
+                amount = round(liquid_max_amount*random.random(), 2)
+                price = round(bprice*(1-0.1*random.random()), 5)
+
+                if self.mm_broker.btc_available < amount:
+                    logging.warn("btc_available(%s) < amount(%s)" % (self.mm_broker.btc_available, amount))
+                else:
+                    self.new_order(self.mm_market, 'buy', amount=amount, price=price)
+
+        if self.selling_len() < config.LIQUID_SELL_ORDER_PAIRS:
+            if self.mm_broker.bch_available < config.LIQUID_BUY_RESERVE:
+                logging.warn("bch_available(%s) <  reserve(%s)" % (self.mm_broker.btc_available, config.LIQUID_BUY_RESERVE))
+            else:
+                sprice = refer_ask_price*(1+config.LIQUID_DIFF)
+
+                amount = round(liquid_max_amount*random.random(), 2)
+                price = round(sprice*(1+0.1*random.random()), 5)
+                if self.mm_broker.bch_available < amount:
+                    logging.warn("bch_available(%s) < amount(%s)" % (self.mm_broker.bch_available, amount))
+                else:
+                    self.new_order(self.mm_market, 'sell', amount=amount, price=price)
+
+        return
 
     def check_orders(self, depths, refer_bid_price, refer_ask_price):
         max_bprice = refer_bid_price*(1-config.LIQUID_DIFF*0.5)
@@ -83,86 +101,39 @@ class MM(BasicBot):
         if not order_ids:
             return
         
-        orders = self.clients[self.mm_market].get_orders(order_ids)
+        orders = self.mm_broker.get_orders(order_ids)
         if orders is not None:
             for order in orders:
                 local_order = self.get_order(order['order_id'])
                 self.hedge_order(local_order, order)
 
                 if order['status'] == 'CLOSE' or order['status'] == 'CANCELED':
-                    self.remove_order(order['id'])
+                    self.remove_order(order['order_id'])
 
                 if order['type'] =='buy':
                     current_time = time.time()
                     if order['price'] > max_bprice:
                         logging.info("[TraderBot] cancel last BUY trade " +
                                         "occured %.2f seconds ago" %
-                                        (current_time - buy_order['time']))
-                        logging.info("cancel bprice %s order['price'] = %s" % (bprice, order['price']))
+                                        (current_time - local_order['time']))
+                        logging.info("cancel max_bprice %s order['price'] = %s" % (max_bprice, order['price']))
 
-                        self.cancel_order(self.mm_market, 'buy', buy_order['id'])
+                        self.cancel_order(self.mm_market, 'buy', order['order_id'])
                 elif order['type'] == 'sell':
                     current_time = time.time()
                     if order['price'] < min_sprice:
                         logging.info("[TraderBot] cancel last SELL trade " +
                                         "occured %.2f seconds ago" %
-                                        (current_time - sell_order['time']))
-                        logging.info("cancel sprice %s order['price'] = %s" % (sprice, order['price']))
+                                        (current_time - local_order['time']))
+                        logging.info("cancel min_sprice %s order['price'] = %s" % (min_sprice, order['price']))
 
-                        self.cancel_order(self.mm_market, 'sell', sell_order['id'])
+                        self.cancel_order(self.mm_market, 'sell', order['order_id'])
         
-            # # query orders
-            # if self.is_buying():
-            #     for buy_order in self.get_orders('buy'):
-            #         logging.debug(buy_order)
-            #         result = self.clients[self.mm_market].get_order(buy_order['id'])
-            #         logging.debug(result)
-            #         if not result:
-            #             logging.warn("get_order buy #%s failed" % (buy_order['id']))
-            #             return
-
-            #         self.hedge_order(buy_order, result)
-
-            #         if result['status'] == 'CLOSE' or result['status'] == 'CANCELED':
-            #             self.remove_order(buy_order['id'])
-            #         else:
-            #             current_time = time.time()
-            #             if result['price'] > max_bprice:
-            #                 logging.info("[TraderBot] cancel last buy trade " +
-            #                              "occured %.2f seconds ago" %
-            #                              (current_time - buy_order['time']))
-            #                 logging.info("cancel bprice %s result['price'] = %s" % (bprice, result['price']))
-
-            #                 self.cancel_order(self.mm_market, 'buy', buy_order['id'])
-
-
-            # if self.is_selling():
-            #     for sell_order in self.get_orders('sell'):
-            #         logging.debug(sell_order)
-            #         result = self.clients[self.mm_market].get_order(sell_order['id'])
-            #         logging.debug(result)
-            #         if not result:
-            #             logging.warn("get_order sell #%s failed" % (sell_order['id']))
-            #             return
-
-            #         self.hedge_order(sell_order, result)
-
-            #         if result['status'] == 'CLOSE' or result['status'] == 'CANCELED':
-            #             self.remove_order(sell_order['id'])
-            #         else:
-            #             current_time = time.time()
-            #             if result['price'] < min_sprice:
-            #                 logging.info("[TraderBot] cancel last SELL trade " +
-            #                              "occured %.2f seconds ago" %
-            #                              (current_time - sell_order['time']))
-            #                 logging.info("cancel sprice %s result['price'] = %s" % (sprice, result['price']))
-
-            #                 self.cancel_order(self.mm_market, 'sell', sell_order['id'])
-            
+ 
     def update_balance(self):
-        for kclient in self.clients:
+        for kclient in self.brokers:
             if kclient == self.mm_market:
-                self.clients[kclient].get_balances()
+                self.brokers[kclient].get_balances()
 
     def hedge_order(self, order, result):
         pass

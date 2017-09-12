@@ -1,11 +1,11 @@
 # Copyright (C) 2017, Philsong <songbohr@gmail.com>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import config
 import logging
 from lib.kkex_api import Client
 
-class KKEX(Market):
+class KKEX(Broker):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
         super().__init__(base_currency, market_currency, pair_code)
 
@@ -63,8 +63,7 @@ class KKEX(Market):
     def _get_orders(self, order_ids):
         orders = []
         res = self.client.orders_info(self.pair_code, order_ids) 
-        print(order_ids)
-        print(res)   
+
         for order in res['orders']:
             resp_order = self._order_status(order)
             orders.append(resp_order)

@@ -1,12 +1,12 @@
 # Copyright (C) 2017, Philsong <songbohr@gmail.com>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import config
 import logging
 from binance.client import Client
 from binance.enums import *
 
-class Binance(Market):
+class Binance(Broker):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
         super().__init__(base_currency, market_currency, pair_code)
 

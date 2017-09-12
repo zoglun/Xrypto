@@ -1,6 +1,6 @@
 # Copyright (C) 2013, Maxime Biais <maxime@biais.org>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import time
 import base64
 import hmac
@@ -14,7 +14,7 @@ import config
 from lib.helpers import *
 
 
-class BrokerBtccProCNY(Market):
+class BrokerBtccProCNY(Broker):
     balance_url = "http://localhost:8080/btcc/account"
     buy_url = "http://localhost:8080/btcc/buy"
     sell_url = "http://localhost:8080/btcc/sell"

@@ -1,13 +1,13 @@
 # Copyright (C) 2017, Philsong <songbohr@gmail.com>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import config
 import logging
 from bittrex import bittrex
  
 # python3 hydra/cli.py -m Bittrex_BCH_BTC get-balance
 
-class BrokerBittrex_BCH_BTC(Market):
+class BrokerBittrex_BCH_BTC(Broker):
     def __init__(self, api_key = None, api_secret = None):
         super().__init__("BTC", "BCH", "BTC-BCC")
 

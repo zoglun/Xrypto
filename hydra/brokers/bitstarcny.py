@@ -1,6 +1,6 @@
 # Copyright (C) 2016, Philsong <songbohr@gmail.com>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import time
 import base64
 import hmac
@@ -14,11 +14,11 @@ import config
 from lib.bitstar_sdk import ApiClient
 import logging
 
-class BrokerBitstarCNY(Market):
+class BrokerBitstarCNY(Broker):
     def __init__(self, API_KEY = None, API_SECRET = None):
         super().__init__()
     
-        self.market = ApiClient(API_KEY, API_SECRET)
+        self.broker = ApiClient(API_KEY, API_SECRET)
 
         self.currency = "CNY"
         self.get_info()
@@ -50,7 +50,7 @@ class BrokerBitstarCNY(Market):
 
 
     def _get_order(self, order_id):
-        order_info = self.market.order_info('swap-btc-cny', order_id)
+        order_info = self.broker.order_info('swap-btc-cny', order_id)
 
         if not response:
             return response
@@ -77,7 +77,7 @@ class BrokerBitstarCNY(Market):
         return resp
 
     def _cancel_order(self, order_id):
-        response = self.market.cancel(order_id)
+        response = self.broker.cancel(order_id)
 
         if not response:
             return response
@@ -93,7 +93,7 @@ class BrokerBitstarCNY(Market):
 
     def get_info(self):
         """Get balance"""
-        response = self.market.accountInfo()
+        response = self.broker.accountInfo()
         if response:
             if "error_code" in response:
                 logging.warn(response)

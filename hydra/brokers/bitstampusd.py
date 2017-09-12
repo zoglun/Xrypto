@@ -1,6 +1,6 @@
 # Copyright (C) 2013, Maxime Biais <maxime@biais.org>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import time
 import base64
 import hmac
@@ -13,7 +13,7 @@ import json
 import config
 
 
-class BrokerBitstampUSD(Market):
+class BrokerBitstampUSD(Broker):
     balance_url = "https://www.bitstamp.net/api/balance/"
     buy_url = "https://www.bitstamp.net/api/buy/"
     sell_url = "https://www.bitstamp.net/api/sell/"

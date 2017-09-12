@@ -1,13 +1,13 @@
 # Copyright (C) 2017, Philsong <songbohr@gmail.com>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import config
 import logging
 import bitfinex
 
 # python3 hydra/cli.py -m Bitfinex_BCH_BTC get-balance
 
-class BrokerBitfinex_BCH_BTC(Market):
+class BrokerBitfinex_BCH_BTC(Broker):
     def __init__(self, api_key = None, api_secret = None):
         super().__init__("BTC", "BCH", "bchbtc")
 

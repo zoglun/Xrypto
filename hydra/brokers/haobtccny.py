@@ -1,6 +1,6 @@
 # Copyright (C) 2016, Philsong <songbohr@gmail.com>
 
-from .market import Market, TradeException
+from .broker import Broker, TradeException
 import time
 import base64
 import hmac
@@ -15,20 +15,20 @@ from lib.exchange import exchange
 from lib.settings import HAOBTC_API_URL
 import logging
 
-class BrokerHaobtcCNY(Market):
+class BrokerHaobtcCNY(Broker):
     def __init__(self, HAOBTC_API_KEY=None, HAOBTC_SECRET_TOKEN=None):
         super().__init__()
         if HAOBTC_API_KEY == None:
             HAOBTC_API_KEY = config.HAOBTC_API_KEY
             HAOBTC_SECRET_TOKEN = config.HAOBTC_SECRET_TOKEN
-        self.market =  exchange(HAOBTC_API_URL, HAOBTC_API_KEY, HAOBTC_SECRET_TOKEN, 'haobtc')
+        self.broker =  exchange(HAOBTC_API_URL, HAOBTC_API_KEY, HAOBTC_SECRET_TOKEN, 'haobtc')
 
         self.currency = "CNY"
         self.get_info()
 
     def _buy(self, amount, price):
         """Create a buy limit order"""
-        response = self.market.buy(amount, price)
+        response = self.broker.buy(amount, price)
         if response and "code" in response:
             logging.warn (response)
             return False
@@ -39,7 +39,7 @@ class BrokerHaobtcCNY(Market):
 
     def _sell(self, amount, price):
         """Create a sell limit order"""
-        response = self.market.sell(amount, price)
+        response = self.broker.sell(amount, price)
         if response and "code" in response:
             logging.warn (response)
             return False
@@ -48,7 +48,7 @@ class BrokerHaobtcCNY(Market):
         return response['order_id']
 
     def _buy_maker(self, amount, price):
-        response = self.market.bidMakerOnly(amount, price)
+        response = self.broker.bidMakerOnly(amount, price)
         if response and "code" in response:
             logging.warn (response)
             return False
@@ -58,7 +58,7 @@ class BrokerHaobtcCNY(Market):
         return response['order_id']
 
     def _sell_maker(self, amount, price):
-        response = self.market.askMakerOnly(amount, price)
+        response = self.broker.askMakerOnly(amount, price)
         if response and "code" in response:
             logging.warn (response)
             return False
@@ -68,7 +68,7 @@ class BrokerHaobtcCNY(Market):
         return response['order_id']
 
     def _get_order(self, order_id):
-        response = self.market.orderInfo(order_id)
+        response = self.broker.orderInfo(order_id)
         if not response:
             return response
             
@@ -79,7 +79,7 @@ class BrokerHaobtcCNY(Market):
         return response
 
     def _cancel_order(self, order_id):
-        response = self.market.cancel(order_id)
+        response = self.broker.cancel(order_id)
 
         if not response:
             return response
@@ -98,7 +98,7 @@ class BrokerHaobtcCNY(Market):
         return True
 
     def _cancel_all(self):
-        response = self.market.cancelAll()
+        response = self.broker.cancelAll()
         if response and  "code" in response:
             logging.warn (response)
             return False
@@ -106,7 +106,7 @@ class BrokerHaobtcCNY(Market):
 
     def get_info(self):
         """Get balance"""
-        response = self.market.accountInfo()
+        response = self.broker.accountInfo()
         if response:
             if "code" in response:
                 logging.warn("get_info failed %s", response)

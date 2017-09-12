@@ -12,7 +12,7 @@ class BCH_BTC_Arbitrage(BasicBot):
     def __init__(self):
         super().__init__()
 
-        self.clients = {
+        self.brokers = {
             "Bitfinex_BCH_BTC": bitfinex_bch_btc.BrokerBitfinex_BCH_BTC(config.Bitfinex_API_KEY, config.Bitfinex_SECRET_TOKEN),
             "Bittrex_BCH_BTC": bittrex_bch_btc.BrokerBittrex_BCH_BTC(config.Bittrex_API_KEY, config.Bittrex_SECRET_TOKEN),
             "Viabtc_BCH_BTC": viabtc_bch_btc.BrokerViabtc_BCH_BTC(config.Viabtc_API_KEY, config.Viabtc_SECRET_TOKEN),
@@ -38,8 +38,8 @@ class BCH_BTC_Arbitrage(BasicBot):
         self.check_order(depths)
 
     def update_balance(self):
-        for kclient in self.clients:
-            self.clients[kclient].get_balances()
+        for kclient in self.brokers:
+            self.brokers[kclient].get_balances()
 
     def end_opportunity_finder(self):
         if not self.potential_trades:
@@ -64,7 +64,7 @@ class BCH_BTC_Arbitrage(BasicBot):
 
             for buy_order in buy_orders:
                 logging.debug(buy_order)
-                result = self.clients[buy_order['market']].get_order(buy_order['id'])
+                result = self.brokers[buy_order['market']].get_order(buy_order['id'])
                 logging.debug (result)
                 if not result:
                     logging.warn("get_order buy #%s failed" % (buy_order['id']))
@@ -74,7 +74,7 @@ class BCH_BTC_Arbitrage(BasicBot):
                     left_amount = result['amount'] - result['deal_size']
                     if  result['status'] == 'CANCELED' or left_amount > 0.001:
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (buy_order['market'], result['price'], left_amount))
-                        self.clients[buy_order['market']].buy_limit(left_amount, result['price']*(1+ 5*config.price_departure_perc))
+                        self.brokers[buy_order['market']].buy_limit(left_amount, result['price']*(1+ 5*config.price_departure_perc))
 
                     self.remove_order(buy_order['id'])
                 else:
@@ -98,7 +98,7 @@ class BCH_BTC_Arbitrage(BasicBot):
 
             for sell_order in self.get_orders('sell'):
                 logging.debug(sell_order)
-                result = self.clients[sell_order['market']].get_order(sell_order['id'])
+                result = self.brokers[sell_order['market']].get_order(sell_order['id'])
                 logging.debug (result)
                 if not result:
                     logging.warn("get_order sell #%s failed" % (sell_order['id']))
@@ -109,7 +109,7 @@ class BCH_BTC_Arbitrage(BasicBot):
                     if result['status'] == 'CANCELED' or left_amount > 0.001:
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (sell_order['market'], result['price'], left_amount))
 
-                        self.clients[sell_order['market']].sell_limit(left_amount, result['price']*(1 - 5*config.price_departure_perc))
+                        self.brokers[sell_order['market']].sell_limit(left_amount, result['price']*(1 - 5*config.price_departure_perc))
 
                     self.remove_order(sell_order['id'])
                 else:
@@ -129,10 +129,10 @@ class BCH_BTC_Arbitrage(BasicBot):
     def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc,
                     w_bprice, w_sprice, 
                     base_currency, market_currency):
-        if kask not in self.clients:
+        if kask not in self.brokers:
             logging.warn("Can't automate this trade, client not available: %s" % kask)
             return
-        if kbid not in self.clients:
+        if kbid not in self.brokers:
             logging.warn("Can't automate this trade, client not available: %s" % kbid)
             return
 
@@ -157,8 +157,8 @@ class BCH_BTC_Arbitrage(BasicBot):
             return
 
         max_avaliable_volume = self.get_min_tradeable_volume(bprice,
-                                                   self.clients[kask].btc_available,
-                                                   self.clients[kbid].bch_available)
+                                                   self.brokers[kask].btc_available,
+                                                   self.brokers[kbid].bch_available)
         volume = min(volume, max_avaliable_volume)
         volume = min(volume, config.bch_max_tx_volume)
 
@@ -184,11 +184,11 @@ class BCH_BTC_Arbitrage(BasicBot):
 
         bch_frozen_volume = config.bch_frozen_volume
 
-        if self.clients[kask].btc_available < max(volume*bprice, bch_frozen_volume*bprice):
+        if self.brokers[kask].btc_available < max(volume*bprice, bch_frozen_volume*bprice):
             logging.warn("%s %s is insufficent" % (kask, base_currency))
             return
  
-        if self.clients[kbid].bch_available < max(volume, bch_frozen_volume):
+        if self.brokers[kbid].bch_available < max(volume, bch_frozen_volume):
             logging.warn("%s %s is insufficent" % (kbid, market_currency))
             return
 

@@ -68,14 +68,14 @@ class BasicBot(Observer):
 
             if maker_only:                
                 if type == 'buy':
-                    order_id = self.clients[market].buy_maker(amount, price)
+                    order_id = self.brokers[market].buy_maker(amount, price)
                 else:
-                    order_id = self.clients[market].sell_maker(amount, price)
+                    order_id = self.brokers[market].sell_maker(amount, price)
             else:
                 if type == 'buy':
-                    order_id = self.clients[market].buy_limit(amount, price)
+                    order_id = self.brokers[market].buy_limit(amount, price)
                 else:
-                    order_id = self.clients[market].sell_limit(amount, price)
+                    order_id = self.brokers[market].sell_limit(amount, price)
 
             if not order_id or order_id == -1:
                 logging.warn("%s @%s %f/%f failed, %s" % (type, market, amount, price, order_id))
@@ -138,7 +138,7 @@ class BasicBot(Observer):
         return self.sprice - self.bprice
         
     def cancel_order(self, market, type, order_id):
-        result = self.clients[market].cancel_order(order_id)
+        result = self.brokers[market].cancel_order(order_id)
         if not result:
             logging.warn("cancel %s #%s failed" % (type, order_id))
             return False
@@ -147,14 +147,12 @@ class BasicBot(Observer):
             return True
 
     def cancel_all_orders(self, market):
-        orders = self.clients[market].get_orders_history()
-
-        print(orders)
+        orders = self.brokers[market].get_orders_history()
         if not orders:
             return
 
         for order in orders:
-            logging.info("Cancelling: %s %s @ %s" % (order['type'], order['amount'], order['price']))
+            logging.verbose("Cancelling: %s %s @ %s" % (order['type'], order['amount'], order['price']))
             while True:
                 result = self.cancel_order(market, order['type'], order['order_id']); 
                 if not result:

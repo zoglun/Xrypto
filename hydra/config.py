@@ -22,6 +22,16 @@ refresh_rate = 5
 
 trade_wait = 10
 
+RISK_PROTECT_MAX_VOLUMN = 100
+
+LIQUID_MAX_AMOUNT = 100
+LIQUID_BUY_ORDER_PAIRS = 100
+LIQUID_SELL_ORDER_PAIRS = 100
+LIQUID_DIFF = 0.001 #20%
+LIQUID_BUY_RESERVE = 10
+LIQUID_SELL_RESERVE = 100
+
+
 btc_profit_thresh = 0.001  # in BTC
 btc_perc_thresh = 0.01  # in 0.01%
 bch_max_tx_volume = 5  # in BCH
@@ -30,7 +40,6 @@ bch_frozen_volume = 10
 
 price_departure_perc = 0.002 #in BTC 1%
 
-bch_guide_dog_volume = 10
 
 Diff = 1.001 # 0.1 % arbitrage to execute
 
@@ -48,18 +57,13 @@ MAKER_BUY_STAGE = 1
 MAKER_SELL_QUEUE = 3
 MAKER_SELL_STAGE = 2
 
-TAKER_MAX_VOLUME = 10
+TAKER_MAX_VOLUME = 20
 TAKER_MIN_VOLUME = 0.01
-
-LIQUID_BUY_ORDER_PAIRS = 50
-LIQUID_SELL_ORDER_PAIRS = 50
-LIQUID_DIFF = 0.001 #20%
 
 bid_fee_rate = 0.001
 ask_fee_rate = 0.001
 bid_price_risk = 0
 ask_price_risk = 0
-
 
 #hedger
 

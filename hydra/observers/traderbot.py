@@ -13,7 +13,7 @@ class TraderBot(BasicBot):
     def __init__(self):
         super().__init__()
 
-        self.clients = {
+        self.brokers = {
             # "HaobtcCNY": haobtccny.BrokerHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
             # "OKCoinCNY": okcoincny.BrokerOkCoinCNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN),
             # "HuobiCNY": huobicny.BrokerHuobiCNY(config.HUOBI_API_KEY, config.HUOBI_SECRET_TOKEN),
@@ -46,8 +46,8 @@ class TraderBot(BasicBot):
         self.check_order(depths)
 
     def update_balance(self):
-        for kclient in self.clients:
-            self.clients[kclient].get_balances()
+        for kclient in self.brokers:
+            self.brokers[kclient].get_balances()
 
     def end_opportunity_finder(self):
         if not self.potential_trades:
@@ -72,7 +72,7 @@ class TraderBot(BasicBot):
 
             for buy_order in buy_orders:
                 logging.debug(buy_order)
-                result = self.clients[buy_order['market']].get_order(buy_order['id'])
+                result = self.brokers[buy_order['market']].get_order(buy_order['id'])
                 logging.debug (result)
                 if not result:
                     logging.warn("get_order buy #%s failed" % (buy_order['id']))
@@ -83,7 +83,7 @@ class TraderBot(BasicBot):
                         left_amount = result['amount']- result['deal_size']
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (buy_order['market'], result['price'], left_amount))
 
-                        self.clients[self.hedger].buy(left_amount, result['price'])
+                        self.brokers[self.hedger].buy(left_amount, result['price'])
 
                     self.remove_order(buy_order['id'])
                 else:
@@ -105,7 +105,7 @@ class TraderBot(BasicBot):
 
             for sell_order in self.get_orders('sell'):
                 logging.debug(sell_order)
-                result = self.clients[sell_order['market']].get_order(sell_order['id'])
+                result = self.brokers[sell_order['market']].get_order(sell_order['id'])
                 logging.debug (result)
                 if not result:
                     logging.warn("get_order sell #%s failed" % (sell_order['id']))
@@ -116,7 +116,7 @@ class TraderBot(BasicBot):
                         left_amount = result['amount']- result['deal_size']
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (sell_order['market'], result['price'], left_amount))
 
-                        self.clients[self.hedger].sell(left_amount, result['price'])
+                        self.brokers[self.hedger].sell(left_amount, result['price'])
 
                     self.remove_order(sell_order['id'])
                 else:
@@ -136,10 +136,10 @@ class TraderBot(BasicBot):
     def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc,
                     w_bprice, w_sprice, 
                     base_currency, market_currency):
-        if kask not in self.clients:
+        if kask not in self.brokers:
             logging.warn("Can't automate this trade, client not available: %s" % kask)
             return
-        if kbid not in self.clients:
+        if kbid not in self.brokers:
             logging.warn("Can't automate this trade, client not available: %s" % kbid)
             return
 
@@ -157,16 +157,16 @@ class TraderBot(BasicBot):
                             % (profit, perc, self.reverse_profit_thresh, self.reverse_perc_thresh))
             arbitrage_max_volume = config.reverse_max_tx_volume
 
-            if self.clients[kbid].btc_balance < self.stage0_percent*self.init_btc[kbid] or self.clients[kbid].cny_balance < self.stage0_percent*self.init_cny[kbid]:
+            if self.brokers[kbid].btc_balance < self.stage0_percent*self.init_btc[kbid] or self.brokers[kbid].cny_balance < self.stage0_percent*self.init_cny[kbid]:
                 logging.info("Buy @%s/%0.2f and sell @%s/%0.2f %0.2f BTC" % (kask, bprice, kbid, sprice, volume))
-                logging.info("%s %s btc:%s < %s,cny:%s < %s,  reverse", self.stage0_percent, kbid, self.clients[kbid].btc_balance,  self.stage0_percent*self.init_btc[kbid], self.clients[kbid].cny_balance, self.stage0_percent*self.init_cny[kbid])
+                logging.info("%s %s btc:%s < %s,cny:%s < %s,  reverse", self.stage0_percent, kbid, self.brokers[kbid].btc_balance,  self.stage0_percent*self.init_btc[kbid], self.brokers[kbid].cny_balance, self.stage0_percent*self.init_cny[kbid])
                 ktemp = kbid
                 kbid = kask
                 kask = ktemp
-            elif self.clients[kask].btc_balance < self.stage1_percent*self.init_btc[kask] or self.clients[kask].cny_balance < self.stage1_percent*self.init_cny[kask]:
+            elif self.brokers[kask].btc_balance < self.stage1_percent*self.init_btc[kask] or self.brokers[kask].cny_balance < self.stage1_percent*self.init_cny[kask]:
                 arbitrage_max_volume = 0.5*(config.reverse_max_tx_volume+config.max_tx_volume)
                 logging.info("Buy @%s/%0.2f and sell @%s/%0.2f %0.2f BTC" % (kask, bprice, kbid, sprice, volume))
-                logging.info("%s %s btc:%s < %s, cny:%s <%s, go on", self.stage1_percent, kask, self.clients[kask].btc_balance, self.stage1_percent*self.init_btc[kask],self.clients[kask].cny_balance, self.stage1_percent*self.init_cny[kask])
+                logging.info("%s %s btc:%s < %s, cny:%s <%s, go on", self.stage1_percent, kask, self.brokers[kask].btc_balance, self.stage1_percent*self.init_btc[kask],self.brokers[kask].cny_balance, self.stage1_percent*self.init_cny[kask])
             else:
                 logging.debug("wait for higher")
                 return
@@ -184,8 +184,8 @@ class TraderBot(BasicBot):
             return
 
         max_volume = self.get_min_tradeable_volume(bprice,
-                                                   self.clients[kask].cny_balance,
-                                                   self.clients[kbid].btc_balance)
+                                                   self.brokers[kask].cny_balance,
+                                                   self.brokers[kbid].btc_balance)
         volume = min(volume, max_volume, arbitrage_max_volume)
         if volume < config.min_tx_volume:
             logging.warn("Can't automate this trade, minimum volume transaction"+
@@ -207,11 +207,11 @@ class TraderBot(BasicBot):
                       w_sprice, bprice, sprice):
         volume = float('%0.2f' % volume)
 
-        if self.clients[kask].cny_balance < max(volume*bprice*10, 31*bprice):
+        if self.brokers[kask].cny_balance < max(volume*bprice*10, 31*bprice):
             logging.warn("%s cny is insufficent" % kask)
             return
  
-        if self.clients[kbid].btc_balance < max(volume*10, 31):
+        if self.brokers[kbid].btc_balance < max(volume*10, 31):
             logging.warn("%s btc is insufficent" % kbid)
             return
 

@@ -21,7 +21,7 @@ class HedgerBot(MarketMaker):
     def __init__(self):
         super().__init__()
 
-        self.clients = {
+        self.brokers = {
             "HaobtcCNY": haobtccny.BrokerHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
             "BrokerCNY": brokercny.BrokerBrokerCNY(),
         }
@@ -143,7 +143,7 @@ class HedgerBot(MarketMaker):
 
             for buy_order in buy_orders:
                 logging.debug(buy_order)
-                result = self.clients[kexchange].get_order(buy_order['id'])
+                result = self.brokers[kexchange].get_order(buy_order['id'])
                 logging.debug (result)
                 if not result:
                     logging.warn("get_order buy #%s failed" % (buy_order['id']))
@@ -165,7 +165,7 @@ class HedgerBot(MarketMaker):
             logging.debug(sell_prices)
             for sell_order in self.get_orders('sell'):
                 logging.debug(sell_order)
-                result = self.clients[kexchange].get_order(sell_order['id'])
+                result = self.brokers[kexchange].get_order(sell_order['id'])
                 logging.debug (result)
                 if not result:
                     logging.warn("get_order sell #%s failed" % (sell_order['id']))
@@ -265,9 +265,9 @@ class HedgerBot(MarketMaker):
         logging.info('hedge [%s] to broker: %s %s %s', client_id, hedge_side, amount, price)
 
         if hedge_side == 'SELL':
-            self.clients[self.hedger].sell(amount, price, client_id)
+            self.brokers[self.hedger].sell(amount, price, client_id)
         else:
-            self.clients[self.hedger].buy(amount, price, client_id)
+            self.brokers[self.hedger].buy(amount, price, client_id)
 
         # update the deal_amount of local order
         self.remove_order(order_id)
