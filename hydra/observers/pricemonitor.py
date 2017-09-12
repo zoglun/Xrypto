@@ -82,7 +82,7 @@ class PriceMonitor(Observer):
         v1 = [i[1] for i in df.values]
 
         line = Line("统计套利-现货期货价差监控")
-        line.add("现货期货价差", attr, v1, mark_point=["average"])
+        line.add("现货期货价差", attr, v1, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
         # line.add("外盘内盘价差", attr2, v2, is_smooth=True, mark_line=["max", "average"])
         line.render('./data/index.html')
 
@@ -102,5 +102,5 @@ class PriceMonitor(Observer):
 
         line = Line("统计套利-外盘内盘价差")
         # line.add("现货期货价差", attr, v1, mark_point=["average"])
-        line.add("外盘内盘价差", attr2, v2, is_smooth=True, mark_line=["max", "average"])
+        line.add("外盘内盘价差", attr2, v2, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
         line.render('./data/c.html')
