@@ -37,10 +37,6 @@ class BCH_BTC_Arbitrage(BasicBot):
 
         self.check_order(depths)
 
-    def update_balance(self):
-        for kclient in self.brokers:
-            self.brokers[kclient].get_balances()
-
     def end_opportunity_finder(self):
         if not self.potential_trades:
             return

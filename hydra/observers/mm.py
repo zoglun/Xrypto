@@ -130,11 +130,6 @@ class MM(BasicBot):
 
                         self.cancel_order(self.mm_market, 'sell', order['order_id'])
         
- 
-    def update_balance(self):
-        for kclient in self.brokers:
-            if kclient == self.mm_market:
-                self.brokers[kclient].get_balances()
 
     def hedge_order(self, order, result):
         pass

@@ -40,10 +40,6 @@ class SpecializedTraderBot(Observer):
         min2 = float(btc_bal) / (1. + config.balance_margin)
         return min(min1, min2) * 0.95
 
-    def update_balance(self):
-        for kclient in self.brokers:
-            self.brokers[kclient].get_balances()
-
     def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc,
                     w_bprice, w_sprice):
         if kask not in self.brokers:
