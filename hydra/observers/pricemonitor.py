@@ -38,9 +38,10 @@ class PriceMonitor(Observer):
         if self.last_diff != diff:
             self.last_diff = diff
         else:
+            self.rate = self.get_exchange_rate()
             return
 
-        logging.info("refer_bid_price, refer_ask_price=(%s/%s), diff=%s" % (OKEx_Future_Quarter_bid*self.rate, OKCoin_BTC_CNY_ask, diff))
+        logging.info("OKEx_Future_Quarter_bid, OKCoin_BTC_CNY_ask=(%s/%s), rate=%s, diff=%s" % (OKEx_Future_Quarter_bid*self.rate, OKCoin_BTC_CNY_ask, self.rate, diff))
        
         need_header = False
 

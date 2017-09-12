@@ -141,7 +141,13 @@ class Datafeed(object):
 
             self.depths = self.update_depths()
 
-            self.tick()
+            try:
+                self.tick()
+            except Exception as ex:
+                logging.warn("exception depths:%s" % ex)
+                traceback.print_exc()
+                return
+
 
             if is_sigint_up:
                 # 中断时需要处理的代码

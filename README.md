@@ -1,5 +1,6 @@
 # opportunity detector and automated trading
 
+
 It gets order books from supported exchanges and calculate arbitrage and triangular-arbitrage
 opportunities between each markets. It takes market depth into account.
 

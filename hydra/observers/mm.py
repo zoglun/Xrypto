@@ -40,7 +40,7 @@ class MM(BasicBot):
     def tick(self, depths):
         try:
             refer_bid_price, refer_ask_price = self.get_refer_ticker(depths)
-        except expression as identifier:
+        except Exception as ex:
             logging.warn("exception depths:%s" % ex)
             traceback.print_exc()
             return
