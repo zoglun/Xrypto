@@ -17,8 +17,7 @@ class BCH_BTC_Arbitrage(BasicBot):
             "Bittrex_BCH_BTC": bittrex_bch_btc.BrokerBittrex_BCH_BTC(config.Bittrex_API_KEY, config.Bittrex_SECRET_TOKEN),
             "Viabtc_BCH_BTC": viabtc_bch_btc.BrokerViabtc_BCH_BTC(config.Viabtc_API_KEY, config.Viabtc_SECRET_TOKEN),
         }
-
-
+        
         self.btc_profit_thresh = config.btc_profit_thresh
         self.btc_perc_thresh = config.btc_perc_thresh
         self.trade_wait = config.trade_wait  # in seconds

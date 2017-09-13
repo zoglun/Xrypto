@@ -61,7 +61,6 @@ class Liquid(BasicBot):
         if self.hedge_broker:
             try:
                 self.hedge_bid_price, self.hedge_ask_price = self.get_ticker(depths, self.hedge_broker)
-                break
             except Exception as ex:
                 logging.warn("%s exception depths:%s" % (m, ex))
                 return

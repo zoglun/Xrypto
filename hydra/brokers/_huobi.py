@@ -3,15 +3,15 @@
 from .broker import Broker, TradeException
 import config
 import logging
-from exchanges.okcoin.OkcoinSpotAPI import OKCoinSpot
+from exchanges.huobi_api import ApiClient
 
-class OKCoin(Broker):
+class Huobi(Broker):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
         super().__init__(base_currency, market_currency, pair_code)
 
-        self.client = OKCoinSpot(
-                    api_key if api_key else config.OKCOIN_API_KEY,
-                    api_secret if api_secret else config.OKCOIN_SECRET_TOKEN)
+        self.client = ApiClient(
+                    api_key if api_key else config.HUOBI_API_KEY,
+                    api_secret if api_secret else config.HUOBI_SECRET_TOKEN)
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
@@ -80,17 +80,34 @@ class OKCoin(Broker):
 
     def _get_balances(self):
         """Get balance"""
-        res = self.client.get_userinfo()
-        logging.debug("get_balances: %s" % res)
+        accounts = self.client.get_accounts()
+        logging.debug("get_accounts: %s" % accounts)
+        print(accounts)
+        account_id = accounts['data'][0]['id']
 
-        entry = res['info']['funds']
-
-        self.bch_available = float(entry['free']['bcc'])
-        self.bch_balance = float(entry['freezed']['bcc']) + float(entry['free']['bcc'])
-        self.btc_available = float(entry['free']['btc'])
-        self.btc_balance = float(entry['freezed']['btc']) + float(entry['free']['btc'])
-        self.cny_available = float(entry['free']['cny'])
-        self.cny_balance = float(entry['freezed']['cny']) + float(entry['free']['cny'])
+        res = self.client.get_account_balances(account_id)
+        print(res)
+        balances = res['data']['list']
+        print(balances)
+        for entry in balances:
+            currency = entry['currency'].upper()
+            if currency not in (
+                    'BTC', 'BCC', 'CNY'):
+                continue
+            
+            print(currency)
+            if currency == 'BCC':
+                if entry['type'] == 'trade':
+                    self.bch_available = float(entry['balance'])
+                self.bch_balance += float(entry['balance'])
+            elif currency == 'BTC':
+                if entry['type'] == 'trade':
+                    self.btc_available = float(entry['balance'])
+                self.btc_balance += float(entry['balance'])
+            elif currency == 'CNY':
+                if entry['type'] == 'trade':
+                    self.cny_available = float(entry['balance'])
+                self.cny_balance += float(entry['balance'])
 
         logging.debug(self)
         return res

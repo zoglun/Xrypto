@@ -8,18 +8,20 @@ import traceback
 import config
 import logging
 from .emailer import send_email
+from .basicbot import BasicBot
 
-class BalanceDumper(Observer):
-    exchange = 'BrokerCNY'
+class BalanceDumper(BasicBot):
+    exchange = 'OKCoin_BTC_CNY'
 
-    out_dir = 'balance_history/'
+    out_dir = 'balance_dumper/'
 
-    def __init__(self):
+    def __init__(self):        
         self.brokers = {
-            # "HaobtcCNY": haobtccny.BrokerHaobtcCNY(config.HAOBTC_API_KEY, config.HAOBTC_SECRET_TOKEN),
-            "BrokerCNY": brokercny.BrokerBrokerCNY(),
+            "OKEx_BTC_Future": okex_btc_future.BrokerOKEx_BTC_Future(config.OKEX_API_KEY, config.OKEX_SECRET_TOKEN),
+            "OKCoin_BTC_CNY": bittrex_bch_btc.BrokerOKCoin_BTC_CNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN),
+            "Viabtc_BCH_BTC": viabtc_bch_btc.BrokerViabtc_BCH_BTC(config.HUOBI_API_KEY, config.HUOBI_SECRET_TOKEN),
         }
-        
+
         self.cny_balance = 0
         self.btc_balance = 0
         self.cny_frozen = 0
@@ -47,25 +49,22 @@ class BalanceDumper(Observer):
         fp.write(("%d") % time +','+("%.f") % price+','+("%.f") % cny+','+ str(("%.2f") % btc) +','+ str(("%.f") % cny_b)+','+ str(("%.2f") % btc_b)+','+ str(("%.f") % cny_f)+','+ str(("%.2f") % btc_f)+'\n')
         fp.close()
 
-    def update_balance(self):
+    def sum_balance(self):
         for kclient in self.brokers:
-            self.brokers[kclient].get_balances()
-            self.cny_balance = self.brokers[kclient].cny_balance
-            self.btc_balance = self.brokers[kclient].btc_balance
-            
-            self.cny_frozen = self.brokers[kclient].cny_frozen
-            self.btc_frozen = self.brokers[kclient].btc_frozen
+            self.cny_balance += self.brokers[kclient].cny_balance
+            self.btc_balance += self.brokers[kclient].btc_balance
 
     def cny_balance_total(self, price):
-        return self.cny_balance + self.cny_frozen+ (self.btc_balance + self.btc_frozen)* price
+        return self.cny_balance + self.btc_balance * price
     
     def btc_balance_total(self, price):
-        return self.btc_balance + self.btc_frozen  + (self.cny_balance +self.cny_frozen ) / (price*1.0)
+        return self.btc_balance + self.cny_balance / (price*1.0)
 
 
-    def begin_opportunity_finder(self, depths):
+    def tick(self, depths):
         # Update client balance
         self.update_balance()
+        self.sum_balance()
 
         # get price
         try:
@@ -98,9 +97,3 @@ class BalanceDumper(Observer):
                 self.cny_total, self.btc_total,
                 self.cny_balance, self.btc_balance,
                 self.cny_frozen, self.btc_frozen)
-
-    def end_opportunity_finder(self):
-        pass
-
-    def opportunity(self, profit, volume, bprice, kask, sprice, kbid, perc, w_bprice, w_sprice):
-        pass

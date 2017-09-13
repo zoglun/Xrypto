@@ -3,15 +3,15 @@
 from .broker import Broker, TradeException
 import config
 import logging
-from exchanges.okcoin.OkcoinSpotAPI import OKCoinSpot
+from exchanges.okcoin.OkcoinFutureAPI import OKCoinFuture
 
-class OKCoin(Broker):
+class OKEx(Broker):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
         super().__init__(base_currency, market_currency, pair_code)
 
-        self.client = OKCoinSpot(
-                    api_key if api_key else config.OKCOIN_API_KEY,
-                    api_secret if api_secret else config.OKCOIN_SECRET_TOKEN)
+        self.client = OKCoinFuture(
+                    api_key if api_key else config.OKEX_API_KEY,
+                    api_secret if api_secret else config.OKEX_SECRET_TOKEN)
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
@@ -45,11 +45,9 @@ class OKCoin(Broker):
 
         if res['status'] == 0 or res['status'] == 1 or res['status'] == 4:
             resp['status'] = 'OPEN'
-        elif status == -1:
-            resp['status'] = 'CANCELED'
         else:
             resp['status'] = 'CLOSE'
-            
+
         return resp
 
     def _get_order(self, order_id):
@@ -80,17 +78,13 @@ class OKCoin(Broker):
 
     def _get_balances(self):
         """Get balance"""
-        res = self.client.get_userinfo()
-        logging.debug("get_balances: %s" % res)
+        res = self.client.future_userinfo()
+        logging.debug("future_userinfo: %s" % res)
 
-        entry = res['info']['funds']
+        entry = res['info']['btc']
 
-        self.bch_available = float(entry['free']['bcc'])
-        self.bch_balance = float(entry['freezed']['bcc']) + float(entry['free']['bcc'])
-        self.btc_available = float(entry['free']['btc'])
-        self.btc_balance = float(entry['freezed']['btc']) + float(entry['free']['btc'])
-        self.cny_available = float(entry['free']['cny'])
-        self.cny_balance = float(entry['freezed']['cny']) + float(entry['free']['cny'])
+        self.btc_available = round(float(entry['account_rights']) - float(entry['keep_deposit']), 8)
+        self.btc_balance = float(entry['account_rights'])
 
         logging.debug(self)
         return res

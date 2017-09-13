@@ -5,7 +5,7 @@ from .HttpMD5Util import buildMySign,httpGet,httpPost
 
 class OKCoinFuture:
 
-    def __init__(self, apikey, secretkey, url = 'www.okex.com'):
+    def __init__(self, apikey, secretkey, url = 'https://www.okex.com'):
         self.__url = url
         self.__apikey = apikey
         self.__secretkey = secretkey
@@ -83,7 +83,7 @@ class OKCoinFuture:
         return httpPost(self.__url,FUTURE_POSITION,params)
 
     #期货下单
-    def future_trade(self,symbol,contractType,price='',amount='',tradeType='',matchPrice='',leverRate=''):
+    def future_trade(self,symbol,contractType, price='', amount='',tradeType='',matchPrice='',leverRate=''):
         FUTURE_TRADE = "/api/v1/future_trade.do?"
         params = {
             'api_key':self.__apikey,
@@ -98,6 +98,12 @@ class OKCoinFuture:
             params['price'] = price
         params['sign'] = buildMySign(params,self.__secretkey)
         return httpPost(self.__url,FUTURE_TRADE,params)
+
+    def buy_limit(self, symbol, contractType, amount, price, leverRate=10):
+        return self.future_trade(symbol, contractType, tradeType='buy', price=price, amount=amount)
+
+    def sell_limit(self, symbol, contractType, amount, price, leverRate=10):
+        return self.future_trade(symbol, contractType, tradeType='sell', price=price, amount=amount)
 
     #期货批量下单
     def future_batchTrade(self,symbol,contractType,orders_data,leverRate):

@@ -14,6 +14,7 @@ import json
 from urllib import parse
 from urllib import request
 from datetime import datetime
+import requests
 
 # timeout in 5 seconds:
 TIMEOUT = 5
@@ -93,11 +94,23 @@ class ApiClient(object):
         headers = DEFAULT_GET_HEADERS if method=='GET' else DEFAULT_POST_HEADERS
         if self._assetPassword:
             headers['AuthData'] = self._auth_data()
-        req = request.Request(url, data=data, headers=headers, method=method)
-        with request.urlopen(req, timeout=TIMEOUT) as resp:
-            if resp.getcode()!=200:
-                raise ApiNetworkError('Bad response code: %s %s' % (resp.getcode(), resp.reason))
-            return self._parse(resp.read())
+
+        if method == 'GET':
+            r = requests.get(url, headers=headers, timeout=TIMEOUT)
+        else:
+            r = requests.post(url,  headers=headers, data=params, timeout=TIMEOUT)
+
+        try:
+            return r.json()
+        except ValueError as e:
+            print(r.text)
+            raise
+
+        # req = request.Request(url, data=data, headers=headers, method=method)
+        # with request.urlopen(req, timeout=TIMEOUT) as r:
+            # if resp.getcode()!=200:
+            #     raise ApiNetworkError('Bad response code: %s %s' % (resp.getcode(), resp.reason))
+            # return self._parse(resp.read())
 
     def _parse(self, text):
         # print('Response:\n%s' % text)
@@ -140,6 +153,14 @@ class ApiClient(object):
 
     def _encode(self, s):
         return parse.quote(s, safe='')
+
+    def get_accounts(self):
+        accounts = self.get('/v1/account/accounts')
+        return accounts
+
+    def get_account_balances(self, account_id):
+        balance = self.get('/v1/account/accounts/%s/balance' % account_id)
+        return balance
 
 if __name__ == '__main__':
     API_KEY = 'your-api-key'

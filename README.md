@@ -122,6 +122,9 @@ Test Broker market:
     python3 hydra/cli.py test_pri -m KKEX_BCH_BTC
     python3 hydra/cli.py test_pri -m KKEX_ETH_BTC
     python3 hydra/cli.py test_pri -m OKCoin_BTC_CNY
+    python3 hydra/cli.py test_pri -m OKEx_BTC_Future
+    python3 hydra/cli.py test_pri -m Huobi_BTC_CNY
+
 
 Run tests
 
