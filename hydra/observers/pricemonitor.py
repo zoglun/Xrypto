@@ -34,12 +34,16 @@ class PriceMonitor(Observer):
         return exchange_rate['rate']
 
     def tick(self, depths):
-        self.rate = self.get_exchange_rate()
+        try:
+            self.rate = self.get_exchange_rate()
 
-        OKEx_Future_Quarter_bid = (depths[self.OKEx_Future_Quarter]["bids"][0]['price'])
-        OKCoin_BTC_CNY_ask = (depths[self.OKCoin_BTC_CNY]["asks"][0]['price'])
-        OKCoin_BTC_CNY_bid = (depths[self.OKCoin_BTC_CNY]["bids"][0]['price'])
-        Bitfinex_BTC_USD_ask = depths[self.Bitfinex_BTC_USD]["asks"][0]['price']
+            OKEx_Future_Quarter_bid = (depths[self.OKEx_Future_Quarter]["bids"][0]['price'])
+            OKCoin_BTC_CNY_ask = (depths[self.OKCoin_BTC_CNY]["asks"][0]['price'])
+            OKCoin_BTC_CNY_bid = (depths[self.OKCoin_BTC_CNY]["bids"][0]['price'])
+            Bitfinex_BTC_USD_ask = depths[self.Bitfinex_BTC_USD]["asks"][0]['price']        
+        except Exception as e:
+            logging.error("ex:%s" % e)
+            return
         
         diff = int(OKEx_Future_Quarter_bid*self.rate - OKCoin_BTC_CNY_ask)
         cross_diff = int(Bitfinex_BTC_USD_ask*self.rate - OKCoin_BTC_CNY_bid)
