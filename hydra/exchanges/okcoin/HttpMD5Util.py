@@ -19,10 +19,7 @@ def buildMySign(params,secretKey):
     return  hashlib.md5(data.encode("utf8")).hexdigest().upper()
 
 def httpGet(url,resource,params=''):
-    url = urljoin(url, resource)
-    if params:
-        url = '%s?%s' % (url, urlencode(params))
-    r = requests.get(url, timeout=10)
+    r = requests.get(url+ resource + '?' + params, timeout=10)
     try:
         return r.json()
     except ValueError as e:
