@@ -67,7 +67,7 @@ class BCH_BTC_Arbitrage(BasicBot):
                     continue
 
                 if result['status'] == 'CLOSE' or result['status'] == 'CANCELED':
-                    left_amount = result['amount'] - result['deal_size']
+                    left_amount = result['amount'] - result['deal_amount']
                     if  result['status'] == 'CANCELED' or left_amount > 0.001:
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (buy_order['market'], result['price'], left_amount))
                         self.brokers[buy_order['market']].buy_limit(left_amount, result['price']*(1+ 5*config.price_departure_perc))
@@ -84,7 +84,7 @@ class BCH_BTC_Arbitrage(BasicBot):
                     if abs(result['price']-ask_price)/result['price'] > config.price_departure_perc:
                         print(result['price'], ask_price)
                         logging.info("%s %s" % (abs(result['price']-ask_price)/result['price'], config.price_departure_perc))
-                        left_amount = result['amount'] - result['deal_size']
+                        left_amount = result['amount'] - result['deal_amount']
                         logging.info("Fire:cancel %s ask_price %s result['price'] = %s, left_amount=%s" % (buy_order['market'], ask_price, result['price'], left_amount))
                         self.cancel_order(buy_order['market'], 'buy', buy_order['id'])
 
@@ -101,7 +101,7 @@ class BCH_BTC_Arbitrage(BasicBot):
                     continue
 
                 if result['status'] == 'CLOSE' or result['status'] == 'CANCELED':
-                    left_amount = result['amount'] - result['deal_size']
+                    left_amount = result['amount'] - result['deal_amount']
                     if result['status'] == 'CANCELED' or left_amount > 0.001:
                         logging.info("cancel ok %s result['price'] = %s, left_amount=%s" % (sell_order['market'], result['price'], left_amount))
 
@@ -117,7 +117,7 @@ class BCH_BTC_Arbitrage(BasicBot):
                         continue
 
                     if abs(result['price']-bid_price)/result['price'] > config.price_departure_perc:
-                        left_amount = result['amount'] - result['deal_size']
+                        left_amount = result['amount'] - result['deal_amount']
 
                         logging.info("Fire:cancel %s bid_price %s result['price'] = %s,left_amount=%s" % (sell_order['market'], bid_price, result['price'], left_amount))
                         self.cancel_order(sell_order['market'], 'sell', sell_order['id'])

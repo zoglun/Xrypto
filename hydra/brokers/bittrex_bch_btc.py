@@ -36,7 +36,7 @@ class BrokerBittrex_BCH_BTC(Broker):
         resp['order_id'] = res['OrderUuid']
         resp['amount'] = float(res['Quantity'])
         resp['price'] = float(res['Limit'])
-        resp['deal_size'] = float(res['Quantity']) - float(res['QuantityRemaining'])
+        resp['deal_amount'] = float(res['Quantity']) - float(res['QuantityRemaining'])
         resp['avg_price'] = float(res['Price'])
 
         if res['IsOpen']:

@@ -71,7 +71,7 @@ class BrokerHuobiCNY(Broker):
         resp['order_id'] = response['id']
         resp['amount'] = float(response['order_amount'])
         resp['price'] = float(response['order_price'])
-        resp['deal_size'] = float(response['processed_amount'])
+        resp['deal_amount'] = float(response['processed_amount'])
         resp['avg_price'] = float(response['processed_price'])
 
         status = response['status']

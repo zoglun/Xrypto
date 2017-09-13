@@ -39,7 +39,7 @@ class Binance(Broker):
         resp['order_id'] = res['orderId']
         resp['amount'] = float(res['origQty'])
         resp['price'] = float(res['price'])
-        resp['deal_size'] = float(res['executedQty'])
+        resp['deal_amount'] = float(res['executedQty'])
         resp['avg_price'] = float(res['price'])
 
         if res['status'] == ORDER_STATUS_NEW or res['status'] == ORDER_STATUS_PARTIALLY_FILLED:

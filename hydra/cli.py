@@ -39,7 +39,7 @@ class CLI:
 
         if "t-watch-viabtc-bcc" in args.command:
             self.create_t_arbitrer_viabtc_bcc(args)
-            self.arbitrer.run_loop()
+            self.datafeed.run_loop()
 
         if "t-watch-binance-wtc" in args.command:
             self.create_t_arbitrer_binance_wtc(args)
@@ -157,7 +157,7 @@ class CLI:
 
     def create_t_arbitrer_viabtc_bcc(self, args):
         from t_arbitrer_viabtc import TrigangularArbitrer_Viabtc
-        self.arbitrer = TrigangularArbitrer_Viabtc(base_pair='Viabtc_BCH_CNY',
+        self.datafeed = TrigangularArbitrer_Viabtc(base_pair='Viabtc_BCH_CNY',
                                                     pair1='Viabtc_BCH_BTC',
                                                     pair2='Viabtc_BTC_CNY')
         self.init_observers_and_markets(args)

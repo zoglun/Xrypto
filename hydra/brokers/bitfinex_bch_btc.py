@@ -44,7 +44,7 @@ class BrokerBitfinex_BCH_BTC(Broker):
         resp['order_id'] = res['id']
         resp['amount'] = float(res['original_amount'])
         resp['price'] = float(res['price'])
-        resp['deal_size'] = float(res['executed_amount'])
+        resp['deal_amount'] = float(res['executed_amount'])
         resp['avg_price'] = float(res['avg_execution_price'])
 
         if res['is_live']:

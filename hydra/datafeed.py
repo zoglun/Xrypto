@@ -82,7 +82,9 @@ class Datafeed(object):
         self.observer_tick()
 
     def __get_market_depth(self, market, depths):
-        depths[market.name] = market.get_depth()
+        depth = market.get_depth()
+        if depth:
+            depths[market.name] = depth
 
     def update_depths(self):
         depths = {}

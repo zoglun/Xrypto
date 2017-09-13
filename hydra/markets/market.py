@@ -34,15 +34,15 @@ class Market(object):
         # logging.warn('Market: %s order book1:(%s>%s)', self.name, timediff, self.depth_updated)
         if timediff > self.update_rate:
             logging.debug('%s should update...', self.name)
-            self.ask_update_depth()
+            if not self.ask_update_depth():
+                return None
         
         timediff = time.time() - self.depth_updated
         # logging.warn('Market: %s order book2:(%s>%s)', self.name, timediff, self.depth_updated)
 
         if timediff > config.market_expiration_time:
             # logging.warn('Market: %s order book is expired(%s>%s)', self.name, timediff, config.market_expiration_time)
-            self.depth = {'asks': [{'price': 0, 'amount': 0}], 'bids': [
-                {'price': 0, 'amount': 0}]}
+            return None
         return self.depth
 
     def subscribe_depth(self):
@@ -94,13 +94,18 @@ class Market(object):
             self.update_depth()
             # self.convert_to_usd()
             self.depth_updated = time.time()
+            return True
         except Exception as e:
-            logging.error("Can't update market: %s - %s" % (self.name, str(e)))
-            log_exception(logging.DEBUG)
+            logging.error("Can't update market: %s - err:%s" % (self.name, str(e)))
+            # log_exception(logging.DEBUG)
+            return False
             # traceback.print_exc()
 
     def get_ticker(self):
         depth = self.get_depth()
+        if not depth:
+            return None
+
         res = {'ask': {'price': 0, 'amount': 0}, 'bid': {'price': 0, 'amount': 0}}
 
         if len(depth['asks']) > 0:

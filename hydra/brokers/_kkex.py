@@ -42,7 +42,7 @@ class KKEX(Broker):
         resp['order_id'] = res['order_id']
         resp['amount'] = float(res['amount'])
         resp['price'] = float(res['price'])
-        resp['deal_size'] = float(res['deal_amount'])
+        resp['deal_amount'] = float(res['deal_amount'])
         resp['avg_price'] = float(res['avg_price'])
         resp['type'] = res['type']
 

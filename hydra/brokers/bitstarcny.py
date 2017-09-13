@@ -64,7 +64,7 @@ class BrokerBitstarCNY(Broker):
         resp['order_id'] = order['order_id']
         resp['amount'] = order['amount']
         resp['price'] = order['price']
-        resp['deal_size'] = order['deal_amount']
+        resp['deal_amount'] = order['deal_amount']
         resp['avg_price'] = order['avg_price']
 
         status = order['status']

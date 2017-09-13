@@ -84,7 +84,7 @@ To check your balance on an exchange (also a good way to check your accounts con
     python3 hydra/cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC get-balance
     python3 hydra/cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
 
-Run t-arbitrage
+Run trianglar-arbitrage
 
     python3 hydra/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch-viabtc-bcc -v
     python3 hydra/cli.py -m Binance_WTC_BTC,Binance_WTC_ETH,Binance_ETH_BTC t-watch-binance-wtc -v
@@ -105,20 +105,20 @@ Run in background
 
 List supported public markets:
 
-      python3 hydra/cli.py list-public-markets
+    python3 hydra/cli.py list-public-markets
 
 Test public market:
       
-        python3 hydra/cli.py test_pub -m OKEx_Future_Quarter
-        python3 hydra/cli.py test_pub -m KKEX_BCH_BTC
-        python3 hydra/cli.py test_pub -m KKEX_ETH_BTC
+    python3 hydra/cli.py test_pub -m OKEx_Future_Quarter
+    python3 hydra/cli.py test_pub -m KKEX_BCH_BTC
+    python3 hydra/cli.py test_pub -m KKEX_ETH_BTC
 
 Test Broker market:
       
-      python3 hydra/cli.py test_pri -m Viabtc_BCH_BTC
-      python3 hydra/cli.py test_pri -m Jubi_EOS_CNY
-      python3 hydra/cli.py test_pri -m KKEX_BCH_BTC
-      python3 hydra/cli.py test_pri -m KKEX_ETH_BTC
+    python3 hydra/cli.py test_pri -m Viabtc_BCH_BTC
+    python3 hydra/cli.py test_pri -m Jubi_EOS_CNY
+    python3 hydra/cli.py test_pri -m KKEX_BCH_BTC
+    python3 hydra/cli.py test_pri -m KKEX_ETH_BTC
 
 Run tests
 
@@ -133,6 +133,8 @@ Help
 liquid in kkex
 
     python3 hydra/cli.py -mKKEX_BCH_BTC,Viabtc_BCH_BTC -oMM
+    python3 hydra/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC -oMM
+    python3 hydra/cli.py -mViabtc_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oMM
 
 arbitrage in haobtc, huobi or okcoin
 
@@ -144,6 +146,9 @@ bch bcc arbitrage in Bitfinex_BCH_BTC, Bittrex_BCH_BTC
     python3 hydra/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC
     python3 hydra/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC
 
+trianglar-arbitrage in viabtc
+
+    python3 hydra/cli.py -o TViabtc -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY  -v
 
 balance statatistic 
 

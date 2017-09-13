@@ -244,15 +244,15 @@ class HedgerBot(MarketMaker):
         logging.error (price_candidate_set)
 
     def hedge_order(self, order, result):
-        if result['deal_size'] <= 0:
+        if result['deal_amount'] <= 0:
             logging.debug("[hedger]NOTHING TO BE DEALED.")
             return
 
         order_id = result['order_id']        
-        deal_size = result['deal_size']
+        deal_amount = result['deal_amount']
         price = result['avg_price']
 
-        amount = deal_size - order['deal_amount']
+        amount = deal_amount - order['deal_amount']
         if amount <= config.broker_min_amount:
             logging.debug("[hedger]deal nothing while.")
             return
@@ -271,7 +271,7 @@ class HedgerBot(MarketMaker):
 
         # update the deal_amount of local order
         self.remove_order(order_id)
-        order['deal_amount'] = deal_size
+        order['deal_amount'] = deal_amount
         order['deal_index'] +=1
         self.orders.append(order)
         
