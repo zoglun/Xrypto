@@ -11,7 +11,7 @@ import hashlib
 import sys
 import json
 import config
-from lib.bitstar_sdk import ApiClient
+from exchanges.bitstar_sdk import ApiClient
 import logging
 
 class BrokerBitstarCNY(Broker):

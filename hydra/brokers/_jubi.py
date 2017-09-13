@@ -3,7 +3,7 @@
 from .broker import Broker, TradeException
 import config
 import logging
-from lib.jubi_api import JubiAPI
+from exchanges.jubi_api import JubiAPI
 
 # python3 hydra/cli.py -m Bitfinex_BCH_BTC get-balance
 

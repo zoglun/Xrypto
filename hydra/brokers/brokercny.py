@@ -12,7 +12,7 @@ import sys
 import json
 import config
 import logging
-import lib.broker_api as exchange_api
+import exchanges.broker_api as exchange_api
 import traceback
 
 class BrokerBrokerCNY(Broker):

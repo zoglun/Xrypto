@@ -72,8 +72,6 @@ class Liquid(BasicBot):
     def place_orders(self, refer_bid_price, refer_ask_price):
         liquid_max_amount = config.LIQUID_MAX_AMOUNT
         # excute trade
-        print(self.orders)
-        print(self.buying_len())
         if self.buying_len() < config.LIQUID_BUY_ORDER_PAIRS:
             if self.mm_broker.btc_available < config.LIQUID_BUY_RESERVE:
                 logging.verbose("btc_available(%s) < reserve(%s)" % (self.mm_broker.btc_available, config.LIQUID_BUY_RESERVE))
@@ -118,7 +116,7 @@ class Liquid(BasicBot):
                 self.hedge_order(local_order, order)
 
                 if order['status'] == 'CLOSE' or order['status'] == 'CANCELED':
-                    logging.info("order#%s closed: amount %s order['price'] = %s" % (order['order_id'], order['amount'], order['price']))
+                    logging.info("order#%s %s: amount = %s price = %s deal = %s" % (order['order_id'], order['status'], order['amount'], order['price'], order['deal_amount']))
                     self.remove_order(order['order_id'])
 
                 if order['type'] =='buy':

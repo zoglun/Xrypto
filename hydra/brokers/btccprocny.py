@@ -11,7 +11,7 @@ import hashlib
 import sys
 import json
 import config
-from lib.helpers import *
+from exchanges.helpers import *
 
 
 class BrokerBtccProCNY(Broker):

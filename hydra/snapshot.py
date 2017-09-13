@@ -1,4 +1,4 @@
-from lib.emailer import send_email
+from exchanges.emailer import send_email
 import datetime
 import time
 import config

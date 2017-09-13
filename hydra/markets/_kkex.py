@@ -3,7 +3,7 @@
 import logging
 import requests
 from .market import Market
-from lib.kkex_api import Client
+from exchanges.kkex_api import Client
 
 
 class KKEX(Market):

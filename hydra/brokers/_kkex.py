@@ -3,7 +3,7 @@
 from .broker import Broker, TradeException
 import config
 import logging
-from lib.kkex_api import Client
+from exchanges.kkex_api import Client
 
 class KKEX(Broker):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):

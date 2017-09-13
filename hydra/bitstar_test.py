@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import decimal
 
-from lib.bitstar_sdk import ApiClient
+from exchanges.bitstar_sdk import ApiClient
 import config
 
 API_KEY = config.BITSTAR_API_KEY

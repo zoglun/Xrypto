@@ -11,8 +11,8 @@ import hashlib
 import sys
 import json
 import config
-from lib.exchange import exchange
-from lib.settings import OKCOIN_API_URL
+from exchanges.exchange import exchange
+from exchanges.settings import OKCOIN_API_URL
 import logging
 
 class BrokerOkCoinCNY(Broker):

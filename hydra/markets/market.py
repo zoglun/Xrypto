@@ -56,7 +56,7 @@ class Market(object):
             pass
 
     def subscribe_zmq_depth(self):
-        import lib.push as push
+        import exchanges.push as push
 
         push_s = push.Push(config.ZMQ_PORT)
         push_s.msg_server()

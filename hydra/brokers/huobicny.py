@@ -11,8 +11,8 @@ import urllib.error
 import hashlib
 import sys
 import json
-from lib.exchange import exchange
-from lib.settings import HUOBI_API_URL
+from exchanges.exchange import exchange
+from exchanges.settings import HUOBI_API_URL
 import sys
 import traceback
 import config

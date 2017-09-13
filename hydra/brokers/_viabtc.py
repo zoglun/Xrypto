@@ -3,7 +3,7 @@
 from .broker import Broker, TradeException
 import config
 import logging
-from lib.viabtc.ViabtcAPI import ViabtcClient
+from exchanges.viabtc.ViabtcAPI import ViabtcClient
 
 class Viabtc(Broker):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
