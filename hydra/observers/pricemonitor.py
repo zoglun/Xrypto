@@ -17,6 +17,8 @@ class PriceMonitor(Observer):
     out_dir = './data/'
     last_diff = 0
     last_cross_diff = 0
+    ok_f = 'ok_diff5.csv'
+    b_f = 'b_diff5.csv'
 
     def __init__(self):
         super().__init__()
@@ -44,12 +46,12 @@ class PriceMonitor(Observer):
 
         if self.last_diff != diff:
             self.last_diff = diff
-            self.save_to_csv('ok_diff.csv', OKCoin_BTC_CNY_ask, OKEx_Future_Quarter_bid*self.rate, diff)
+            self.save_to_csv(self.ok_f, OKCoin_BTC_CNY_ask, OKEx_Future_Quarter_bid*self.rate, diff)
             self.render_to_html()
 
         if self.last_cross_diff != cross_diff:
             self.last_cross_diff = cross_diff
-            self.save_to_csv('bitfinex_diff.csv', OKCoin_BTC_CNY_bid, Bitfinex_BTC_USD_ask*self.rate, cross_diff)
+            self.save_to_csv(self.b_f, OKCoin_BTC_CNY_bid, Bitfinex_BTC_USD_ask*self.rate, cross_diff)
             self.render_to_html_cross()
 
         logging.info("rate=%s, okdiff=%s, bitfinex_diff=%s" % (self.rate, diff, cross_diff))
@@ -67,45 +69,51 @@ class PriceMonitor(Observer):
         fp = open(filename, 'a+')
 
         if need_header:
-            fp.write("timestamp, p1, p2, diff\n")
+            fp.write("timestamp, strtime, p1, p2, diff\n")
 
-        fp.write(("%d") % time.time() +','+("%.2f") % p1 +','+("%.2f") % p2 +','+("%.2f") % diff +'\n')
+        timestr = time.strftime("%d/%m/%Y %H:%M:%S")
+
+        fp.write(("%d") % time.time()+','+("%s") % timestr +','+("%.2f") % p1 +','+("%.2f") % p2 +','+("%.2f") % diff +'\n')
         fp.close()
 
     def render_to_html(self):
         import pandas as pd
         from pyecharts import Line
 
-        df = pd.read_csv('./data/ok_diff.csv')
+        df = pd.read_csv(self.out_dir + self.ok_f)
 
-        attr = [i[0] for i in df.values]
-        p1 = [i[1] for i in df.values]
-        p2 = [i[2] for i in df.values]
-        d3 = [i[3] for i in df.values]
+        attr = [i[1] for i in df.values]
+        p1 = [i[2] for i in df.values]
+        p2 = [i[3] for i in df.values]
+        d3 = [i[4] for i in df.values]
+
+        line = Line("统计套利")
+        line.add("价差", attr, d3, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
+        # line.add("外盘内盘价差", attr2, v2, is_smooth=True, mark_line=["max", "average"])
+        line.render('./data/index.html')
 
         line = Line("统计套利")
         line.add("ok", attr, p1)
         line.add("ok季度", attr, p2)
-        line.add("价差", attr, d3, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
-
-        # line.add("外盘内盘价差", attr2, v2, is_smooth=True, mark_line=["max", "average"])
-        line.render('./data/index.html')
+        line.render('./data/index2.html')
 
     def render_to_html_cross(self):
         import pandas as pd
         from pyecharts import Line
 
         # df = pd.read_csv('./data/diff.csv')
-        df = pd.read_csv('./data/bitfinex_diff.csv')
+        df = pd.read_csv(self.out_dir + self.b_f)
 
-        attr = [i[0] for i in df.values]
-        p1 = [i[1] for i in df.values]
-        p2 = [i[2] for i in df.values]
-        d3 = [i[3] for i in df.values]
+        attr = [i[1] for i in df.values]
+        p1 = [i[2] for i in df.values]
+        p2 = [i[3] for i in df.values]
+        d3 = [i[4] for i in df.values]
+
+        line = Line("统计套利")
+        line.add("价差", attr, d3, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
+        line.render('./data/c.html')
 
         line = Line("统计套利")
         line.add("ok", attr, p1)
         line.add("bitfinex", attr, p2)
-        line.add("价差", attr, d3, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
-
-        line.render('./data/c.html')
+        line.render('./data/c2.html')
