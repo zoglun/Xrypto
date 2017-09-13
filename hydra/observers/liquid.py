@@ -12,8 +12,9 @@ import config
 from .basicbot import BasicBot
 import threading
 
-class MM(BasicBot):
-    def __init__(self, mm_market='KKEX_BCH_BTC'):
+class Liquid(BasicBot):
+    def __init__(self, mm_market='KKEX_BCH_BTC', 
+                        refer_markets=['Viabtc_BCH_BTC', 'Bitfinex_BCH_BTC', 'Bittrex_BCH_BTC']):
         super().__init__()
 
         self.mm_market = mm_market
@@ -25,7 +26,7 @@ class MM(BasicBot):
 
         self.mm_broker = self.brokers[mm_market]
         
-        self.refer_markets = ['Viabtc_BCH_BTC', 'Bitfinex_BCH_BTC', 'Bittrex_BCH_BTC']
+        self.refer_markets = refer_markets
 
         self.cancel_all_orders(self.mm_market)
 
@@ -141,7 +142,6 @@ class MM(BasicBot):
         
     def hedge_order(self, order, result):
         if result['deal_amount'] <= 0:
-            logging.debug("[hedger]NOTHING TO BE DEALED.")
             return
 
         order_id = result['order_id']        
@@ -149,8 +149,8 @@ class MM(BasicBot):
         price = result['avg_price']
 
         amount = deal_amount - order['deal_amount']
-        if amount <= config.broker_min_amount:
-            logging.debug("[hedger]deal nothing while.")
+        if amount <= config.LIQUID_HEDGE_MIN_AMOUNT:
+            logging.debug("[hedger]deal nothing while.", amount, config.LIQUID_HEDGE_MIN_AMOUNT)
             return
 
         client_id = str(order_id) + '-' + str(order['deal_index'])

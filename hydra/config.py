@@ -30,6 +30,7 @@ LIQUID_SELL_ORDER_PAIRS = 5
 LIQUID_DIFF = 0.001 #20%
 LIQUID_BUY_RESERVE = 200
 LIQUID_SELL_RESERVE = 1000
+LIQUID_HEDGE_MIN_AMOUNT = 0.01
 
 
 btc_profit_thresh = 0.001  # in BTC
@@ -76,9 +77,6 @@ stage1_percent=0.2
 
 BUY_QUEUE = 1
 SELL_QUEUE = 1
-
-
-broker_min_amount = 0.01
 
 #stata
 cny_init = 60000000000

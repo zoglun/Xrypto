@@ -132,9 +132,9 @@ Help
 
 liquid in kkex
 
-    python3 hydra/cli.py -mKKEX_BCH_BTC,Viabtc_BCH_BTC -oMM
-    python3 hydra/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC -oMM
-    python3 hydra/cli.py -mViabtc_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oMM
+    python3 hydra/cli.py -mKKEX_BCH_BTC,Viabtc_BCH_BTC -oLiquid
+    python3 hydra/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC -oLiquid
+    python3 hydra/cli.py -mViabtc_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid
 
 arbitrage in haobtc, huobi or okcoin
 
