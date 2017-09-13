@@ -3,16 +3,15 @@
 from .broker import Broker, TradeException
 import config
 import logging
-from exchanges.kkex_api import Client
+from exchanges.okcoin.OkcoinSpotAPI import OKCoinSpot
 
-class KKEX(Broker):
+class OKCoin(Broker):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
         super().__init__(base_currency, market_currency, pair_code)
-        
-        self.client = Client(
-                    api_key if api_key else config.KKEX_API_KEY,
-                    api_secret if api_secret else config.KKEX_SECRET_TOKEN,
-                    api_root='http://118.190.82.40:8019/api/v1')
+
+        self.client = OKCoinSpot(
+                    api_key if api_key else config.OKCOIN_API_KEY,
+                    api_secret if api_secret else config.OKCOIN_SECRET_TOKEN)
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
@@ -55,10 +54,11 @@ class KKEX(Broker):
         res = self.client.order_info(self.pair_code, int(order_id))
         logging.verbose('get_order: %s' % res)
 
-        assert str(res['order']['order_id']) == str(order_id)
-        return self._order_status(res['order'])
+        assert str(res['orders'][0]['order_id']) == str(order_id)
+        return self._order_status(res['orders'][0])
 
     def _get_orders(self, order_ids):
+        raise
         orders = []
         res = self.client.orders_info(self.pair_code, order_ids) 
 
@@ -83,17 +83,20 @@ class KKEX(Broker):
 
         entry = res['info']['funds']
 
-        self.bch_available = float(entry['free']['BCC'])
-        self.bch_balance = float(entry['freezed']['BCC']) + float(entry['free']['BCC'])
-        self.btc_available = float(entry['free']['BTC'])
-        self.btc_balance = float(entry['freezed']['BTC']) + float(entry['free']['BTC'])
+        self.bch_available = float(entry['free']['bcc'])
+        self.bch_balance = float(entry['freezed']['bcc']) + float(entry['free']['bcc'])
+        self.btc_available = float(entry['free']['btc'])
+        self.btc_balance = float(entry['freezed']['btc']) + float(entry['free']['btc'])
+        self.cny_available = float(entry['free']['cny'])
+        self.cny_balance = float(entry['freezed']['cny']) + float(entry['free']['cny'])
 
         logging.debug(self)
         return res
 
     def _get_orders_history(self):
+        raise
         orders = []
-        res = self.client.get_orders_history(self.pair_code, pagesize=200)    
+        res = self.client.get_orders_history(self.pair_code, pageLength=200)    
         for order in res['orders']:
             resp_order = self._order_status(order)
             orders.append(resp_order)

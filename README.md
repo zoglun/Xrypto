@@ -110,8 +110,10 @@ List supported public markets:
 Test public market:
       
     python3 hydra/cli.py test_pub -m OKEx_Future_Quarter
+    python3 hydra/cli.py test_pub -m OKEx_Future_Quarter,OKCoin_BTC_CNY
     python3 hydra/cli.py test_pub -m KKEX_BCH_BTC
     python3 hydra/cli.py test_pub -m KKEX_ETH_BTC
+
 
 Test Broker market:
       
@@ -119,6 +121,7 @@ Test Broker market:
     python3 hydra/cli.py test_pri -m Jubi_EOS_CNY
     python3 hydra/cli.py test_pri -m KKEX_BCH_BTC
     python3 hydra/cli.py test_pri -m KKEX_ETH_BTC
+    python3 hydra/cli.py test_pri -m OKCoin_BTC_CNY
 
 Run tests
 

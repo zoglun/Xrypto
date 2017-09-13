@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #用于访问OKCOIN 现货REST API
-from okcoincnapi.HttpMD5Util import buildMySign,httpGet,httpPost
+from .HttpMD5Util import buildMySign,httpGet,httpPost
 
 class OKCoinSpot:
 
-    def __init__(self,url,apikey,secretkey):
+    def __init__(self,apikey,secretkey, url='https://www.okcoin.cn'):
         self.__url = url
         self.__apikey = apikey
         self.__secretkey = secretkey
@@ -39,7 +39,7 @@ class OKCoinSpot:
         return httpGet(self.__url,TRADES_RESOURCE,'&'.join(params))
     
     #获取用户现货账户信息
-    def userinfo(self):
+    def get_userinfo(self):
         USERINFO_RESOURCE = "/api/v1/userinfo.do"
         params ={}
         params['api_key'] = self.__apikey
@@ -47,7 +47,7 @@ class OKCoinSpot:
         return httpPost(self.__url,USERINFO_RESOURCE,params)
 
     #现货交易
-    def trade(self,symbol,tradeType,price='',amount=''):
+    def trade(self,symbol,tradeType, price='',amount=''):
         TRADE_RESOURCE = "/api/v1/trade.do"
         params = {
             'api_key':self.__apikey,
@@ -61,6 +61,13 @@ class OKCoinSpot:
             
         params['sign'] = buildMySign(params,self.__secretkey)
         return httpPost(self.__url,TRADE_RESOURCE,params)
+    
+    def buy_limit(self, symbol, amount, price):
+        return self.trade(symbol, 'buy', price=price, amount=amount)
+
+    def sell_limit(self, symbol, amount, price):
+        return self.trade(symbol, 'sell', price=price, amount=amount)
+
 
     #现货批量下单
     def batchTrade(self,symbol,tradeType,orders_data):
@@ -75,7 +82,7 @@ class OKCoinSpot:
         return httpPost(self.__url,BATCH_TRADE_RESOURCE,params)
 
     #现货取消订单
-    def cancelOrder(self,symbol,orderId):
+    def cancel_order(self,symbol,orderId):
         CANCEL_ORDER_RESOURCE = "/api/v1/cancel_order.do"
         params = {
              'api_key':self.__apikey,
@@ -86,7 +93,7 @@ class OKCoinSpot:
         return httpPost(self.__url,CANCEL_ORDER_RESOURCE,params)
 
     #现货订单信息查询
-    def orderinfo(self,symbol,orderId):
+    def order_info(self,symbol,orderId):
          ORDER_INFO_RESOURCE = "/api/v1/order_info.do"
          params = {
              'api_key':self.__apikey,
@@ -97,19 +104,19 @@ class OKCoinSpot:
          return httpPost(self.__url,ORDER_INFO_RESOURCE,params)
 
     #现货批量订单信息查询
-    def ordersinfo(self,symbol,orderId,tradeType):
+    def orders_info(self,symbol,order_ids, tradeType=0):
          ORDERS_INFO_RESOURCE = "/api/v1/orders_info.do"
          params = {
              'api_key':self.__apikey,
              'symbol':symbol,
-             'order_id':orderId,
+             'order_id':','.join(order_ids),
              'type':tradeType
          }
          params['sign'] = buildMySign(params,self.__secretkey)
          return httpPost(self.__url,ORDERS_INFO_RESOURCE,params)
 
     #现货获得历史订单信息
-    def orderHistory(self,symbol,status,currentPage,pageLength):
+    def get_orders_history(self,symbol,status=0,currentPage=1,pageLength=200):
            ORDER_HISTORY_RESOURCE = "/api/v1/order_history.do"
            params = {
               'api_key':self.__apikey,

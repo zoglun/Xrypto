@@ -3,8 +3,7 @@ from .observer import Observer
 import json
 import time
 import os
-from brokers import kkex_bch_btc
-import math
+from brokers import kkex_bch_btc, viabtc_bch_btc
 import random
 import sys
 import traceback
@@ -14,7 +13,8 @@ import threading
 
 class Liquid(BasicBot):
     def __init__(self, mm_market='KKEX_BCH_BTC', 
-                        refer_markets=['Viabtc_BCH_BTC', 'Bitfinex_BCH_BTC', 'Bittrex_BCH_BTC']):
+                        refer_markets=['Viabtc_BCH_BTC', 'Bitfinex_BCH_BTC', 'Bittrex_BCH_BTC'],
+                        hedge_market='Viabtc_BCH_BTC'):
         super().__init__()
 
         self.mm_market = mm_market
@@ -22,11 +22,14 @@ class Liquid(BasicBot):
         self.brokers = {
             # TODO: move that to the config file
             mm_market: kkex_bch_btc.BrokerKKEX_BCH_BTC(config.KKEX_API_KEY, config.KKEX_SECRET_TOKEN),
+            hedge_market: viabtc_bch_btc.BrokerViabtc_BCH_BTC(config.Viabtc_API_KEY, config.Viabtc_SECRET_TOKEN),
         }
 
         self.mm_broker = self.brokers[mm_market]
         
         self.refer_markets = refer_markets
+
+        self.hedge_broker = hedge_market
 
         self.cancel_all_orders(self.mm_market)
 
@@ -44,7 +47,7 @@ class Liquid(BasicBot):
         refer_market = None
         for m in self.refer_markets:
             try:
-                refer_bid_price, refer_ask_price = self.get_refer_ticker(depths, m)
+                refer_bid_price, refer_ask_price = self.get_ticker(depths, m)
                 refer_market = m
                 break
             except Exception as ex:
@@ -54,7 +57,15 @@ class Liquid(BasicBot):
         if not refer_market:
             logging.warn('no avaliable market depths')
             return
-
+        
+        if self.hedge_broker:
+            try:
+                self.hedge_bid_price, self.hedge_ask_price = self.get_ticker(depths, self.hedge_broker)
+                break
+            except Exception as ex:
+                logging.warn("%s exception depths:%s" % (m, ex))
+                return
+        
         self.check_orders(depths, refer_bid_price, refer_ask_price)
 
         # Update client balance
@@ -62,12 +73,12 @@ class Liquid(BasicBot):
 
         self.place_orders(refer_bid_price, refer_ask_price)
 
-    def get_refer_ticker(self, depths, refer_market):
-        refer_bid_price = (depths[refer_market]["bids"][0]['price'])
-        refer_ask_price = (depths[refer_market]["asks"][0]['price'])
+    def get_ticker(self, depths, market):
+        bid_price = (depths[market]["bids"][0]['price'])
+        ask_price = (depths[market]["asks"][0]['price'])
 
-        logging.debug("refer_market:%s bid, ask=(%s/%s)" % (refer_market, refer_bid_price, refer_ask_price))
-        return refer_bid_price, refer_ask_price
+        logging.debug("market:%s bid, ask=(%s/%s)" % (market, bid_price, ask_price))
+        return bid_price, ask_price
 
     def place_orders(self, refer_bid_price, refer_ask_price):
         liquid_max_amount = config.LIQUID_MAX_AMOUNT
@@ -157,10 +168,10 @@ class Liquid(BasicBot):
         hedge_side = 'sell' if order['type'] =='buy' else 'buy'
         logging.info('hedge [%s] to broker: %s %s %s', client_id, hedge_side, amount, price)
 
-        # if hedge_side == 'SELL':
-        #     self.brokers[self.hedger].sell(amount, price, client_id)
+        # if hedge_side == 'sell':
+        #     self.brokers[self.hedge_market].sell_limit(amount, self.hedge_bid_price*(1-1%))
         # else:
-        #     self.brokers[self.hedger].buy(amount, price, client_id)
+        #     self.brokers[self.hedge_market].buy_limit(amount, self.hedge_ask_price*(1+1%))
 
         # update the deal_amount of local order
         self.remove_order(order_id)

@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #用于访问OKCOIN 期货REST API
-from okcoincnapi.HttpMD5Util import buildMySign,httpGet,httpPost
+from .HttpMD5Util import buildMySign,httpGet,httpPost
 
 class OKCoinFuture:
 
-    def __init__(self,url,apikey,secretkey):
+    def __init__(self, apikey, secretkey, url = 'www.okex.com'):
         self.__url = url
         self.__apikey = apikey
         self.__secretkey = secretkey
@@ -21,7 +21,7 @@ class OKCoinFuture:
         return httpGet(self.__url,FUTURE_TICKER_RESOURCE,params)
 
     #OKCoin期货市场深度信息
-    def future_depth(self,symbol,contractType,size): 
+    def future_depth(self,symbol,contractType,size=None): 
         FUTURE_DEPTH_RESOURCE = "/api/v1/future_depth.do"
         params = ''
         if symbol:

@@ -8,6 +8,8 @@ import json
 import hashlib
 import time
 import requests
+from urllib.parse import urljoin
+from urllib.parse import urlencode
 
 def buildMySign(params,secretKey):
     sign = ''
@@ -17,24 +19,27 @@ def buildMySign(params,secretKey):
     return  hashlib.md5(data.encode("utf8")).hexdigest().upper()
 
 def httpGet(url,resource,params=''):
-    # conn = http.client.HTTPSConnection(url, timeout=10)
-    # conn.request("GET",resource + '?' + params)
-    # response = conn.getresponse()
-    # data = gzip.decompress(response.read()).decode('utf-8')
-    
-    f = requests.get("https://"+ url+ resource + '?' + params)
-    return json.loads(f.text)
+    url = urljoin(url, resource)
+    if params:
+        url = '%s?%s' % (url, urlencode(params))
+    r = requests.get(url, timeout=10)
+    try:
+        return r.json()
+    except ValueError as e:
+        print(r.text)
+        raise
 
 def httpPost(url,resource,params):
-     headers = {
-            "Content-type" : "application/x-www-form-urlencoded",
-     }
-     conn = http.client.HTTPSConnection(url, timeout=10)
-     temp_params = urllib.parse.urlencode(params)
-     conn.request("POST", resource, temp_params, headers)
-     response = conn.getresponse()
-     data = response.read().decode('utf-8')
-     params.clear()
-     conn.close()
-     return data
+    headers = {
+        "Content-type" : "application/x-www-form-urlencoded",
+    }
+
+    url = urljoin(url, resource)
+    params = urllib.parse.urlencode(params)
+    r = requests.post(url, headers=headers, data=params, timeout=10)
+    try:
+        return r.json()
+    except ValueError as e:
+        print(r.text)
+        raise
  

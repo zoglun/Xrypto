@@ -150,7 +150,6 @@ class Datafeed(object):
                 traceback.print_exc()
                 return
 
-
             if is_sigint_up:
                 # 中断时需要处理的代码
                 logging.info("APP Exit")

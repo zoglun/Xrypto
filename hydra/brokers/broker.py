@@ -29,7 +29,7 @@ class Broker(object):
         self.bch_available = 0.
 
     def __str__(self):
-        return "%s: %s" % (self.name[7:], str({"cny_balance": self.cny_balance,
+        return "%s: %s" % (self.brief_name, str({"cny_balance": self.cny_balance,
                                             "cny_available": self.cny_available,
                                             "btc_balance": self.btc_balance,
                                             "btc_available": self.btc_available,
