@@ -87,7 +87,7 @@ class BalanceDumper(BasicBot):
 
         logging.info('cny profit:%.2f', profit)
 
-        if (profit != self.last_profit):
+        if (abs(profit - self.last_profit) > 200):
             self.last_profit = profit
             self.save_profit(bid_price, 
                 self.cny_balance, self.btc_balance,
