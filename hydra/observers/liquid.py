@@ -149,17 +149,17 @@ class Liquid(BasicBot):
                         self.cancel_order(self.mm_market, 'sell', order['order_id'])
         
     def hedge_order(self, order, result):
-        if result['deal_amount'] <= 0:
+        if result['deal_amount'] <= 0.000001:
+            return
+
+        amount = result['deal_amount'] - order['deal_amount']
+        if amount <= config.LIQUID_HEDGE_MIN_AMOUNT:
+            logging.debug("[hedger]deal nothing while. v:%s <= min:%s", amount, config.LIQUID_HEDGE_MIN_AMOUNT)
             return
 
         order_id = result['order_id']        
         deal_amount = result['deal_amount']
         price = result['avg_price']
-
-        amount = deal_amount - order['deal_amount']
-        if amount <= config.LIQUID_HEDGE_MIN_AMOUNT:
-            logging.debug("[hedger]deal nothing while.", amount, config.LIQUID_HEDGE_MIN_AMOUNT)
-            return
 
         client_id = str(order_id) + '-' + str(order['deal_index'])
 
@@ -171,6 +171,16 @@ class Liquid(BasicBot):
         #     self.brokers[self.hedge_market].sell_limit(amount, self.hedge_bid_price*(1-1%))
         # else:
         #     self.brokers[self.hedge_market].buy_limit(amount, self.hedge_ask_price*(1+1%))
+
+        if hedge_side == 'sell':
+            logging.info('test: %s %s', hedge_side, self.hedge_bid_price*(1-0.01))
+
+            self.brokers[self.mm_market].sell_limit(amount, self.hedge_bid_price*(1-0.01))
+        else:
+            logging.info('test: %s %s', hedge_side, self.hedge_bid_price*(1-0.01))
+
+            self.brokers[self.mm_market].buy_limit(amount, self.hedge_ask_price*(1+0.01))
+
 
         # update the deal_amount of local order
         self.remove_order(order_id)
