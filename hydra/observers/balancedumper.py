@@ -2,24 +2,26 @@ from .observer import Observer
 import json
 import time
 import os
-from brokers import haobtccny,huobicny,okcoincny,brokercny
+from brokers import okex_btc_future,okcoin_btc_cny,huobi_btc_cny
 import sys
 import traceback
 import config
 import logging
-from .emailer import send_email
+from exchanges.emailer import send_email
 from .basicbot import BasicBot
 
 class BalanceDumper(BasicBot):
     exchange = 'OKCoin_BTC_CNY'
+    last_profit = 0
 
-    out_dir = 'balance_dumper/'
+    out_dir = './data/'
+    profit_csv = 'profit.csv'
 
     def __init__(self):        
         self.brokers = {
             "OKEx_BTC_Future": okex_btc_future.BrokerOKEx_BTC_Future(config.OKEX_API_KEY, config.OKEX_SECRET_TOKEN),
-            "OKCoin_BTC_CNY": bittrex_bch_btc.BrokerOKCoin_BTC_CNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN),
-            "Viabtc_BCH_BTC": viabtc_bch_btc.BrokerViabtc_BCH_BTC(config.HUOBI_API_KEY, config.HUOBI_SECRET_TOKEN),
+            "OKCoin_BTC_CNY": okcoin_btc_cny.BrokerOKCoin_BTC_CNY(config.OKCOIN_API_KEY, config.OKCOIN_SECRET_TOKEN),
+            "Huobi_BTC_CNY": huobi_btc_cny.BrokerHuobi_BTC_CNY(config.HUOBI_API_KEY, config.HUOBI_SECRET_TOKEN),
         }
 
         self.cny_balance = 0
@@ -29,13 +31,16 @@ class BalanceDumper(BasicBot):
         self.cny_total = 0
         self.btc_total = 0
        
+        self.init_btc = 80
+        self.init_cny = 2000000
+
         try:
             os.mkdir(self.out_dir)
         except:
             pass
 
-    def update_trade_history(self, exchange, time, price, cny, btc, cny_b, btc_b, cny_f, btc_f):
-        filename = self.out_dir + exchange + '_balance.csv'
+    def save_profit(self, price, cny, btc, profit):
+        filename = self.out_dir + self.profit_csv
         need_header = False
 
         if not os.path.exists(filename):
@@ -43,23 +48,19 @@ class BalanceDumper(BasicBot):
 
         fp = open(filename, 'a+')
 
-        if need_header:
-            fp.write("timestamp, price, cny, btc, cny_b, btc_b, cny_f, btc_f\n")
+        timestr = time.strftime("%d/%m/%Y %H:%M:%S")
 
-        fp.write(("%d") % time +','+("%.f") % price+','+("%.f") % cny+','+ str(("%.2f") % btc) +','+ str(("%.f") % cny_b)+','+ str(("%.2f") % btc_b)+','+ str(("%.f") % cny_f)+','+ str(("%.2f") % btc_f)+'\n')
+        if need_header:
+            fp.write("timestamp, timestr, price, cny, btc, profit\n")
+        line = "%d, %s, %.f, %.2f, %.6f, %.2f\n" % (time.time(), timestr, price, cny, btc, profit)
+        fp.write(line)
         fp.close()
 
     def sum_balance(self):
+        self.cny_balance = self.btc_balance = 0
         for kclient in self.brokers:
             self.cny_balance += self.brokers[kclient].cny_balance
             self.btc_balance += self.brokers[kclient].btc_balance
-
-    def cny_balance_total(self, price):
-        return self.cny_balance + self.btc_balance * price
-    
-    def btc_balance_total(self, price):
-        return self.btc_balance + self.cny_balance / (price*1.0)
-
 
     def tick(self, depths):
         # Update client balance
@@ -72,28 +73,40 @@ class BalanceDumper(BasicBot):
             ask_price = int(depths[self.exchange]["asks"][0]['price'])
         except  Exception as ex:
             logging.warn("exception depths:%s" % ex)
-            t,v,tb = sys.exc_info()
-            print(t,v)
             traceback.print_exc()
-
-            # logging.warn(depths)
             return
 
         if bid_price == 0 or ask_price == 0:
             logging.warn("exception ticker")
             return
         
-        cny_abs = abs(self.cny_total - self.cny_balance_total(bid_price))
-        cny_diff = self.cny_total*0.1
-        btc_abs = abs(self.btc_total - self.btc_balance_total(ask_price))
-        btc_diff = self.btc_total*0.1
+        btc_diff = self.btc_balance - self.init_btc
+        cny_diff = self.cny_balance - self.init_cny
 
-        self.cny_total = self.cny_balance_total(bid_price)
-        self.btc_total = self.btc_balance_total(ask_price)
+        profit = btc_diff * bid_price + cny_diff
 
-        if (cny_abs > 200 and cny_abs < cny_diff) or (btc_abs > 0.1 and btc_abs < btc_diff):
-            logging.info("update_balance-->")
-            self.update_trade_history(self.exchange, time.time(), bid_price, 
-                self.cny_total, self.btc_total,
+        logging.info('cny profit:%.2f', profit)
+
+        if (profit != self.last_profit):
+            self.last_profit = profit
+            self.save_profit(bid_price, 
                 self.cny_balance, self.btc_balance,
-                self.cny_frozen, self.btc_frozen)
+                profit)
+            self.render_to_html()
+
+    def render_to_html(self):
+        import pandas as pd
+        from pyecharts import Line
+
+        df = pd.read_csv(self.out_dir + self.profit_csv)
+
+        attr = [i[1] for i in df.values]
+        p1 = [i[2] for i in df.values]
+        p2 = [i[3] for i in df.values]
+        d3 = [i[4] for i in df.values]
+        profit = [i[5] for i in df.values]
+
+        line = Line("统计套利")
+        line.add("profit", attr, profit, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
+        # line.add("外盘内盘价差", attr2, v2, is_smooth=True, mark_line=["max", "average"])
+        line.render('./data/p.html')

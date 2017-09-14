@@ -3,28 +3,22 @@
 from .broker import Broker, TradeException
 import config
 import logging
-from exchanges.huobi_api import Client
+from exchanges.huobi_api_new import ApiClient
 
 class Huobi(Broker):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
         super().__init__(base_currency, market_currency, pair_code)
 
-        if (market_currency != 'BTC' and  market_currency != 'LTC'):
-            assert(False)
-         
-        if (base_currency != 'CNY'):
-            assert(False)
-
-        self.client = Client(
+        self.client = ApiClient(
                     api_key if api_key else config.HUOBI_API_KEY,
                     api_secret if api_secret else config.HUOBI_SECRET_TOKEN)
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
         res = self.client.buy_limit(
+            symbol=self.pair_code,
             amount=str(amount),
-            price=str(price),
-            coin_type=self.market_currency.lower())
+            price=str(price))
 
         logging.verbose('_buy_limit: %s' % res)
 
@@ -33,34 +27,33 @@ class Huobi(Broker):
     def _sell_limit(self, amount, price):
         """Create a sell limit order"""
         res = self.client.sell_limit(
+            symbol=self.pair_code,
             amount=str(amount),
-            price=str(price),
-            coin_type=self.market_currency.lower())
+            price=str(price))
         logging.verbose('_sell_limit: %s' % res)
 
         return res['order_id']
 
     def _order_status(self, res):
         resp = {}
+        resp['order_id'] = res['order_id']
+        resp['amount'] = float(res['amount'])
+        resp['price'] = float(res['price'])
+        resp['deal_amount'] = float(res['deal_amount'])
+        resp['avg_price'] = float(res['avg_price'])
+        resp['type'] = res['type']
 
-        resp['order_id'] = res['id']
-        resp['amount'] = float(res['order_amount'])
-        resp['price'] = float(res['order_price'])
-        resp['deal_amount'] = float(res['processed_amount'])
-        resp['avg_price'] = float(res['processed_price'])
-
-        status = res['status']
-        if status == 3 or status == 6:
-            resp['status'] = 'CANCELED'
-        elif status == 2:
-            resp['status'] = 'CLOSE'
-        else:
+        if res['status'] == 0 or res['status'] == 1 or res['status'] == 4:
             resp['status'] = 'OPEN'
+        elif status == -1:
+            resp['status'] = 'CANCELED'
+        else:
+            resp['status'] = 'CLOSE'
+            
         return resp
 
     def _get_order(self, order_id):
-        res = self.client.get_order_info(int(order_id), 
-                                        coin_type=self.market_currency.lower())
+        res = self.client.order_info(self.pair_code, int(order_id))
         logging.verbose('get_order: %s' % res)
 
         assert str(res['orders'][0]['order_id']) == str(order_id)
@@ -69,7 +62,7 @@ class Huobi(Broker):
     def _get_orders(self, order_ids):
         raise
         orders = []
-        res = self.client.get_orders(order_ids) 
+        res = self.client.orders_info(self.pair_code, order_ids) 
 
         for order in res['orders']:
             resp_order = self._order_status(order)
@@ -78,7 +71,7 @@ class Huobi(Broker):
         return orders
 
     def _cancel_order(self, order_id):
-        res = self.client.cancel_order(int(order_id), coin_type=self.market_currency.lower())
+        res = self.client.cancel_order(self.pair_code, int(order_id))
         logging.verbose('cancel_order: %s' % res)
 
         assert str(res['order_id']) == str(order_id)
@@ -87,15 +80,34 @@ class Huobi(Broker):
 
     def _get_balances(self):
         """Get balance"""
-        res = self.client.get_account_info()
-        logging.debug("get_account_info: %s" % res)
+        accounts = self.client.get_accounts()
+        logging.debug("get_accounts: %s" % accounts)
+        print(accounts)
+        account_id = accounts['data'][0]['id']
 
-        self.btc_available = float(res["available_btc_display"])
-        self.cny_available = float(res["available_cny_display"])
-        self.btc_frozen = float(res["frozen_btc_display"])
-        self.cny_frozen = float(res["frozen_cny_display"])
-        self.btc_balance = self.btc_available + self.btc_frozen
-        self.cny_balance = self.cny_available + self.cny_frozen
+        res = self.client.get_account_balances(account_id)
+        print(res)
+        balances = res['data']['list']
+        print(balances)
+        for entry in balances:
+            currency = entry['currency'].upper()
+            if currency not in (
+                    'BTC', 'BCC', 'CNY'):
+                continue
+            
+            print(currency)
+            if currency == 'BCC':
+                if entry['type'] == 'trade':
+                    self.bch_available = float(entry['balance'])
+                self.bch_balance += float(entry['balance'])
+            elif currency == 'BTC':
+                if entry['type'] == 'trade':
+                    self.btc_available = float(entry['balance'])
+                self.btc_balance += float(entry['balance'])
+            elif currency == 'CNY':
+                if entry['type'] == 'trade':
+                    self.cny_available = float(entry['balance'])
+                self.cny_balance += float(entry['balance'])
 
         logging.debug(self)
         return res

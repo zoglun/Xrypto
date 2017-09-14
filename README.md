@@ -113,6 +113,7 @@ Test public market:
     python3 hydra/cli.py test_pub -m OKEx_Future_Quarter,OKCoin_BTC_CNY
     python3 hydra/cli.py test_pub -m KKEX_BCH_BTC
     python3 hydra/cli.py test_pub -m KKEX_ETH_BTC
+    python3 hydra/cli.py test_pub -m Huobi_BTC_CNY
 
 
 Test Broker market:
@@ -158,7 +159,7 @@ trianglar-arbitrage in viabtc
 
 balance statatistic 
 
-    python3 hydra/cli.py -oBalanceDumper -mHaobtcCNY
+    python3 hydra/cli.py -oBalanceDumper -mOKCoin_BTC_CNY
     
 price diff:
 
