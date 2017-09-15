@@ -18,6 +18,8 @@ class Liquid(BasicBot):
         super().__init__()
 
         self.mm_market = mm_market
+        self.refer_markets = refer_markets
+        self.hedge_market = hedge_market
 
         self.brokers = {
             # TODO: move that to the config file
@@ -26,10 +28,7 @@ class Liquid(BasicBot):
         }
 
         self.mm_broker = self.brokers[mm_market]
-        
-        self.refer_markets = refer_markets
-
-        self.hedge_broker = hedge_market
+        self.hedge_broker = self.brokers[hedge_market]
 
         self.cancel_all_orders(self.mm_market)
 
@@ -50,64 +49,68 @@ class Liquid(BasicBot):
                 refer_bid_price, refer_ask_price = self.get_ticker(depths, m)
                 refer_market = m
                 break
-            except Exception as ex:
-                logging.warn("%s exception depths:%s" % (m, ex))
+            except Exception as e:
+                print('xxx....')
+                print(e)
+                logging.warn('%s exception when get_ticker:%s' % (m, e))
                 continue
         
         if not refer_market:
             logging.warn('no avaliable market depths')
             return
         
-        if self.hedge_broker:
+        if self.hedge_market:
             try:
-                self.hedge_bid_price, self.hedge_ask_price = self.get_ticker(depths, self.hedge_broker)
-            except Exception as ex:
-                logging.warn("%s exception depths:%s" % (m, ex))
+                self.hedge_bid_price, self.hedge_ask_price = self.get_ticker(depths, self.hedge_market)
+            except Exception as e:
+                logging.warn('%s exception when get_ticker:%s' % (self.hedge_market, e))
                 return
         
         self.check_orders(depths, refer_bid_price, refer_ask_price)
 
-        # Update client balance
-        self.update_balance()   
-
         self.place_orders(refer_bid_price, refer_ask_price)
 
     def get_ticker(self, depths, market):
-        bid_price = (depths[market]["bids"][0]['price'])
-        ask_price = (depths[market]["asks"][0]['price'])
+        bid_price = depths[market]["bids"][0]['price']
+        ask_price = depths[market]["asks"][0]['price']
 
-        logging.debug("market:%s bid, ask=(%s/%s)" % (market, bid_price, ask_price))
+        # logging.debug("market:%s bid, ask=(%s/%s)" % (market, bid_price, ask_price))
         return bid_price, ask_price
 
     def place_orders(self, refer_bid_price, refer_ask_price):
-        liquid_max_amount = config.LIQUID_MAX_AMOUNT
+        # Update client balance
+        self.update_balance()   
+
+        max_bch_trade_amount = config.LIQUID_MAX_BCH_AMOUNT
+        min_bch_trade_amount = config.LIQUID_MIN_BCH_AMOUNT
+
         # excute trade
         if self.buying_len() < config.LIQUID_BUY_ORDER_PAIRS:
-            if self.mm_broker.btc_available < config.LIQUID_BUY_RESERVE:
-                logging.verbose("btc_available(%s) < reserve(%s)" % (self.mm_broker.btc_available, config.LIQUID_BUY_RESERVE))
+            bprice = refer_bid_price*(1-config.LIQUID_DIFF)
+
+            amount = round(max_bch_trade_amount*random.random(), 2)
+            price = round(bprice*(1-0.1*random.random()), 5) #-10% random price base on sprice
+
+            Qty = min(self.mm_broker.btc_balance/price, self.hedge_broker.bch_available)
+            Qty = min(Qty, config.LIQUID_BTC_RESERVE/price)
+
+            if Qty < amount or amount < min_bch_trade_amount:
+                logging.verbose("BUY amount (%s) not IN (%s, %s)" % (amount, min_bch_trade_amount, Qty))
             else:
-                bprice = refer_bid_price*(1-config.LIQUID_DIFF)
-
-                amount = round(liquid_max_amount*random.random(), 2)
-                price = round(bprice*(1-0.1*random.random()), 5)
-
-                if self.mm_broker.btc_available < amount*price:
-                    logging.verbose("btc_available(%s) < amount(%s)" % (self.mm_broker.btc_available, amount))
-                else:
-                    self.new_order(self.mm_market, 'buy', amount=amount, price=price)
+                self.new_order(self.mm_market, 'buy', amount=amount, price=price)
 
         if self.selling_len() < config.LIQUID_SELL_ORDER_PAIRS:
-            if self.mm_broker.bch_available < config.LIQUID_BUY_RESERVE:
-                logging.verbose("bch_available(%s) <  reserve(%s)" % (self.mm_broker.btc_available, config.LIQUID_BUY_RESERVE))
-            else:
-                sprice = refer_ask_price*(1+config.LIQUID_DIFF)
+            sprice = refer_ask_price*(1+config.LIQUID_DIFF)
 
-                amount = round(liquid_max_amount*random.random(), 2)
-                price = round(sprice*(1+0.1*random.random()), 5)
-                if self.mm_broker.bch_available < amount:
-                    logging.verbose("bch_available(%s) < amount(%s)" % (self.mm_broker.bch_available, amount))
-                else:
-                    self.new_order(self.mm_market, 'sell', amount=amount, price=price)
+            amount = round(max_bch_trade_amount*random.random(), 2)
+            price = round(sprice*(1+0.1*random.random()), 5) # +10% random price base on sprice
+
+            Qty = min(self.mm_broker.bch_available, self.hedge_broker.btc_available/price)
+            Qty = min(Qty, config.LIQUID_BCH_RESERVE)
+            if Qty < amount or amount < min_bch_trade_amount:
+                logging.verbose("SELL amount (%s) not IN (%s, %s)" % (amount, min_bch_trade_amount, Qty))
+            else:
+                self.new_order(self.mm_market, 'sell', amount=amount, price=price)
 
         return
 

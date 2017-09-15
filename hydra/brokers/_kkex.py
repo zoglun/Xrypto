@@ -93,7 +93,8 @@ class KKEX(Broker):
 
     def _get_orders_history(self):
         orders = []
-        res = self.client.get_orders_history(self.pair_code, pagesize=200)    
+        res = self.client.get_orders_history(self.pair_code, pagesize=200)   
+        # logging.debug('res: %s', res) 
         for order in res['orders']:
             resp_order = self._order_status(order)
             orders.append(resp_order)

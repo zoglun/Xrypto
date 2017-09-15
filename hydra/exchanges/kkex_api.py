@@ -28,7 +28,9 @@ class Client:
         url = urljoin(self.api_root, path)
         r = requests.post(url, data=params, timeout=10)
         try:
-            return r.json()
+            res = r.json()
+            # logging.debug('kkex:res %s', res)
+            return res
         except ValueError as e:
             print(r.text)
             raise
@@ -96,7 +98,7 @@ class Client:
             'amount': amount
         }
         logging.debug(
-            'buy limit %s %s %s', symbol, amount, price)
+            'sell limit %s %s %s', symbol, amount, price)
         return self.trade_api('/api/v1/trade', params)
 
     def buy_market(self, symbol, price_amount):

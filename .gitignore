@@ -55,4 +55,5 @@ download.sh
 snapshot_*.txt
 .vscode
 *.html
+tools/*.png
 
