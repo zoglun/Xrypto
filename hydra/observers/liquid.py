@@ -3,7 +3,7 @@ from .observer import Observer
 import json
 import time
 import os
-from brokers import kkex_bch_btc, viabtc_bch_btc
+from brokers import kkex_bch_btc, bitfinex_bch_btc
 import random
 import sys
 import traceback
@@ -13,8 +13,8 @@ import threading
 
 class Liquid(BasicBot):
     def __init__(self, mm_market='KKEX_BCH_BTC', 
-                        refer_markets=['Viabtc_BCH_BTC', 'Bitfinex_BCH_BTC', 'Bittrex_BCH_BTC'],
-                        hedge_market='Viabtc_BCH_BTC'):
+                        refer_markets=['Bitfinex_BCH_BTC', 'Bittrex_BCH_BTC'],
+                        hedge_market='Bitfinex_BCH_BTC'):
         super().__init__()
 
         self.mm_market = mm_market
@@ -24,7 +24,7 @@ class Liquid(BasicBot):
         self.brokers = {
             # TODO: move that to the config file
             mm_market: kkex_bch_btc.BrokerKKEX_BCH_BTC(config.KKEX_API_KEY, config.KKEX_SECRET_TOKEN),
-            hedge_market: viabtc_bch_btc.BrokerViabtc_BCH_BTC(config.Viabtc_API_KEY, config.Viabtc_SECRET_TOKEN),
+            hedge_market: bitfinex_bch_btc.BrokerBitfinex_BCH_BTC(config.Bitfinex_API_KEY, config.Bitfinex_SECRET_TOKEN),
         }
 
         self.mm_broker = self.brokers[mm_market]
@@ -50,8 +50,6 @@ class Liquid(BasicBot):
                 refer_market = m
                 break
             except Exception as e:
-                print('xxx....')
-                print(e)
                 logging.warn('%s exception when get_ticker:%s' % (m, e))
                 continue
         
@@ -176,12 +174,8 @@ class Liquid(BasicBot):
         #     self.brokers[self.hedge_market].buy_limit(amount, self.hedge_ask_price*(1+1%))
 
         if hedge_side == 'sell':
-            logging.info('test: %s %s', hedge_side, self.hedge_bid_price*(1-0.01))
-
             self.brokers[self.mm_market].sell_limit(amount, self.hedge_bid_price*(1-0.01))
         else:
-            logging.info('test: %s %s', hedge_side, self.hedge_bid_price*(1-0.01))
-
             self.brokers[self.mm_market].buy_limit(amount, self.hedge_ask_price*(1+0.01))
 
 
