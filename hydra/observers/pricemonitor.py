@@ -50,12 +50,12 @@ class PriceMonitor(Observer):
 
         if self.last_diff != diff:
             self.last_diff = diff
-            self.save_to_csv(self.ok_f, Viabtc_BTC_CNY_ask, OKEx_Future_Quarter_bid*self.rate, diff)
+            self.save_to_csv(self.okv_f, Viabtc_BTC_CNY_ask, OKEx_Future_Quarter_bid*self.rate, diff)
             self.render_to_html()
 
         if self.last_cross_diff != cross_diff:
             self.last_cross_diff = cross_diff
-            self.save_to_csv(self.b_f, Viabtc_BTC_CNY_bid, Bitfinex_BTC_USD_ask*self.rate, cross_diff)
+            self.save_to_csv(self.bv_f, Viabtc_BTC_CNY_bid, Bitfinex_BTC_USD_ask*self.rate, cross_diff)
             self.render_to_html_cross()
 
         logging.info("rate=%s, okdiff=%s, bitfinex_diff=%s" % (self.rate, diff, cross_diff))
@@ -84,7 +84,7 @@ class PriceMonitor(Observer):
         import pandas as pd
         from pyecharts import Line
 
-        df = pd.read_csv(self.out_dir + self.ok_f)
+        df = pd.read_csv(self.out_dir + self.okv_f)
 
         attr = [i[1] for i in df.values]
         p1 = [i[2] for i in df.values]
@@ -106,7 +106,7 @@ class PriceMonitor(Observer):
         from pyecharts import Line
 
         # df = pd.read_csv('./data/diff.csv')
-        df = pd.read_csv(self.out_dir + self.b_f)
+        df = pd.read_csv(self.out_dir + self.bv_f)
 
         attr = [i[1] for i in df.values]
         p1 = [i[2] for i in df.values]
