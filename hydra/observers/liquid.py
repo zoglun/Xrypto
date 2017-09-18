@@ -3,7 +3,7 @@ from .observer import Observer
 import json
 import time
 import os
-from brokers import kkex_bch_btc, bitfinex_bch_btc
+from brokers import kkex_bch_btc, bitfinex_bch_btc, bittrex_bch_btc
 import random
 import sys
 import traceback
@@ -14,7 +14,7 @@ import threading
 class Liquid(BasicBot):
     def __init__(self, mm_market='KKEX_BCH_BTC', 
                         refer_markets=['Bitfinex_BCH_BTC', 'Bittrex_BCH_BTC'],
-                        hedge_market='Bitfinex_BCH_BTC'):
+                        hedge_market='KKEX_BCH_BTC'):
         super().__init__()
 
         self.mm_market = mm_market
@@ -24,7 +24,9 @@ class Liquid(BasicBot):
         self.brokers = {
             # TODO: move that to the config file
             mm_market: kkex_bch_btc.BrokerKKEX_BCH_BTC(config.KKEX_API_KEY, config.KKEX_SECRET_TOKEN),
-            hedge_market: bitfinex_bch_btc.BrokerBitfinex_BCH_BTC(config.Bitfinex_API_KEY, config.Bitfinex_SECRET_TOKEN),
+            hedge_market: kkex_bch_btc.BrokerKKEX_BCH_BTC(config.KKEX_API_KEY, config.KKEX_SECRET_TOKEN),
+            # hedge_market: bittrex_bch_btc.BrokerBittrex_BCH_BTC(config.Bittrex_API_KEY, config.Bittrex_SECRET_TOKEN),
+            # hedge_market: bitfinex_bch_btc.BrokerBitfinex_BCH_BTC(config.Bitfinex_API_KEY, config.Bitfinex_SECRET_TOKEN),
         }
 
         self.mm_broker = self.brokers[mm_market]

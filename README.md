@@ -139,7 +139,7 @@ Help
 
 liquid in kkex
 
-    python3 hydra/cli.py -mKKEX_BCH_BTC,Viabtc_BCH_BTC -oLiquid
+    python3 hydra/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid
     python3 hydra/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC -oLiquid
     python3 hydra/cli.py -mViabtc_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid
 
@@ -163,7 +163,7 @@ balance statatistic
     
 price diff:
 
-    python3 hydra/cli.py -oPriceMonitor -mOKCoin_BTC_CNY,OKEx_Future_Quarter,Bitfinex_BTC_USD
+    python3 hydra/cli.py -oPriceMonitor -mViabtc_BCH_CNY,OKEx_Future_Quarter,Bitfinex_BTC_USD
 
 
 bistar test

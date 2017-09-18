@@ -63,7 +63,7 @@ class BrokerBittrex_BCH_BTC(Broker):
     def _get_balances(self):
         """Get balance"""
         res = self.client.get_balances()
-        # print("get_balances response:", res)
+        logging.debug("bittrex get_balances response: %s" % res)
 
         for entry in res['result']:
             currency = entry['Currency']

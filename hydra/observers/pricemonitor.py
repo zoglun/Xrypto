@@ -17,12 +17,12 @@ class PriceMonitor(Observer):
     out_dir = './data/'
     last_diff = 0
     last_cross_diff = 0
-    ok_f = 'ok_diff5.csv'
-    b_f = 'b_diff5.csv'
+    okv_f = 'okv_diff6.csv'
+    bv_f = 'bv_diff6.csv'
 
     def __init__(self):
         super().__init__()
-        self.OKCoin_BTC_CNY = 'OKCoin_BTC_CNY'
+        self.Viabtc_BTC_CNY = 'Viabtc_BTC_CNY'
         self.OKEx_Future_Quarter = 'OKEx_Future_Quarter'
         self.Bitfinex_BTC_USD = 'Bitfinex_BTC_USD'
 
@@ -38,24 +38,24 @@ class PriceMonitor(Observer):
             self.rate = self.get_exchange_rate()
 
             OKEx_Future_Quarter_bid = (depths[self.OKEx_Future_Quarter]["bids"][0]['price'])
-            OKCoin_BTC_CNY_ask = (depths[self.OKCoin_BTC_CNY]["asks"][0]['price'])
-            OKCoin_BTC_CNY_bid = (depths[self.OKCoin_BTC_CNY]["bids"][0]['price'])
+            Viabtc_BTC_CNY_ask = (depths[self.Viabtc_BTC_CNY]["asks"][0]['price'])
+            Viabtc_BTC_CNY_bid = (depths[self.Viabtc_BTC_CNY]["bids"][0]['price'])
             Bitfinex_BTC_USD_ask = depths[self.Bitfinex_BTC_USD]["asks"][0]['price']        
         except Exception as e:
             logging.error("ex:%s" % e)
             return
         
-        diff = int(OKEx_Future_Quarter_bid*self.rate - OKCoin_BTC_CNY_ask)
-        cross_diff = int(Bitfinex_BTC_USD_ask*self.rate - OKCoin_BTC_CNY_bid)
+        diff = int(OKEx_Future_Quarter_bid*self.rate - Viabtc_BTC_CNY_ask)
+        cross_diff = int(Bitfinex_BTC_USD_ask*self.rate - Viabtc_BTC_CNY_bid)
 
         if self.last_diff != diff:
             self.last_diff = diff
-            self.save_to_csv(self.ok_f, OKCoin_BTC_CNY_ask, OKEx_Future_Quarter_bid*self.rate, diff)
+            self.save_to_csv(self.ok_f, Viabtc_BTC_CNY_ask, OKEx_Future_Quarter_bid*self.rate, diff)
             self.render_to_html()
 
         if self.last_cross_diff != cross_diff:
             self.last_cross_diff = cross_diff
-            self.save_to_csv(self.b_f, OKCoin_BTC_CNY_bid, Bitfinex_BTC_USD_ask*self.rate, cross_diff)
+            self.save_to_csv(self.b_f, Viabtc_BTC_CNY_bid, Bitfinex_BTC_USD_ask*self.rate, cross_diff)
             self.render_to_html_cross()
 
         logging.info("rate=%s, okdiff=%s, bitfinex_diff=%s" % (self.rate, diff, cross_diff))
