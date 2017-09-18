@@ -9,7 +9,7 @@ from exchanges.kkex_api import Client
 class KKEX(Market):
     def __init__(self, base_currency, market_currency, pair_code):
         super().__init__(base_currency, market_currency, pair_code, 0.001)
-        self.client = Client(None, None, 'http://118.190.82.40:8019/api/v1')
+        self.client = Client(None, None)
 
     def update_depth(self):
         raw_depth = self.client.depth(symbol=self.pair_code)

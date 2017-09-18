@@ -58,7 +58,7 @@ class PriceMonitor(Observer):
             self.save_to_csv(self.bv_f, Viabtc_BTC_CNY_bid, Bitfinex_BTC_USD_ask*self.rate, cross_diff)
             self.render_to_html_cross()
 
-        logging.info("rate=%s, okdiff=%s, bitfinex_diff=%s" % (self.rate, diff, cross_diff))
+        logging.info("rate=%s, viadiff=%s, bitfinex_diff=%s" % (self.rate, diff, cross_diff))
 
 
         return

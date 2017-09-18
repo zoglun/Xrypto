@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 from urllib.parse import urlencode
 
 class Client:
-    def __init__(self, key, secret, api_root='https://api.kkex.com'):
+    def __init__(self, key, secret, api_root='https://kkex.com'):
         self.key = key
         self.secret = secret
         self.api_root = api_root

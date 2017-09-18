@@ -11,8 +11,7 @@ class KKEX(Broker):
         
         self.client = Client(
                     api_key if api_key else config.KKEX_API_KEY,
-                    api_secret if api_secret else config.KKEX_SECRET_TOKEN,
-                    api_root='http://118.190.82.40:8019/api/v1')
+                    api_secret if api_secret else config.KKEX_SECRET_TOKEN)
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
