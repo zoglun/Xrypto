@@ -163,7 +163,7 @@ balance statatistic
     
 price diff:
 
-    python3 hydra/cli.py -oPriceMonitor -mViabtc_BCH_CNY,OKEx_Future_Quarter,Bitfinex_BTC_USD
+    python3 hydra/cli.py -oPriceMonitor -mViabtc_BTC_CNY,OKEx_Future_Quarter,Bitfinex_BTC_USD
 
 
 bistar test
