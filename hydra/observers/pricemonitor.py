@@ -92,12 +92,12 @@ class PriceMonitor(Observer):
         d3 = [i[4] for i in df.values]
 
         line = Line("统计套利")
-        line.add("ok期现价差", attr, d3, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
+        line.add("viabtc,okex期现价差", attr, d3, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
         # line.add("外盘内盘价差", attr2, v2, is_smooth=True, mark_line=["max", "average"])
         line.render('./data/index.html')
 
         line = Line("统计套利")
-        line.add("ok", attr, p1)
+        line.add("via", attr, p1)
         line.add("ok季度", attr, p2)
         line.render('./data/index2.html')
 
@@ -114,10 +114,10 @@ class PriceMonitor(Observer):
         d3 = [i[4] for i in df.values]
 
         line = Line("统计套利")
-        line.add("ok,bitfinex价差", attr, d3, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
+        line.add("via,bitfinex价差", attr, d3, is_smooth=True, mark_point=["max","average","min"], mark_line=["max", "average","min"])
         line.render('./data/c.html')
 
         line = Line("统计套利")
-        line.add("ok", attr, p1)
+        line.add("via", attr, p1)
         line.add("bitfinex", attr, p2)
         line.render('./data/c2.html')
