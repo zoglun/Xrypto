@@ -54,77 +54,65 @@ variants of them, use:
     sudo apt-get install python3 python3-pip python-nose
     pip3 install -r requirements.txt
 
-You need market broker service, please read its README to install then run it. 
-  
-    https://github.com/philsong/bitcoin-broker 
-
-To connect the broker server you will need to install thriftpy:
-
-    pip3 install cython thriftpy
-
-To use the observer XMPPMessager you will need to install sleekxmpp:
-
-    pip3 install sleekxmpp
-
 # Debug
 
-    python3 hydra/cli.py watch -d
+    python3 xrypto/cli.py watch -d
 
 # Run
 
 To run the opportunity watcher:
 
-    python3 hydra/cli.py watch -v
+    python3 xrypto/cli.py watch -v
 
 To check your balance on an exchange (also a good way to check your accounts configuration):
 
-    python3 hydra/cli.py -m HaobtcCNY get-balance
-    python3 hydra/cli.py -m Viabtc_BCH_CNY get-balance
-    python3 hydra/cli.py -m Bitfinex_BCH_BTC get-balance
-    python3 hydra/cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC get-balance
-    python3 hydra/cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
+    python3 xrypto/cli.py -m HaobtcCNY get-balance
+    python3 xrypto/cli.py -m Viabtc_BCH_CNY get-balance
+    python3 xrypto/cli.py -m Bitfinex_BCH_BTC get-balance
+    python3 xrypto/cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC get-balance
+    python3 xrypto/cli.py -m HaobtcCNY,OkCoinCNY,HuobiCNY get-balance
 
 Run trianglar-arbitrage
 
-    python3 hydra/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch-viabtc-bcc -v
-    python3 hydra/cli.py -m Binance_WTC_BTC,Binance_WTC_ETH,Binance_ETH_BTC t-watch-binance-wtc -v
-    python3 hydra/cli.py -m Binance_BNB_BTC,Binance_BNB_ETH,Binance_ETH_BTC t-watch-binance-bnb -v
-    python3 hydra/cli.py -m Binance_LRC_BTC,Binance_LRC_ETH,Binance_ETH_BTC t-watch-binance-lrc -v
-    python3 hydra/cli.py -m Binance_MCO_BTC,Binance_MCO_ETH,Binance_ETH_BTC t-watch-binance-mco -v
-    python3 hydra/cli.py -m Binance_QTUM_BTC,Binance_QTUM_ETH,Binance_ETH_BTC t-watch-binance-qtum -v
+    python3 xrypto/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch-viabtc-bcc -v
+    python3 xrypto/cli.py -m Binance_WTC_BTC,Binance_WTC_ETH,Binance_ETH_BTC t-watch-binance-wtc -v
+    python3 xrypto/cli.py -m Binance_BNB_BTC,Binance_BNB_ETH,Binance_ETH_BTC t-watch-binance-bnb -v
+    python3 xrypto/cli.py -m Binance_LRC_BTC,Binance_LRC_ETH,Binance_ETH_BTC t-watch-binance-lrc -v
+    python3 xrypto/cli.py -m Binance_MCO_BTC,Binance_MCO_ETH,Binance_ETH_BTC t-watch-binance-mco -v
+    python3 xrypto/cli.py -m Binance_QTUM_BTC,Binance_QTUM_ETH,Binance_ETH_BTC t-watch-binance-qtum -v
 
 Run in background
 
-    python3 hydra/cli.py -m Binance_WTC_BTC,Binance_WTC_ETH,Binance_ETH_BTC t-watch-binance-wtc  &
-    python3 hydra/cli.py -m Binance_BNB_BTC,Binance_BNB_ETH,Binance_ETH_BTC t-watch-binance-bnb  &
-    python3 hydra/cli.py -m Binance_LRC_BTC,Binance_LRC_ETH,Binance_ETH_BTC t-watch-binance-lrc  &
-    python3 hydra/cli.py -m Binance_MCO_BTC,Binance_MCO_ETH,Binance_ETH_BTC t-watch-binance-mco  &
-    python3 hydra/cli.py -m Binance_QTUM_BTC,Binance_QTUM_ETH,Binance_ETH_BTC t-watch-binance-qtum  &
+    python3 xrypto/cli.py -m Binance_WTC_BTC,Binance_WTC_ETH,Binance_ETH_BTC t-watch-binance-wtc  &
+    python3 xrypto/cli.py -m Binance_BNB_BTC,Binance_BNB_ETH,Binance_ETH_BTC t-watch-binance-bnb  &
+    python3 xrypto/cli.py -m Binance_LRC_BTC,Binance_LRC_ETH,Binance_ETH_BTC t-watch-binance-lrc  &
+    python3 xrypto/cli.py -m Binance_MCO_BTC,Binance_MCO_ETH,Binance_ETH_BTC t-watch-binance-mco  &
+    python3 xrypto/cli.py -m Binance_QTUM_BTC,Binance_QTUM_ETH,Binance_ETH_BTC t-watch-binance-qtum  &
 
 # Alternative usage
 
 List supported public markets:
 
-    python3 hydra/cli.py list-public-markets
+    python3 xrypto/cli.py list-public-markets
 
 Test public market:
       
-    python3 hydra/cli.py test_pub -m OKEx_Future_Quarter
-    python3 hydra/cli.py test_pub -m OKEx_Future_Quarter,OKCoin_BTC_CNY
-    python3 hydra/cli.py test_pub -m KKEX_BCH_BTC
-    python3 hydra/cli.py test_pub -m KKEX_ETH_BTC
-    python3 hydra/cli.py test_pub -m Huobi_BTC_CNY
+    python3 xrypto/cli.py test_pub -m OKEx_Future_Quarter
+    python3 xrypto/cli.py test_pub -m OKEx_Future_Quarter,OKCoin_BTC_CNY
+    python3 xrypto/cli.py test_pub -m KKEX_BCH_BTC
+    python3 xrypto/cli.py test_pub -m KKEX_ETH_BTC
+    python3 xrypto/cli.py test_pub -m Huobi_BTC_CNY
 
 
 Test Broker market:
       
-    python3 hydra/cli.py test_pri -m Viabtc_BCH_BTC
-    python3 hydra/cli.py test_pri -m Jubi_EOS_CNY
-    python3 hydra/cli.py test_pri -m KKEX_BCH_BTC
-    python3 hydra/cli.py test_pri -m KKEX_ETH_BTC
-    python3 hydra/cli.py test_pri -m OKCoin_BTC_CNY
-    python3 hydra/cli.py test_pri -m OKEx_BTC_Future
-    python3 hydra/cli.py test_pri -m Huobi_BTC_CNY
+    python3 xrypto/cli.py test_pri -m Viabtc_BCH_BTC
+    python3 xrypto/cli.py test_pri -m Jubi_EOS_CNY
+    python3 xrypto/cli.py test_pri -m KKEX_BCH_BTC
+    python3 xrypto/cli.py test_pri -m KKEX_ETH_BTC
+    python3 xrypto/cli.py test_pri -m OKCoin_BTC_CNY
+    python3 xrypto/cli.py test_pri -m OKEx_BTC_Future
+    python3 xrypto/cli.py test_pri -m Huobi_BTC_CNY
 
 
 Run tests
@@ -133,42 +121,42 @@ Run tests
 
 Help
       
-      python3 hydra/cli.py -h
+      python3 xrypto/cli.py -h
 
 # Example
 
 liquid in kkex
 
-    python3 hydra/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid
-    python3 hydra/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC -oLiquid
-    python3 hydra/cli.py -mViabtc_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid
+    python3 xrypto/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid
+    python3 xrypto/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC -oLiquid
+    python3 xrypto/cli.py -mViabtc_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid
 
 arbitrage in haobtc, huobi or okcoin
 
-    python3 hydra/cli.py -oTraderBot -mHaobtcCNY,HuobiCNY
-    python3 hydra/cli.py -oTraderBot -mHaobtcCNY,OKCoinCNY
+    python3 xrypto/cli.py -oTraderBot -mHaobtcCNY,HuobiCNY
+    python3 xrypto/cli.py -oTraderBot -mHaobtcCNY,OKCoinCNY
 
 bch bcc arbitrage in Bitfinex_BCH_BTC, Bittrex_BCH_BTC
 
-    python3 hydra/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC
-    python3 hydra/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC
+    python3 xrypto/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC
+    python3 xrypto/cli.py -o BCH_BTC_Arbitrage -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC
 
 trianglar-arbitrage in viabtc
 
-    python3 hydra/cli.py -o TViabtc -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY  -v
+    python3 xrypto/cli.py -o TViabtc -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY  -v
 
 balance statatistic 
 
-    python3 hydra/cli.py -oBalanceDumper -mOKCoin_BTC_CNY
+    python3 xrypto/cli.py -oBalanceDumper -mOKCoin_BTC_CNY
     
 price diff:
 
-    python3 hydra/cli.py -oPriceMonitor -mViabtc_BTC_CNY,OKEx_Future_Quarter,Bitfinex_BTC_USD
+    python3 xrypto/cli.py -oPriceMonitor -mViabtc_BTC_CNY,OKEx_Future_Quarter,Bitfinex_BTC_USD
 
 
 bistar test
 
-    python3 hydra/bitstar_test.py
+    python3 xrypto/bitstar_test.py
 
     
 # TODO

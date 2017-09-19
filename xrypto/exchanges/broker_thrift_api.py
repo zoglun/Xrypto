@@ -1,7 +1,7 @@
 # Copyright (C) 2016, Phil Song <songbohr@gmail.com>
 
 import thriftpy
-broker_thrift = thriftpy.load("hydra/exchanges/broker.thrift", module_name="broker_thrift")
+broker_thrift = thriftpy.load("xrypto/exchanges/broker.thrift", module_name="broker_thrift")
 
 from thriftpy.rpc import make_client
 from thriftpy.protocol.binary import TBinaryProtocolFactory

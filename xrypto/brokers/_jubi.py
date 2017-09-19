@@ -3,24 +3,24 @@
 from .broker import Broker, TradeException
 import config
 import logging
-from exchanges.yunbi.client import YunbiClient
+from exchanges.jubi_api import JubiAPI
 
-# python3 hydra/cli.py -m Bitfinex_BCH_BTC get-balance
+# python3 xrypto/cli.py -m Bitfinex_BCH_BTC get-balance
 
-class Yunbi(Broker):
+class Jubi(Broker):
     def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
         super().__init__(base_currency, market_currency, pair_code)
 
         self.orders = {}
 
-        self.client = YunbiClient(
-                    api_key if api_key else config.Viabtc_API_KEY,
-                    api_secret if api_secret else config.Viabtc_SECRET_TOKEN)
+        self.client = JubiAPI(
+                    api_key if api_key else config.Jubi_API_KEY,
+                    api_secret if api_secret else config.Jubi_SECRET_TOKEN)
  
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
         res = self.client.buy_limit(
-            market=self.pair_code
+            coin=self.pair_code,
             amount=str(amount),
             price=str(price)
             )
@@ -32,7 +32,7 @@ class Yunbi(Broker):
     def _sell_limit(self, amount, price):
         """Create a sell limit order"""
         res = self.client.sell_limit(
-            market=self.pair_code
+            coin=self.pair_code,
             amount=str(amount),
             price=str(price))
         logging.verbose('_sell_limit: %s' % res)
@@ -55,7 +55,7 @@ class Yunbi(Broker):
         return resp
 
     def _get_order(self, order_id):
-        res = self.client.get_order(int(order_id))
+        res = self.client.get_order(coin=self.pair_code, trade_id=int(order_id))
         logging.verbose('get_order: %s' % res)
 
         if res['code'] == 600:
@@ -68,7 +68,7 @@ class Yunbi(Broker):
         return self._order_status(res['data'])
 
     def _cancel_order(self, order_id):
-        res = self.client.cancel_order(int(order_id))
+        res = self.client.cancel_order(coin=self.pair_code, trade_id=int(order_id))
         logging.verbose('cancel_order: %s' % res)
 
         assert str(res['data']['id']) == str(order_id)

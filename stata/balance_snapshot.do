@@ -1,4 +1,4 @@
-cd "/Users/phil/work/X-work/hydra/"
+cd "/Users/phil/work/X-work/xrypto/"
 
 insheet using "snapshot_ALL_balance.csv", clear
 
