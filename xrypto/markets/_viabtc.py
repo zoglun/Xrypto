@@ -26,7 +26,9 @@ from .market import Market
 # }
 
 class Viabtc(Market):
-    def __init__(self, base_currency, market_currency, pair_code):
+    def __init__(self, pair_code):
+        base_currency, market_currency = self.get_tradeable_pairs(pair_code)
+
         super().__init__(base_currency, market_currency, pair_code, 0.002)
 
     def update_depth(self):
@@ -41,3 +43,18 @@ class Viabtc(Market):
         bids = self.sort_and_format(depth['data']['bids'], True)
         asks = self.sort_and_format(depth['data']['asks'], False)
         return {'asks': asks, 'bids': bids}
+
+   
+    def get_tradeable_pairs(self, pair_code):
+        if pair_code == 'bccbtc':
+            base_currency = 'BTC'
+            market_currency = 'BCH'
+        elif pair_code == 'bcccny':
+            base_currency = 'CNY'
+            market_currency = 'BCH'
+        elif pair_code == 'btccny':
+            base_currency = 'CNY'
+            market_currency = 'BTC'
+        else:
+            assert(False)
+        return base_currency, market_currency

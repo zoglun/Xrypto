@@ -14,7 +14,7 @@ import traceback
 import re,sys,re
 import string
 import signal
- 
+from markets.market_utils import create_markets
 
 is_sigint_up = False
 
@@ -35,19 +35,12 @@ class Datafeed(object):
     def init_markets(self, _markets):
         logging.debug("_markets:%s" % _markets)
         self.market_names = _markets
-        for market_name in _markets:
+        markets = create_markets(_markets)
+
+        for market_name, market in markets.items():
             if self.get_market(market_name):
                 continue
-
-            try:
-                exec('import markets.' + market_name.lower())
-                market = eval('markets.' + market_name.lower() + '.' +
-                              market_name + '()')
-                self.markets.append(market)
-            except (ImportError, AttributeError) as e:
-                print("%s market name is invalid: Ignored (you should check your config file)" % (market_name))
-                logging.warn("exception import:%s" % e)
-                traceback.print_exc()
+            self.markets.append(market)
 
     def init_observers(self, _observers):
         logging.debug("_observers:%s" % _observers)

@@ -31,7 +31,9 @@ from .market import Market
 # }
 
 class Bittrex(Market):
-    def __init__(self, base_currency, market_currency, pair_code):
+    def __init__(self,  pair_code):
+        base_currency, market_currency = self.get_tradeable_pairs(pair_code)
+
         super().__init__(base_currency, market_currency, pair_code, 0.0025)
 
         self.client = bittrex.Bittrex(None, None)
@@ -53,3 +55,11 @@ class Bittrex(Market):
         bids = self.sort_and_format(depth['result']['buy'], True)
         asks = self.sort_and_format(depth['result']['sell'], False)
         return {'asks': asks, 'bids': bids}
+
+    def get_tradeable_pairs(self, pair_code):
+        if pair_code == 'BTC-BCC':
+            base_currency = 'BTC'
+            market_currency = 'BCH'
+        else:
+            assert(False)
+        return base_currency, market_currency

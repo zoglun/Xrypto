@@ -16,7 +16,9 @@ from .market import Market
 #   },
 
 class Bitfinex(Market):
-    def __init__(self, base_currency, market_currency, pair_code):
+    def __init__(self, pair_code):
+        base_currency, market_currency = self.get_tradeable_pairs(pair_code)
+
         super().__init__(base_currency, market_currency, pair_code, 0.002)
 
     def update_depth(self):
@@ -34,3 +36,13 @@ class Bitfinex(Market):
             r.append({'price': float(i['price']), 'amount': float(i['amount'])})
         return r
 
+    def get_tradeable_pairs(self, pair_code):
+        if pair_code == 'bchbtc':
+            base_currency = 'BTC'
+            market_currency = 'BCH'
+        elif pair_code == 'btcusd':
+            base_currency = 'USD'
+            market_currency = 'BTC'
+        else:
+            assert(False)
+        return base_currency, market_currency

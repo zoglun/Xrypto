@@ -45,23 +45,23 @@ class CLI:
 
         if "t-watch-binance-wtc" in args.command:
             self.create_t_arbitrer_binance_wtc(args)
-            self.arbitrer.run_loop()
+            self.datafeed.run_loop()
 
         if "t-watch-binance-bnb" in args.command:
             self.create_t_arbitrer_binance_bnb(args)
-            self.arbitrer.run_loop()
+            self.datafeed.run_loop()
 
         if "t-watch-binance-lrc" in args.command:
             self.create_t_arbitrer_binance_lrc(args)
-            self.arbitrer.run_loop()
+            self.datafeed.run_loop()
 
         if "t-watch-binance-mco" in args.command:
             self.create_t_arbitrer_binance_mco(args)
-            self.arbitrer.run_loop()
+            self.datafeed.run_loop()
 
         if "t-watch-binance-qtum" in args.command:
             self.create_t_arbitrer_binance_qtum(args)
-            self.arbitrer.run_loop()
+            self.datafeed.run_loop()
 
         if "replay-history" in args.command:
             self.create_arbitrer(args)
@@ -150,35 +150,35 @@ class CLI:
 
     def create_t_arbitrer_binance_wtc(self, args):
         from t_arbitrer_binance import TrigangularArbitrer_Binance
-        self.arbitrer = TrigangularArbitrer_Binance(base_pair='Binance_WTC_BTC',
+        self.datafeed = TrigangularArbitrer_Binance(base_pair='Binance_WTC_BTC',
                                                     pair1='Binance_WTC_ETH',
                                                     pair2='Binance_ETH_BTC')
         self.init_observers_and_markets(args)
 
     def create_t_arbitrer_binance_bnb(self, args):
         from t_arbitrer_binance import TrigangularArbitrer_Binance
-        self.arbitrer = TrigangularArbitrer_Binance(base_pair='Binance_BNB_BTC',
+        self.datafeed = TrigangularArbitrer_Binance(base_pair='Binance_BNB_BTC',
                                                     pair1='Binance_BNB_ETH',
                                                     pair2='Binance_ETH_BTC')
         self.init_observers_and_markets(args)
 
     def create_t_arbitrer_binance_lrc(self, args):
         from t_arbitrer_binance import TrigangularArbitrer_Binance
-        self.arbitrer = TrigangularArbitrer_Binance(base_pair='Binance_LRC_BTC',
+        self.datafeed = TrigangularArbitrer_Binance(base_pair='Binance_LRC_BTC',
                                                     pair1='Binance_LRC_ETH',
                                                     pair2='Binance_ETH_BTC')
         self.init_observers_and_markets(args)
 
     def create_t_arbitrer_binance_mco(self, args):
         from t_arbitrer_binance import TrigangularArbitrer_Binance
-        self.arbitrer = TrigangularArbitrer_Binance(base_pair='Binance_MCO_BTC',
+        self.datafeed = TrigangularArbitrer_Binance(base_pair='Binance_MCO_BTC',
                                                     pair1='Binance_MCO_ETH',
                                                     pair2='Binance_ETH_BTC')
         self.init_observers_and_markets(args)
 
     def create_t_arbitrer_binance_qtum(self, args):
         from t_arbitrer_binance import TrigangularArbitrer_Binance
-        self.arbitrer = TrigangularArbitrer_Binance(base_pair='Binance_QTUM_BTC',
+        self.datafeed = TrigangularArbitrer_Binance(base_pair='Binance_QTUM_BTC',
                                                     pair1='Binance_QTUM_ETH',
                                                     pair2='Binance_ETH_BTC')
         self.init_observers_and_markets(args)

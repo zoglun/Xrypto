@@ -12,7 +12,7 @@ import threading
 
 class Market(object):
     def __init__(self, base_currency, market_currency, pair_code, fee_rate):
-        self.name = self.__class__.__name__
+        self._name = None
         self.base_currency = base_currency
         self.market_currency = market_currency
         self.pair_code = pair_code
@@ -26,6 +26,14 @@ class Market(object):
         self.depth = {'asks': [{'price': 0, 'amount': 0}], 'bids': [
                 {'price': 0, 'amount': 0}]}
                 
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+
     def terminate(self):
         self.is_terminated = True
 
