@@ -4,11 +4,10 @@
 import logging
 import time
 import config
-from arbitrer import Arbitrer
-from brokers import viabtc_bch_cny, viabtc_bch_btc, viabtc_btc_cny
-from datafeed import Datafeed
+from .basicbot import BasicBot
+from brokers.broker_factory import create_brokers
 
-class TrigangularArbitrer_Viabtc(Datafeed):
+class TrigangularArbitrer_Viabtc(BasicBot):
     def __init__(self, base_pair, pair1, pair2, monitor_only=False):
         super().__init__()
         self.base_pair = base_pair or 'Viabtc_BCH_CNY'
@@ -20,37 +19,29 @@ class TrigangularArbitrer_Viabtc(Datafeed):
         t_api_key = config.t_Viabtc_API_KEY
         t_secret_token = config.t_Viabtc_SECRET_TOKEN
 
-        self.clients = {
-            self.base_pair: viabtc_bch_cny.BrokerViabtc_BCH_CNY(t_api_key, t_secret_token),
-            self.pair_1: viabtc_bch_btc.BrokerViabtc_BCH_BTC(t_api_key, t_secret_token),
-            self.pair_2: viabtc_btc_cny.BrokerViabtc_BTC_CNY(t_api_key, t_secret_token),
-        }
+        self.brokers = create_brokers([self.base_pair, self.pair_1, self.pair_2])
 
         self.last_trade = 0
 
     def update_balance(self):
-        self.clients[self.base_pair].get_balances()
+        self.brokers[self.base_pair].get_balances()
 
-    def observer_tick(self):
-        self.forward()
-        # self.reverse()
+    def tick(self, depths):
+        self.forward(depths)
+        # self.reverse(depths)
 
 
-    def forward(self):
-        try:
-            base_pair_ask_amount = self.depths[self.base_pair]["asks"][0]["amount"]
-            base_pair_ask_price = self.depths[self.base_pair]["asks"][0]["price"]
+    def forward(self, depths):
+        base_pair_ask_amount = depths[self.base_pair]["asks"][0]["amount"]
+        base_pair_ask_price = depths[self.base_pair]["asks"][0]["price"]
 
-            logging.verbose("base_pair: %s ask_price:%s"% (self.base_pair, base_pair_ask_price))
+        logging.verbose("base_pair: %s ask_price:%s"% (self.base_pair, base_pair_ask_price))
 
-            pair1_bid_amount = self.depths[self.pair_1]["bids"][0]["amount"]
-            pair1_bid_price = self.depths[self.pair_1]["bids"][0]["price"]
+        pair1_bid_amount = depths[self.pair_1]["bids"][0]["amount"]
+        pair1_bid_price = depths[self.pair_1]["bids"][0]["price"]
 
-            pair2_bid_amount = self.depths[self.pair_2]["bids"][0]["amount"]
-            pair2_bid_price = self.depths[self.pair_2]["bids"][0]["price"]
-        except Exception as ex:
-            logging.warn("t exception depths:%s" %  ex)
-            return
+        pair2_bid_amount = depths[self.pair_2]["bids"][0]["amount"]
+        pair2_bid_price = depths[self.pair_2]["bids"][0]["price"]
 
         if pair1_bid_price == 0:
             return
@@ -100,26 +91,26 @@ class TrigangularArbitrer_Viabtc(Datafeed):
                 return
             
             if not self.monitor_only:
-                self.clients[self.base_pair].buy_limit(hedge_bch_amount, base_pair_ask_price)
-                self.clients[self.pair_1].sell_limit(hedge_bch_amount, pair1_bid_price)
-                self.clients[self.pair_2].sell_limit(hedge_btc_amount, pair2_bid_price)
+                self.brokers[self.base_pair].buy_limit(hedge_bch_amount, base_pair_ask_price)
+                self.brokers[self.pair_1].sell_limit(hedge_bch_amount, pair1_bid_price)
+                self.brokers[self.pair_2].sell_limit(hedge_btc_amount, pair2_bid_price)
 
             self.last_trade = time.time()
 
 
-    def reverse(self):
+    def reverse(self, depths):
         print("t3 reverse:")
 
-        base_pair_bid_amount = self.depths[self.base_pair]["bids"][0]["amount"]
-        base_pair_bid_price = self.depths[self.base_pair]["bids"][0]["price"]
+        base_pair_bid_amount = depths[self.base_pair]["bids"][0]["amount"]
+        base_pair_bid_price = depths[self.base_pair]["bids"][0]["price"]
 
         logging.verbose("base_pair: %s bid_price:%s"% (self.base_pair, base_pair_bid_price))
 
-        pair1_ask_amount = self.depths[self.pair_1]["asks"][0]["amount"]
-        pair1_ask_price = self.depths[self.pair_1]["asks"][0]["price"]
+        pair1_ask_amount = depths[self.pair_1]["asks"][0]["amount"]
+        pair1_ask_price = depths[self.pair_1]["asks"][0]["price"]
 
-        pair2_ask_amount = self.depths[self.pair_2]["asks"][0]["amount"]
-        pair2_ask_price = self.depths[self.pair_2]["asks"][0]["price"]
+        pair2_ask_amount = depths[self.pair_2]["asks"][0]["amount"]
+        pair2_ask_price = depths[self.pair_2]["asks"][0]["price"]
 
         if pair1_ask_price == 0  or pair2_ask_price == 0:
             return
@@ -169,9 +160,9 @@ class TrigangularArbitrer_Viabtc(Datafeed):
                 return
 
 
-            self.clients[self.base_pair].sell_limit(hedge_bch_amount, base_pair_bid_price)
-            self.clients[self.pair_2].buy_limit(hedge_btc_amount, pair2_ask_price)
-            self.clients[self.pair_1].buy_limit(hedge_bch_amount, pair1_ask_price)
+            self.brokers[self.base_pair].sell_limit(hedge_bch_amount, base_pair_bid_price)
+            self.brokers[self.pair_2].buy_limit(hedge_btc_amount, pair2_ask_price)
+            self.brokers[self.pair_1].buy_limit(hedge_bch_amount, pair1_ask_price)
 
             self.last_trade = time.time()
 

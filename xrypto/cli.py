@@ -20,6 +20,9 @@ from arbitrer import Arbitrer
 from brokers.broker_factory import create_brokers
 from markets.market_factory import create_markets
 
+from observers.t_viabtc import TrigangularArbitrer_Viabtc
+from observers.t_binance import TrigangularArbitrer_Binance
+
 class CLI:
     def __init__(self):
         self.inject_verbose_info()
@@ -31,51 +34,49 @@ class CLI:
 
     def exec_command(self, args):
         logging.debug('exec_command:%s' % args)
-        if "watch" in args.command:
-            self.create_datafeed(args)
-            self.datafeed.run_loop()
-
-        if "b-watch" in args.command:
-            self.create_arbitrer(args)
-            self.arbitrer.run_loop()
-
-        if "t-watch-viabtc-bcc" in args.command:
-            self.create_t_arbitrer_viabtc_bcc(args)
-            self.datafeed.run_loop()
-
-        if "t-watch-binance-wtc" in args.command:
-            self.create_t_arbitrer_binance_wtc(args)
-            self.datafeed.run_loop()
-
-        if "t-watch-binance-bnb" in args.command:
-            self.create_t_arbitrer_binance_bnb(args)
-            self.datafeed.run_loop()
-
-        if "t-watch-binance-lrc" in args.command:
-            self.create_t_arbitrer_binance_lrc(args)
-            self.datafeed.run_loop()
-
-        if "t-watch-binance-mco" in args.command:
-            self.create_t_arbitrer_binance_mco(args)
-            self.datafeed.run_loop()
-
-        if "t-watch-binance-qtum" in args.command:
-            self.create_t_arbitrer_binance_qtum(args)
-            self.datafeed.run_loop()
 
         if "replay-history" in args.command:
             self.create_arbitrer(args)
             self.arbitrer.replay_history(args.replay_history)
+            return
         if "get-balance" in args.command:
             self.get_balance(args)
+            return
         if "list-public-markets" in args.command:
             self.list_markets()
+            return
         if "get-broker-balance" in args.command:
             self.get_broker_balance(args)
+            return
         if "test_pub" in args.command:
             self.test_pub(args)
+            return
         if "test_pri" in args.command:
             self.test_pri(args)
+            return
+
+        if "b-watch" in args.command:
+            self.create_arbitrer(args)
+        else:
+            self.create_datafeed(args)
+
+            # special tranglar observer
+            if "t-watch-viabtc-bcc" in args.command:
+                self.register_t_viabtc_bcc(args)
+
+            if "t-watch-binance-wtc" in args.command:
+                self.register_t_binance_wtc(args)
+
+            if "t-watch-binance-bnb" in args.command:
+                self.register_t_binance_bnb(args)
+
+            if "t-watch-binance-mco" in args.command:
+                self.register_t_binance_mco(args)
+
+            if "t-watch-binance-qtum" in args.command:
+                self.register_t_binance_qtum(args)
+        
+        self.datafeed.run_loop()
 
     def list_markets(self):
         logging.debug('list_markets') 
@@ -141,47 +142,36 @@ class CLI:
         self.arbitrer = Arbitrer()
         self.init_observers_and_markets(args)
 
-    def create_t_arbitrer_viabtc_bcc(self, args):
-        from t_arbitrer_viabtc import TrigangularArbitrer_Viabtc
-        self.datafeed = TrigangularArbitrer_Viabtc(base_pair='Viabtc_BCH_CNY',
+    def register_t_viabtc_bcc(self, args):
+        _observer = TrigangularArbitrer_Viabtc(base_pair='Viabtc_BCH_CNY',
                                                     pair1='Viabtc_BCH_BTC',
                                                     pair2='Viabtc_BTC_CNY')
-        self.init_observers_and_markets(args)
+        self.datafeed.register_observer(_observer)
 
-    def create_t_arbitrer_binance_wtc(self, args):
-        from t_arbitrer_binance import TrigangularArbitrer_Binance
-        self.datafeed = TrigangularArbitrer_Binance(base_pair='Binance_WTC_BTC',
+    def register_t_binance_wtc(self, args):
+        _observer = TrigangularArbitrer_Binance(base_pair='Binance_WTC_BTC',
                                                     pair1='Binance_WTC_ETH',
                                                     pair2='Binance_ETH_BTC')
-        self.init_observers_and_markets(args)
+        self.datafeed.register_observer(_observer)
 
-    def create_t_arbitrer_binance_bnb(self, args):
-        from t_arbitrer_binance import TrigangularArbitrer_Binance
-        self.datafeed = TrigangularArbitrer_Binance(base_pair='Binance_BNB_BTC',
+    def register_t_binance_bnb(self, args):
+        _observer = TrigangularArbitrer_Binance(base_pair='Binance_BNB_BTC',
                                                     pair1='Binance_BNB_ETH',
                                                     pair2='Binance_ETH_BTC')
-        self.init_observers_and_markets(args)
+        self.datafeed.register_observer(_observer)
 
-    def create_t_arbitrer_binance_lrc(self, args):
-        from t_arbitrer_binance import TrigangularArbitrer_Binance
-        self.datafeed = TrigangularArbitrer_Binance(base_pair='Binance_LRC_BTC',
-                                                    pair1='Binance_LRC_ETH',
-                                                    pair2='Binance_ETH_BTC')
-        self.init_observers_and_markets(args)
 
-    def create_t_arbitrer_binance_mco(self, args):
-        from t_arbitrer_binance import TrigangularArbitrer_Binance
-        self.datafeed = TrigangularArbitrer_Binance(base_pair='Binance_MCO_BTC',
+    def register_t_binance_mco(self, args):
+        _observer = TrigangularArbitrer_Binance(base_pair='Binance_MCO_BTC',
                                                     pair1='Binance_MCO_ETH',
                                                     pair2='Binance_ETH_BTC')
-        self.init_observers_and_markets(args)
+        self.datafeed.register_observer(_observer)
 
-    def create_t_arbitrer_binance_qtum(self, args):
-        from t_arbitrer_binance import TrigangularArbitrer_Binance
-        self.datafeed = TrigangularArbitrer_Binance(base_pair='Binance_QTUM_BTC',
+    def register_t_binance_qtum(self, args):
+        _observer = TrigangularArbitrer_Binance(base_pair='Binance_QTUM_BTC',
                                                     pair1='Binance_QTUM_ETH',
                                                     pair2='Binance_ETH_BTC')
-        self.init_observers_and_markets(args)
+        self.datafeed.register_observer(_observer)
 
 
     def init_observers_and_markets(self, args):

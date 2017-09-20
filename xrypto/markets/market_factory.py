@@ -2,7 +2,7 @@ from ._kkex import KKEX
 from ._bittrex import Bittrex
 from ._bitfinex import Bitfinex
 from ._binance import Binance
-
+from ._viabtc import Viabtc
 import logging
 import config
 
@@ -13,6 +13,14 @@ def create_markets(exchangeNames):
             xchg = KKEX('BCCBTC')
         elif (name == 'KKEX_ETH_BTC'):
             xchg = KKEX('ETHBTC')
+  
+        elif (name == 'Viabtc_BCH_BTC'):
+            xchg = Viabtc('bccbtc')
+        elif (name == 'Viabtc_BCH_CNY'):
+            xchg = Viabtc('bcccny')
+        elif (name == 'Viabtc_BTC_CNY'):
+            xchg = Viabtc('btccny')
+
         elif (name == 'Bitfinex_BCH_BTC'):
             xchg = Bitfinex('bchbtc')
         elif (name == 'Bittrex_BCH_BTC'):

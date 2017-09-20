@@ -4,10 +4,10 @@
 import logging
 import time
 import config
-from arbitrer import Arbitrer
-from datafeed import Datafeed
+from .basicbot import BasicBot
+from brokers.broker_factory import create_brokers
 
-class TrigangularArbitrer_Binance(Datafeed):
+class TrigangularArbitrer_Binance(BasicBot):
     def __init__(self, base_pair, pair1, pair2, monitor_only=True):
         super().__init__()
         self.base_pair = base_pair
@@ -35,22 +35,22 @@ class TrigangularArbitrer_Binance(Datafeed):
         pass
         # self.clients[self.base_pair].get_balances()
 
-    def observer_tick(self):
-        self.forward()
+    def tick(self, depths):
+        self.forward(depths)
         # self.reverse()
 
 
-    def forward(self):
-        base_pair_ask_amount = self.depths[self.base_pair]["asks"][0]["amount"]
-        base_pair_ask_price = self.depths[self.base_pair]["asks"][0]["price"]
+    def forward(self, depths):
+        base_pair_ask_amount = depths[self.base_pair]["asks"][0]["amount"]
+        base_pair_ask_price = depths[self.base_pair]["asks"][0]["price"]
 
         logging.verbose("base_pair: %s ask_price:%s"% (self.base_pair, base_pair_ask_price))
 
-        pair1_bid_amount = self.depths[self.pair_1]["bids"][0]["amount"]
-        pair1_bid_price = self.depths[self.pair_1]["bids"][0]["price"]
+        pair1_bid_amount = depths[self.pair_1]["bids"][0]["amount"]
+        pair1_bid_price = depths[self.pair_1]["bids"][0]["price"]
 
-        pair2_bid_amount = self.depths[self.pair_2]["bids"][0]["amount"]
-        pair2_bid_price = self.depths[self.pair_2]["bids"][0]["price"]
+        pair2_bid_amount = depths[self.pair_2]["bids"][0]["amount"]
+        pair2_bid_price = depths[self.pair_2]["bids"][0]["price"]
 
         if pair1_bid_price == 0:
             return
@@ -112,16 +112,16 @@ class TrigangularArbitrer_Binance(Datafeed):
     def reverse(self):
         print("t3 reverse:")
 
-        base_pair_bid_amount = self.depths[self.base_pair]["bids"][0]["amount"]
-        base_pair_bid_price = self.depths[self.base_pair]["bids"][0]["price"]
+        base_pair_bid_amount = depths[self.base_pair]["bids"][0]["amount"]
+        base_pair_bid_price = depths[self.base_pair]["bids"][0]["price"]
 
         logging.verbose("base_pair: %s bid_price:%s"% (self.base_pair, base_pair_bid_price))
 
-        pair1_ask_amount = self.depths[self.pair_1]["asks"][0]["amount"]
-        pair1_ask_price = self.depths[self.pair_1]["asks"][0]["price"]
+        pair1_ask_amount = depths[self.pair_1]["asks"][0]["amount"]
+        pair1_ask_price = depths[self.pair_1]["asks"][0]["price"]
 
-        pair2_ask_amount = self.depths[self.pair_2]["asks"][0]["amount"]
-        pair2_ask_price = self.depths[self.pair_2]["asks"][0]["price"]
+        pair2_ask_amount = depths[self.pair_2]["asks"][0]["amount"]
+        pair2_ask_price = depths[self.pair_2]["asks"][0]["price"]
 
         if pair1_ask_price == 0  or pair2_ask_price == 0:
             return

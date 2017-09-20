@@ -33,7 +33,7 @@ class Datafeed(object):
         self.threadpool = ThreadPoolExecutor(max_workers=10)
 
     def init_markets(self, _markets):
-        logging.debug("_markets:%s" % _markets)
+        logging.debug("init_markets:%s" % _markets)
         self.market_names = _markets
         markets = create_markets(_markets)
 
@@ -43,7 +43,7 @@ class Datafeed(object):
             self.markets.append(market)
 
     def init_observers(self, _observers):
-        logging.debug("_observers:%s" % _observers)
+        logging.debug("init_observers:%s" % _observers)
 
         self.observer_names = _observers
         for observer_name in _observers:
@@ -55,7 +55,11 @@ class Datafeed(object):
             except (ImportError, AttributeError) as e:
                 print("%s observer name is invalid: Ignored (you should check your config file)" % (observer_name))
                 print(e)
-                
+
+    def register_observer(self, _observer):
+        logging.debug("register_observer:%s" % _observer)
+        self.observers.append(_observer)
+
 
     def get_market(self, market_name):
         for market in self.markets:

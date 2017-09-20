@@ -11,12 +11,13 @@ class Snapshot(object):
         super(Snapshot, self).__init__()
 
     def _snapshot(self, filename, header, body):
+        _path = './snapshot' + filename
         need_header = False
 
-        if not os.path.exists(filename):
+        if not os.path.exists(_path):
             need_header = True
 
-        fp = open(filename, 'a+')
+        fp = open(_path, 'a+')
 
         if need_header:
             fp.write(header)

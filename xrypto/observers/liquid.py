@@ -162,18 +162,12 @@ class Liquid(BasicBot):
 
         logging.info("hedge new deal: %s", result)
         hedge_side = 'sell' if order['type'] =='buy' else 'buy'
-        logging.info('hedge [%s] to broker: %s %s %s', client_id, hedge_side, amount, price)
-
-        # if hedge_side == 'sell':
-        #     self.brokers[self.hedge_market].sell_limit(amount, self.hedge_bid_price*(1-1%))
-        # else:
-        #     self.brokers[self.hedge_market].buy_limit(amount, self.hedge_ask_price*(1+1%))
+        logging.info('hedge [%s] to %s: %s %s %s', client_id, self.hedge_market, hedge_side, amount, price)
 
         if hedge_side == 'sell':
-            self.brokers[self.mm_market].sell_limit(amount, self.hedge_bid_price*(1-0.01))
+            self.brokers[self.hedge_market].sell_limit(amount, self.hedge_bid_price*(1-0.01))
         else:
-            self.brokers[self.mm_market].buy_limit(amount, self.hedge_ask_price*(1+0.01))
-
+            self.brokers[self.hedge_market].buy_limit(amount, self.hedge_ask_price*(1+0.01))
 
         # update the deal_amount of local order
         self.remove_order(order_id)
