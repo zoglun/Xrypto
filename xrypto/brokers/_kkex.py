@@ -6,13 +6,27 @@ import logging
 from exchanges.kkex_api import Client
 
 class KKEX(Broker):
-    def __init__(self, base_currency, market_currency, pair_code, api_key=None, api_secret=None):
+    def __init__(self, pair_code, api_key=None, api_secret=None):
+        
+        base_currency, market_currency = self.get_tradeable_pairs(pair_code)
+
         super().__init__(base_currency, market_currency, pair_code)
         
         self.client = Client(
                     api_key if api_key else config.KKEX_API_KEY,
                     api_secret if api_secret else config.KKEX_SECRET_TOKEN)
  
+    def get_tradeable_pairs(self, pair_code):
+        if pair_code == 'BCCBTC':
+            base_currency = 'BTC'
+            market_currency = 'BCH'
+        elif pair_code == 'ETHBTC':
+            base_currency = 'BTC'
+            market_currency = 'ETH'
+        else:
+            assert(False)
+        return base_currency, market_currency
+
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
         res = self.client.buy_limit(

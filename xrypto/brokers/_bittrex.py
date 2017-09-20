@@ -7,9 +7,11 @@ from bittrex import bittrex
  
 # python3 xrypto/cli.py -m Bittrex_BCH_BTC get-balance
 
-class BrokerBittrex_BCH_BTC(Broker):
-    def __init__(self, api_key = None, api_secret = None):
-        super().__init__("BTC", "BCH", "BTC-BCC")
+class Bittrex(Broker):
+    def __init__(self, pair_code, api_key = None, api_secret = None):
+        base_currency, market_currency = self.get_tradeable_pairs(pair_code)
+
+        super().__init__(base_currency, market_currency, pair_code)
 
         self.client = bittrex.Bittrex(
                     api_key if api_key else config.Bittrex_API_KEY,
@@ -17,6 +19,15 @@ class BrokerBittrex_BCH_BTC(Broker):
 
         # self.get_balances()
  
+    def get_tradeable_pairs(self, pair_code):
+        if pair_code == 'BTC-BCC':
+            base_currency = 'BTC'
+            market_currency = 'BCH'
+        else:
+            assert(False)
+        return base_currency, market_currency
+
+
     def _buy_limit(self, amount, price):
         """Create a buy limit order"""
         res = self.client.buy_limit(self.pair_code,

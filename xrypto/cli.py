@@ -17,6 +17,8 @@ import markets
 from snapshot import Snapshot
 from datafeed import Datafeed
 from arbitrer import Arbitrer
+from brokers.broker_utils import create_brokers
+from markets.market_utils import create_markets
 
 class CLI:
     def __init__(self):
@@ -94,14 +96,8 @@ class CLI:
             logging.error("You must use --markets argument to specify markets")
             sys.exit(2)
         pmarkets = args.markets.split(",")
-        pmarketsi = []
-        for pmarket in pmarkets:
-            exec('import markets.' + pmarket.lower())
-            market = eval('markets.' + pmarket.lower() + '.' +
-                           pmarket + '()')
-            pmarketsi.append(market)
-
-        for market in pmarketsi:
+        pmarketsi = create_markets(pmarkets)
+        for market in pmarketsi.values():
             print(market.get_ticker())
 
     def test_pri(self, args):
@@ -109,34 +105,24 @@ class CLI:
             logging.error("You must use --markets argument to specify markets")
             sys.exit(2)
         pmarkets = args.markets.split(",")
-        pmarketsi = []
-        for pmarket in pmarkets:
-            exec('import brokers.' + pmarket.lower())
-            market = eval('brokers.' + pmarket.lower()
-                          + '.Broker' + pmarket + '()')
-            pmarketsi.append(market)
-
-        for market in pmarketsi:
-            market.test()
+        brokers = create_brokers(pmarkets)
+        print(brokers)
+        for market, broker in brokers.items():
+            broker.get_balances()
 
     def get_balance(self, args):
         if not args.markets:
             logging.error("You must use --markets argument to specify markets")
             sys.exit(2)
         pmarkets = args.markets.split(",")
-        pmarketsi = []
-        for pmarket in pmarkets:
-            exec('import brokers.' + pmarket.lower())
-            market = eval('brokers.' + pmarket.lower()
-                          + '.Broker' + pmarket + '()')
-            pmarketsi.append(market)
+        brokers = create_brokers(pmarkets)
 
         snapshot = Snapshot()
 
         while True:
             total_btc = 0.
             total_bch = 0.
-            for market in pmarketsi:
+            for market in brokers.values():
                 market.get_balances()
                 print(market)
                 total_btc += market.btc_balance
