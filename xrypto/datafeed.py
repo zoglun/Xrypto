@@ -14,7 +14,7 @@ import traceback
 import re,sys,re
 import string
 import signal
-from markets.market_utils import create_markets
+from markets.market_factory import create_markets
 
 is_sigint_up = False
 

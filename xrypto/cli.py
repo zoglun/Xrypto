@@ -17,8 +17,8 @@ import markets
 from snapshot import Snapshot
 from datafeed import Datafeed
 from arbitrer import Arbitrer
-from brokers.broker_utils import create_brokers
-from markets.market_utils import create_markets
+from brokers.broker_factory import create_brokers
+from markets.market_factory import create_markets
 
 class CLI:
     def __init__(self):
