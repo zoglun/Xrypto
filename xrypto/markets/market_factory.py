@@ -3,6 +3,7 @@ from ._bittrex import Bittrex
 from ._bitfinex import Bitfinex
 from ._binance import Binance
 from ._viabtc import Viabtc
+from ._okex import OKEx
 import logging
 import config
 
@@ -21,6 +22,8 @@ def create_markets(exchangeNames):
         elif (name == 'Viabtc_BTC_CNY'):
             xchg = Viabtc('btccny')
 
+        elif (name == 'Bitfinex_BTC_USD'):
+            xchg = Bitfinex('btcusd')
         elif (name == 'Bitfinex_BCH_BTC'):
             xchg = Bitfinex('bchbtc')
         elif (name == 'Bittrex_BCH_BTC'):
@@ -44,6 +47,8 @@ def create_markets(exchangeNames):
         elif (name == 'Binance_WTC_ETH'):
             xchg = Binance('WTCETH')
 
+        elif (name == 'OKEx_Future_Quarter'):
+            xchg = OKEx('btc_usd', contract_type='quarter')
         else:
             logging.warn('Exchange ' + name + ' not supported!')
             assert(False)

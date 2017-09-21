@@ -24,6 +24,7 @@ trade_wait = 10
 
 RISK_PROTECT_MAX_VOLUMN = 100
 
+# liquid strategy parameters config
 LIQUID_MAX_BCH_AMOUNT = 50
 LIQUID_MIN_BCH_AMOUNT = 0.1
 
@@ -34,7 +35,7 @@ LIQUID_BTC_RESERVE = 50
 LIQUID_BCH_RESERVE = 500
 LIQUID_HEDGE_MIN_AMOUNT = 0.01
 
-
+# arbitrage config
 btc_profit_thresh = 0.001  # in BTC
 btc_perc_thresh = 0.01  # in 0.01%
 bch_max_tx_volume = 5  # in BCH
@@ -96,17 +97,8 @@ EMAIL_USE_TLS = True
 EMAIL_RECEIVER = ['FIXME@FIXME.com']
 
 
-#### XMPP Observer
-xmpp_jid = "FROM@jabber.org"
-xmpp_password = "FIXME"
-xmpp_to = "TO@jabber.org"
-
-# broker thrift server
-BROKER_HOST = "127.0.0.1"
-BROKER_PORT = 18030
-
 #### Trader Bot Config
-# Access to Broker APIs
+# Access to exchange APIs
 
 bitstamp_username = "FIXME"
 bitstamp_password = "FIXME"

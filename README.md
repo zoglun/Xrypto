@@ -5,17 +5,12 @@ It gets order books from supported exchanges and calculate arbitrage and triangu
 opportunities between each markets. It takes market depth into account.
 
 Currently supported exchanges to get/feed data:
- - Bitfinex (BCH_BTC)
- - Bitfinex (BTC_USD)
- - Bittrex (BCH_BTC)
- - Viabtc (BCH_BTC)
- - Viabtc (BTC_CNY)
- - Viabtc (BCH_CNY)
+ - Bitfinex
+ - Bittrex
+ - Viabtc
  - Bitstamp (USD)
- - BTC-e (USD)
  - OkCoin (CNY)
  - Huobi (CNY)
- - Broker (CNY)
  - Bitstar (Future)
  - OKEx (Future)
  - Yunbi (CNY)
@@ -23,13 +18,9 @@ Currently supported exchanges to get/feed data:
  - Binance
 
 Currently supported exchanges to automate trade:
- - Bitfinex (BCH_BTC)
- - Bitfinex (BTC_USD)
- - Bittrex (BCH_BTC)
- - Viabtc (BCH_BTC)
- - Viabtc (BTC_CNY)
- - Viabtc (BCH_CNY)
- - Bitstamp (USD)
+ - Bitfinex 
+ - Bittrex 
+ - Viabtc
  - OkCoin (CNY)
  - Huobi (CNY)
  - Bitstar (Future)
@@ -185,10 +176,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 If for some reason you feel like donating a few micro btc to future development, those should go here:
 
 `1NDnnWCUu926z4wxA3sNBGYWNQD3mKyes8`
-
-## Credits
-
-* @[Maxime Biais](https://github.com/maxme) for [the original work on **bitcoin-arbitrage**](https://github.com/maxme/https://github.com/maxme/bitcoin-arbitrage)
 
 ![Join Us](docs/xmq.jpg)
 

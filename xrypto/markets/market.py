@@ -22,7 +22,7 @@ class Market(object):
         self.update_rate = 3
 
         self.is_terminated = False
-        self.request_timeout = 5 #5s
+        self.request_timeout = 10 #5s
         self.depth = {'asks': [{'price': 0, 'amount': 0}], 'bids': [
                 {'price': 0, 'amount': 0}]}
                 
