@@ -13,13 +13,16 @@ from brokers.broker_factory import create_brokers
 
 class Liquid(BasicBot):
     def __init__(self, mm_market='KKEX_BCH_BTC', 
-                        refer_markets=['Bitfinex_BCH_BTC', 'Bittrex_BCH_BTC'],
+                        refer_markets=['Bitfinex_BCH_BTC'],
                         hedge_market='KKEX_BCH_BTC'):
         super().__init__()
 
         self.mm_market = mm_market
         self.refer_markets = refer_markets
         self.hedge_market = hedge_market
+
+        self.data_lost_count = 0
+        self.risk_protect_count = 1
 
         self.brokers = create_brokers([mm_market, hedge_market])
 
@@ -38,6 +41,14 @@ class Liquid(BasicBot):
 
         logging.info('terminate complete')
 
+    def risk_protect(self):
+        self.data_lost_count+=1
+        if self.data_lost_count > self.risk_protect_count:
+            logging.warn('risk protect~stop liquid supplly. %s' % self.data_lost_count)
+
+            self.cancel_all_orders(self.mm_market)
+            self.data_lost_count = 0
+
     def tick(self, depths):
         refer_market = None
         for m in self.refer_markets:
@@ -51,6 +62,7 @@ class Liquid(BasicBot):
         
         if not refer_market:
             logging.warn('no avaliable market depths')
+            self.risk_protect()
             return
         
         if self.hedge_market:
@@ -58,6 +70,7 @@ class Liquid(BasicBot):
                 self.hedge_bid_price, self.hedge_ask_price = self.get_ticker(depths, self.hedge_market)
             except Exception as e:
                 logging.warn('%s exception when get_ticker:%s' % (self.hedge_market, e))
+                self.risk_protect()
                 return
         
         self.check_orders(depths, refer_bid_price, refer_ask_price)
@@ -146,7 +159,7 @@ class Liquid(BasicBot):
                         self.cancel_order(self.mm_market, 'sell', order['order_id'])
         
     def hedge_order(self, order, result):
-        if result['deal_amount'] <= 0.000001:
+        if result['deal_amount'] <= config.LIQUID_HEDGE_MIN_AMOUNT:
             return
 
         amount = result['deal_amount'] - order['deal_amount']
@@ -160,7 +173,7 @@ class Liquid(BasicBot):
 
         client_id = str(order_id) + '-' + str(order['deal_index'])
 
-        logging.info("hedge new deal: %s", result)
+        logging.info("order # %s new deal: %s", order_id, result)
         hedge_side = 'sell' if order['type'] =='buy' else 'buy'
         logging.info('hedge [%s] to %s: %s %s %s', client_id, self.hedge_market, hedge_side, amount, price)
 

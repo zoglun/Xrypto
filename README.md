@@ -116,6 +116,8 @@ Help
 
 liquid in kkex
 
+    python3 xrypto/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC -oLiquid
+
     python3 xrypto/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid
     python3 xrypto/cli.py -mKKEX_BCH_BTC,Bittrex_BCH_BTC -oLiquid
     python3 xrypto/cli.py -mViabtc_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid

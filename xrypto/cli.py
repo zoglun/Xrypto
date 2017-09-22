@@ -56,7 +56,7 @@ class CLI:
             return
 
         if "b-watch" in args.command:
-            self.create_arbitrer(args)
+            self.create_datafeed(args)
         else:
             self.create_datafeed(args)
 
