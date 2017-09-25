@@ -14,7 +14,7 @@ from brokers.broker_factory import create_brokers
 class Liquid(BasicBot):
     def __init__(self, mm_market='KKEX_BCH_BTC', 
                         refer_markets=['Bitfinex_BCH_BTC'],
-                        hedge_market='KKEX_BCH_BTC'):
+                        hedge_market='Bitfinex_BCH_BTC'):
         super().__init__()
 
         self.mm_market = mm_market
@@ -22,8 +22,9 @@ class Liquid(BasicBot):
         self.hedge_market = hedge_market
 
         self.data_lost_count = 0
-        self.risk_protect_count = 1
+        self.risk_protect_count = 10
 
+        self.slappage = 0.005
         self.brokers = create_brokers([mm_market, hedge_market])
 
         self.mm_broker = self.brokers[mm_market]
@@ -178,9 +179,9 @@ class Liquid(BasicBot):
         logging.info('hedge [%s] to %s: %s %s %s', client_id, self.hedge_market, hedge_side, amount, price)
 
         if hedge_side == 'sell':
-            self.brokers[self.hedge_market].sell_limit(amount, self.hedge_bid_price*(1-0.01))
+            self.brokers[self.hedge_market].sell_limit(amount, self.hedge_bid_price*(1-self.slappage))
         else:
-            self.brokers[self.hedge_market].buy_limit(amount, self.hedge_ask_price*(1+0.01))
+            self.brokers[self.hedge_market].buy_limit(amount, self.hedge_ask_price*(1+self.slappage))
 
         # update the deal_amount of local order
         self.remove_order(order_id)
