@@ -9,24 +9,12 @@ Currently supported exchanges to get/feed data:
  - Bittrex
  - Viabtc
  - Bitstamp (USD)
- - OkCoin (CNY)
- - Huobi (CNY)
- - Bitstar (Future)
- - OKEx (Future)
- - Yunbi (CNY)
- - Jubi (CNY)
  - Binance
 
 Currently supported exchanges to automate trade:
  - Bitfinex 
  - Bittrex 
  - Viabtc
- - OkCoin (CNY)
- - Huobi (CNY)
- - Bitstar (Future)
- - OkEx (Future)
- - Yunbi (CNY)
- - Jubi (CNY)
  - Binance
 
 # WARNING
@@ -57,14 +45,11 @@ To run the opportunity watcher:
 
 To check your balance on an exchange (also a good way to check your accounts configuration):
 
-    python3 xrypto/cli.py -m HaobtcCNY get-balance
-    python3 xrypto/cli.py -m Viabtc_BCH_CNY get-balance
     python3 xrypto/cli.py -m Bitfinex_BCH_BTC get-balance
-    python3 xrypto/cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC,Viabtc_BCH_BTC get-balance
+    python3 xrypto/cli.py -m Bitfinex_BCH_BTC,Bittrex_BCH_BTC get-balance
 
 Run trianglar-arbitrage
 
-    python3 xrypto/cli.py -m Viabtc_BCH_CNY,Viabtc_BCH_BTC,Viabtc_BTC_CNY t-watch-viabtc-bcc -v
     python3 xrypto/cli.py -m Binance_WTC_BTC,Binance_WTC_ETH,Binance_ETH_BTC t-watch-binance-wtc -v
     python3 xrypto/cli.py -m Binance_BNB_BTC,Binance_BNB_ETH,Binance_ETH_BTC t-watch-binance-bnb -v
     python3 xrypto/cli.py -m Binance_MCO_BTC,Binance_MCO_ETH,Binance_ETH_BTC t-watch-binance-mco -v
@@ -85,24 +70,15 @@ List supported public markets:
     python3 xrypto/cli.py list-public-markets
 
 Test public market:
-      
-    python3 xrypto/cli.py test_pub -m OKEx_Future_Quarter
-    python3 xrypto/cli.py test_pub -m OKEx_Future_Quarter,OKCoin_BTC_CNY
+
     python3 xrypto/cli.py test_pub -m KKEX_BCH_BTC
     python3 xrypto/cli.py test_pub -m KKEX_ETH_BTC
-    python3 xrypto/cli.py test_pub -m Huobi_BTC_CNY
 
 
 Test Broker market:
       
-    python3 xrypto/cli.py test_pri -m Viabtc_BCH_BTC
-    python3 xrypto/cli.py test_pri -m Jubi_EOS_CNY
     python3 xrypto/cli.py test_pri -m KKEX_BCH_BTC
     python3 xrypto/cli.py test_pri -m KKEX_ETH_BTC
-    python3 xrypto/cli.py test_pri -m OKCoin_BTC_CNY
-    python3 xrypto/cli.py test_pri -m OKEx_BTC_Future
-    python3 xrypto/cli.py test_pri -m Huobi_BTC_CNY
-
 
 Run tests
 
@@ -120,7 +96,6 @@ liquid in kkex
 
     python3 xrypto/cli.py -mKKEX_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid
     python3 xrypto/cli.py -mKKEX_BCH_BTC,Bittrex_BCH_BTC -oLiquid
-    python3 xrypto/cli.py -mViabtc_BCH_BTC,Bitfinex_BCH_BTC,Bittrex_BCH_BTC -oLiquid
 
 arbitrage in haobtc, huobi or okcoin
 
@@ -151,15 +126,6 @@ bistar test
     python3 xrypto/bitstar_test.py
 
     
-# TODO
-
- * Tests
- * Write documentation
- * Better history handling for observer "HistoryDumper" (Redis ?)
- * Move EUR / USD from a market to an other:
-   * Coupons
-   * Negative Operations
-
 # LICENSE
 
 
