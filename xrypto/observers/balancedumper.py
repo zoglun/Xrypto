@@ -79,7 +79,7 @@ class BalanceDumper(BasicBot):
 
         btc_profit = bch_diff * bid_price + btc_diff
 
-        logging.info('btc_profit:%.8f', btc_profit)
+        logging.info('btc_profit:%.4f, btc_diff:%.4f, bch_diff: %.2f', btc_profit, btc_diff, bch_diff)
 
         if (self.first_run or abs(btc_profit - self.last_profit) > 0.01):
             self.first_run = False
