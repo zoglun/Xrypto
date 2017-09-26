@@ -100,7 +100,7 @@ class Liquid(BasicBot):
             price = round(bprice*(1-0.1*random.random()), 5) #-10% random price base on sprice
 
             Qty = min(self.mm_broker.btc_balance/price, self.hedge_broker.bch_available)
-            Qty = min(Qty, config.LIQUID_BTC_RESERVE/price)
+            # Qty = min(Qty, config.LIQUID_BTC_RESERVE/price)
 
             if Qty < amount or amount < min_bch_trade_amount:
                 logging.verbose("BUY amount (%s) not IN (%s, %s)" % (amount, min_bch_trade_amount, Qty))
@@ -114,7 +114,7 @@ class Liquid(BasicBot):
             price = round(sprice*(1+0.1*random.random()), 5) # +10% random price base on sprice
 
             Qty = min(self.mm_broker.bch_available, self.hedge_broker.btc_available/price)
-            Qty = min(Qty, config.LIQUID_BCH_RESERVE)
+            # Qty = min(Qty, config.LIQUID_BCH_RESERVE)
             if Qty < amount or amount < min_bch_trade_amount:
                 logging.verbose("SELL amount (%s) not IN (%s, %s)" % (amount, min_bch_trade_amount, Qty))
             else:
