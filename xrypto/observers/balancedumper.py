@@ -24,14 +24,8 @@ class BalanceDumper(BasicBot):
         self.btc_balance = 0
         self.bch_balance = 0
 
-        self.init_kk_btc = 100
-        self.init_kk_bch = 330.94
-
-        self.init_bf_btc = 249.61
-        self.init_bf_bch = 7368.56
-
-        self.init_btc = self.init_kk_btc + self.init_bf_btc
-        self.init_bch = self.init_kk_bch + self.init_bf_bch
+        self.init_btc = config.init_kk_btc + config.init_bf_btc
+        self.init_bch = config.init_kk_bch + config.init_bf_bch
 
         self.first_run = True
         try:
