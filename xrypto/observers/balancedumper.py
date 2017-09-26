@@ -12,7 +12,7 @@ from .basicbot import BasicBot
 from brokers.broker_factory import create_brokers
 
 class BalanceDumper(BasicBot):
-    exchange = 'KKEX_BCH_BTC'
+    exchange = 'Bitfinex_BCH_BTC'
     last_profit = 0
 
     out_dir = './data/'

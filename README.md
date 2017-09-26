@@ -139,7 +139,8 @@ trianglar-arbitrage in viabtc
 balance statatistic 
 
     python3 xrypto/cli.py -oBalanceDumper -mKKEX_BCH_BTC
-    
+    python3 xrypto/cli.py -oBalanceDumper -mBitfinex_BCH_BTC
+
 price diff:
 
     python3 xrypto/cli.py -oPriceMonitor -mViabtc_BTC_CNY,OKEx_Future_Quarter,Bitfinex_BTC_USD
